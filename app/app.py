@@ -9,20 +9,57 @@ load_dotenv()
 # ── Conexión a la base de datos ──────────────────────────────
 @st.cache_resource
 def get_engine():
-    return create_engine(os.getenv("DATABASE_URL"))
+    return create_engine(
+        os.getenv("DATABASE_URL"),
+        pool_pre_ping=True,
+        pool_recycle=300
+    )
 
 def run_query(sql, params=None):
     engine = get_engine()
     with engine.connect() as conn:
         return pd.read_sql_query(text(sql), conn, params=params)
 
-# ── Badges por tipo de actor ─────────────────────────────────
+# ── Diccionarios de etiquetas ────────────────────────────────
 TIPO_BADGE = {
-    "laboratorio": "🟢 Laboratorio",
-    "empresa":     "🔵 Empresa",
-    "startup":     "🟣 Startup",
-    "universidad": "🟡 Universidad",
+    "laboratorio":  "🟢 Laboratorio",
+    "empresa":      "🔵 Empresa",
+    "startup":      "🟣 Startup",
+    "universidad":  "🟡 Universidad",
     "investigacion":"🟠 Investigación",
+}
+
+AREA_LABEL = {
+    "salud_humana":        "Salud humana",
+    "medicamentos_farma":  "Medicamentos y farmacia",
+    "alimentos_nutricion": "Alimentos y nutrición",
+    "ambiente":            "Medio ambiente",
+    "agroindustria":       "Agroindustria",
+    "salud_animal":        "Salud animal",
+    "otro":                "Otro",
+}
+
+SERVICIO_LABEL = {
+    "diagnostico_clinico":     "Diagnóstico clínico",
+    "analisis_quimico":        "Análisis químico",
+    "analisis_molecular":      "Análisis molecular",
+    "analisis_microbiologico": "Análisis microbiológico",
+    "control_calidad":         "Control de calidad",
+    "validacion_procesos":     "Validación de procesos",
+    "manufactura":             "Manufactura",
+    "i_d_aplicada":            "I+D aplicada",
+    "metrologia":              "Metrología",
+    "consultoria_tecnica":     "Consultoría técnica",
+    "procesamiento_biologico": "Procesamiento biológico",
+    "otro":                    "Otro",
+}
+
+TIPO_LABEL = {
+    "laboratorio":  "Laboratorio",
+    "empresa":      "Empresa",
+    "startup":      "Startup",
+    "universidad":  "Universidad",
+    "investigacion":"Investigación",
 }
 
 def badge(tipo):
@@ -42,7 +79,7 @@ st.divider()
 # ── Navegación ───────────────────────────────────────────────
 pagina = st.sidebar.radio(
     "Navegación",
-    ["Red de actores", "Capacidades", "Necesidades", "Financiamiento", "Buscar (IA)"]
+    ["Red de actores", "Servicios", "Necesidades", "Financiamiento", "Buscar (IA)"]
 )
 
 # ── Página: Red de actores ───────────────────────────────────
@@ -72,26 +109,28 @@ if pagina == "Red de actores":
 
     st.divider()
 
-    # Filtros
+    # Aplicar labels antes de construir filtros
+    df["tipo_label"] = df["tipo"].map(TIPO_LABEL).fillna(df["tipo"])
+
     col1, col2 = st.columns(2)
     busqueda = col1.text_input("🔍 Buscar por nombre", placeholder="Ej: CEPROCOR, Lamarx...")
-    tipos = ["Todos"] + sorted(df["tipo"].unique().tolist())
+    tipos = ["Todos"] + sorted(df["tipo_label"].unique().tolist())
     tipo_sel = col2.selectbox("Filtrar por tipo", tipos)
 
     df_filtrado = df.copy()
     if busqueda:
         df_filtrado = df_filtrado[df_filtrado["nombre"].str.contains(busqueda, case=False)]
     if tipo_sel != "Todos":
-        df_filtrado = df_filtrado[df_filtrado["tipo"] == tipo_sel]
+        df_filtrado = df_filtrado[df_filtrado["tipo_label"] == tipo_sel]
 
     df_filtrado["tipo"] = df_filtrado["tipo"].apply(badge)
-    df_filtrado = df_filtrado.drop(columns=["id"])
+    df_filtrado = df_filtrado.drop(columns=["id", "tipo_label"])
 
     st.dataframe(df_filtrado, use_container_width=True, hide_index=True)
 
-# ── Página: Capacidades ──────────────────────────────────────
-elif pagina == "Capacidades":
-    st.header("Capacidades del ecosistema")
+# ── Página: Servicios ────────────────────────────────────────
+elif pagina == "Servicios":
+    st.header("Servicios del ecosistema")
 
     df = run_query("""
         SELECT
@@ -105,6 +144,10 @@ elif pagina == "Capacidades":
         JOIN actor a ON a.id = c.actor_id
         ORDER BY a.nombre, c.area_tematica
     """)
+
+    # Aplicar labels antes de construir filtros
+    df["area_tematica"] = df["area_tematica"].map(AREA_LABEL).fillna(df["area_tematica"])
+    df["tipo_servicio"] = df["tipo_servicio"].map(SERVICIO_LABEL).fillna(df["tipo_servicio"])
 
     col1, col2, col3 = st.columns(3)
     busqueda = col1.text_input("🔍 Buscar", placeholder="Ej: microbiológico, validación...")
@@ -151,6 +194,10 @@ elif pagina == "Necesidades":
             a.nombre
     """)
 
+    # Aplicar labels antes de construir filtros
+    df["area_tematica"] = df["area_tematica"].map(AREA_LABEL).fillna(df["area_tematica"])
+    df["tipo_servicio"] = df["tipo_servicio"].map(SERVICIO_LABEL).fillna(df["tipo_servicio"])
+
     col1, col2 = st.columns(2)
     busqueda = col1.text_input("🔍 Buscar", placeholder="Ej: diagnóstico, validación...")
     urgencias = ["Todas"] + sorted(df["urgencia"].unique().tolist())
@@ -173,16 +220,19 @@ elif pagina == "Financiamiento":
     st.write("Fondos, subsidios y créditos disponibles para actores del ecosistema biotech.")
 
     df = run_query("""
-        SELECT
-            nombre,
-            tipo,
-            organismo,
-            sectores_elegibles,
-            status,
-            url
+        SELECT nombre, tipo, organismo, sectores_elegibles, status, url
         FROM instrumento
         ORDER BY tipo, nombre
     """)
+
+    TIPO_INSTRUMENTO = {
+        "subsidio": "Subsidio",
+        "credito":  "Crédito",
+        "capital":  "Capital",
+        "concurso": "Concurso",
+    }
+    df["tipo"] = df["tipo"].map(TIPO_INSTRUMENTO).fillna(df["tipo"])
+    df["url"] = df["url"].fillna("—")
 
     col1, col2 = st.columns(2)
     busqueda = col1.text_input("🔍 Buscar", placeholder="Ej: FONARSEC, biotecnología...")
@@ -199,7 +249,6 @@ elif pagina == "Financiamiento":
         df = df[df["tipo"] == tipo_sel]
 
     st.dataframe(df, use_container_width=True, hide_index=True)
-
 # ── Página: Buscar con IA ────────────────────────────────────
 elif pagina == "Buscar (IA)":
     st.header("Buscar capacidades con IA")
