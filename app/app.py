@@ -251,7 +251,7 @@ elif pagina == "Financiamiento":
     st.dataframe(df, use_container_width=True, hide_index=True)
 # ── Página: Buscar con IA ────────────────────────────────────
 elif pagina == "Buscar (IA)":
-    st.header("Buscar capacidades con IA")
+    st.header("Buscar servicios con IA")
     st.write("Describí lo que necesitás en lenguaje libre y el sistema encontrará capacidades relevantes en la plataforma.")
 
     consulta = st.text_area(
