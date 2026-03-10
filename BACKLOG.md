@@ -39,6 +39,18 @@ Detección automática de necesidades sin oferta disponible → oportunidades de
 - Objetivo: refinar el match con más contexto y documentar mejor el gap en la tabla `gap`
 - Prerequisito: más actores y servicios cargados en la red para que el matching sea útil
 
+### Decisión de arquitectura — versión producción
+- Stack definido: FastAPI (backend) + Next.js (frontend)
+- Migrar desde Streamlit cuando el prototipo esté validado con stakeholders
+- La BD en Neon PostgreSQL no cambia, toda la lógica es transferible
+- Prerequisito: reuniones de validación con CEPROCOR y LACE
+```
+
+Luego:
+```
+git add BACKLOG.md
+git commit -m "Add architecture decision: FastAPI + Next.js for production"
+git push
 ---
 
 *Actualizado: marzo 2026*
