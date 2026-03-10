@@ -72,6 +72,12 @@ COLOR_TIPO = {
     "universidad":   "#f1c40f",
     "investigacion": "#e67e22",
 }
+COLOR_URGENCIA = {
+    "critica": "#e74c3c",
+    "alta":    "#e67e22",
+    "normal":  "#3498db",
+    "baja":    "#888888",
+}
 
 def badge(tipo):
     return TIPO_BADGE.get(tipo, f"⚪ {tipo.capitalize()}")
@@ -81,11 +87,8 @@ st.set_page_config(page_title="Plataforma Biotech de Córdoba", page_icon="🔬"
 st.markdown("""
 <style>
 .actor-card {
-    background: #1e1e2e;
-    border: 1px solid #333;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 16px;
+    background: #1e1e2e; border: 1px solid #333;
+    border-radius: 12px; padding: 20px; margin-bottom: 16px;
 }
 .actor-name { font-size: 1.1rem; font-weight: 700; color: #ffffff; margin-bottom: 6px; }
 .actor-badge {
@@ -98,6 +101,19 @@ st.markdown("""
 .stat-item { text-align: center; }
 .stat-number { font-size: 1.3rem; font-weight: 700; color: #fff; }
 .stat-label { font-size: 0.7rem; color: #888; text-transform: uppercase; }
+.result-card {
+    background: #1a1a2e; border: 1px solid #2a2a3e;
+    border-radius: 10px; padding: 16px 20px; margin-bottom: 12px;
+    border-left: 4px solid #3498db;
+}
+.result-title { font-size: 1rem; font-weight: 700; color: #ffffff; margin-bottom: 4px; }
+.result-meta { font-size: 0.8rem; color: #888; margin-bottom: 8px; }
+.result-desc { font-size: 0.9rem; color: #ccc; margin-bottom: 10px; }
+.result-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.tag {
+    display: inline-block; padding: 2px 8px; border-radius: 12px;
+    font-size: 0.72rem; font-weight: 600;
+}
 .hero-box {
     background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     border-radius: 16px; padding: 48px 40px; margin-bottom: 32px; text-align: center;
@@ -187,10 +203,8 @@ elif pagina == "Red de actores":
         tipo_text = TIPO_LABEL.get(row["tipo"], row["tipo"])
         mercado = safe_str(row["mercado"])
         website = safe_str(row["website"])
-
         mercado_part = f'<div class="actor-meta">🏭 {mercado}</div>' if mercado else ''
         website_part = f'<a class="actor-link" href="{website}" target="_blank">🔗 {website}</a>' if website else ''
-
         card = (
             f'<div class="actor-card">'
             f'<div class="actor-name">{row["nombre"]}</div>'
@@ -214,13 +228,13 @@ elif pagina == "Servicios":
         ORDER BY a.nombre, c.area_tematica
     """)
 
-    df["area_tematica"] = df["area_tematica"].map(AREA_LABEL).fillna(df["area_tematica"])
-    df["tipo_servicio"] = df["tipo_servicio"].map(SERVICIO_LABEL).fillna(df["tipo_servicio"])
+    df["area_label"] = df["area_tematica"].map(AREA_LABEL).fillna(df["area_tematica"])
+    df["servicio_label"] = df["tipo_servicio"].map(SERVICIO_LABEL).fillna(df["tipo_servicio"])
 
     col1, col2, col3 = st.columns(3)
     busqueda = col1.text_input("🔍 Buscar", placeholder="Ej: microbiológico, validación...")
-    areas = ["Todas"] + sorted(df["area_tematica"].unique().tolist())
-    tipos = ["Todos"] + sorted(df["tipo_servicio"].unique().tolist())
+    areas = ["Todas"] + sorted(df["area_label"].unique().tolist())
+    tipos = ["Todos"] + sorted(df["servicio_label"].unique().tolist())
     area_sel = col2.selectbox("Área temática", areas)
     tipo_sel = col3.selectbox("Tipo de servicio", tipos)
 
@@ -228,12 +242,32 @@ elif pagina == "Servicios":
         df = df[df["descripcion"].str.contains(busqueda, case=False, na=False) |
                 df["actor"].str.contains(busqueda, case=False, na=False)]
     if area_sel != "Todas":
-        df = df[df["area_tematica"] == area_sel]
+        df = df[df["area_label"] == area_sel]
     if tipo_sel != "Todos":
-        df = df[df["tipo_servicio"] == tipo_sel]
+        df = df[df["servicio_label"] == tipo_sel]
 
-    df["tipo_actor"] = df["tipo_actor"].apply(badge)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.caption(f"{len(df)} resultado(s) encontrado(s)")
+    st.divider()
+
+    for _, row in df.iterrows():
+        color = COLOR_TIPO.get(row["tipo_actor"], "#888")
+        tipo_text = TIPO_LABEL.get(row["tipo_actor"], row["tipo_actor"])
+        disp_color = "#2ecc71" if row["disponibilidad"] == "disponible" else "#e67e22" if row["disponibilidad"] == "parcial" else "#e74c3c"
+        disp_text = row["disponibilidad"].capitalize()
+        desc = safe_str(row["descripcion"])
+
+        card = (
+            f'<div class="result-card" style="border-left-color:{color};">'
+            f'<div class="result-title">{row["servicio_label"]}</div>'
+            f'<div class="result-meta">{row["actor"]}</div>'
+            f'<div class="result-desc">{desc}</div>'
+            f'<div class="result-tags">'
+            f'<span class="tag" style="background:{color}22;color:{color};border:1px solid {color}44;">{tipo_text}</span>'
+            f'<span class="tag" style="background:#ffffff11;color:#aaa;border:1px solid #333;">{row["area_label"]}</span>'
+            f'<span class="tag" style="background:{disp_color}22;color:{disp_color};border:1px solid {disp_color}44;">{disp_text}</span>'
+            f'</div></div>'
+        )
+        st.markdown(card, unsafe_allow_html=True)
 
 # ── Necesidades ──────────────────────────────────────────────
 elif pagina == "Necesidades":
@@ -248,12 +282,12 @@ elif pagina == "Necesidades":
             WHEN 'normal'  THEN 3 WHEN 'baja'  THEN 4 END, a.nombre
     """)
 
-    df["area_tematica"] = df["area_tematica"].map(AREA_LABEL).fillna(df["area_tematica"])
-    df["tipo_servicio"] = df["tipo_servicio"].map(SERVICIO_LABEL).fillna(df["tipo_servicio"])
+    df["area_label"] = df["area_tematica"].map(AREA_LABEL).fillna(df["area_tematica"])
+    df["servicio_label"] = df["tipo_servicio"].map(SERVICIO_LABEL).fillna(df["tipo_servicio"])
 
     col1, col2 = st.columns(2)
     busqueda = col1.text_input("🔍 Buscar", placeholder="Ej: diagnóstico, validación...")
-    urgencias = ["Todas"] + sorted(df["urgencia"].unique().tolist())
+    urgencias = ["Todas"] + ["alta", "normal", "baja"]
     urgencia_sel = col2.selectbox("Urgencia", urgencias)
 
     if busqueda:
@@ -262,8 +296,28 @@ elif pagina == "Necesidades":
     if urgencia_sel != "Todas":
         df = df[df["urgencia"] == urgencia_sel]
 
-    df["tipo_actor"] = df["tipo_actor"].apply(badge)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.caption(f"{len(df)} resultado(s) encontrado(s)")
+    st.divider()
+
+    for _, row in df.iterrows():
+        color_actor = COLOR_TIPO.get(row["tipo_actor"], "#888")
+        tipo_text = TIPO_LABEL.get(row["tipo_actor"], row["tipo_actor"])
+        urg_color = COLOR_URGENCIA.get(row["urgencia"], "#888")
+        urg_text = row["urgencia"].capitalize()
+        desc = safe_str(row["descripcion"])
+
+        card = (
+            f'<div class="result-card" style="border-left-color:{urg_color};">'
+            f'<div class="result-title">{row["servicio_label"]}</div>'
+            f'<div class="result-meta">{row["actor"]}</div>'
+            f'<div class="result-desc">{desc}</div>'
+            f'<div class="result-tags">'
+            f'<span class="tag" style="background:{color_actor}22;color:{color_actor};border:1px solid {color_actor}44;">{tipo_text}</span>'
+            f'<span class="tag" style="background:#ffffff11;color:#aaa;border:1px solid #333;">{row["area_label"]}</span>'
+            f'<span class="tag" style="background:{urg_color}22;color:{urg_color};border:1px solid {urg_color}44;">Urgencia: {urg_text}</span>'
+            f'</div></div>'
+        )
+        st.markdown(card, unsafe_allow_html=True)
 
 # ── Financiamiento ───────────────────────────────────────────
 elif pagina == "Financiamiento":
@@ -272,12 +326,11 @@ elif pagina == "Financiamiento":
 
     df = run_query("SELECT nombre, tipo, organismo, sectores_elegibles, status, url FROM instrumento ORDER BY tipo, nombre")
 
-    df["tipo"] = df["tipo"].map(TIPO_INSTRUMENTO).fillna(df["tipo"])
-    df["url"] = df["url"].fillna("—")
+    df["tipo_label"] = df["tipo"].map(TIPO_INSTRUMENTO).fillna(df["tipo"])
 
     col1, col2 = st.columns(2)
     busqueda = col1.text_input("🔍 Buscar", placeholder="Ej: FONARSEC, biotecnología...")
-    tipos = ["Todos"] + sorted(df["tipo"].unique().tolist())
+    tipos = ["Todos"] + sorted(df["tipo_label"].unique().tolist())
     tipo_sel = col2.selectbox("Tipo", tipos)
 
     if busqueda:
@@ -285,9 +338,31 @@ elif pagina == "Financiamiento":
                 df["organismo"].str.contains(busqueda, case=False, na=False) |
                 df["sectores_elegibles"].str.contains(busqueda, case=False, na=False)]
     if tipo_sel != "Todos":
-        df = df[df["tipo"] == tipo_sel]
+        df = df[df["tipo_label"] == tipo_sel]
 
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.caption(f"{len(df)} resultado(s) encontrado(s)")
+    st.divider()
+
+    for _, row in df.iterrows():
+        status_color = "#2ecc71" if row["status"] == "activo" else "#e67e22" if row["status"] == "proximamente" else "#888"
+        status_text = row["status"].capitalize()
+        tipo_text = safe_str(row["tipo_label"])
+        sectores = safe_str(row["sectores_elegibles"])
+        url = safe_str(row["url"])
+        url_part = f'<a style="color:#aad4e8;font-size:0.8rem;" href="{url}" target="_blank">🔗 Más información</a>' if url else ''
+
+        card = (
+            f'<div class="result-card" style="border-left-color:{status_color};">'
+            f'<div class="result-title">{row["nombre"]}</div>'
+            f'<div class="result-meta">{row["organismo"]}</div>'
+            f'<div class="result-desc">Sectores elegibles: {sectores}</div>'
+            f'{url_part}'
+            f'<div class="result-tags" style="margin-top:10px;">'
+            f'<span class="tag" style="background:#3498db22;color:#3498db;border:1px solid #3498db44;">{tipo_text}</span>'
+            f'<span class="tag" style="background:{status_color}22;color:{status_color};border:1px solid {status_color}44;">{status_text}</span>'
+            f'</div></div>'
+        )
+        st.markdown(card, unsafe_allow_html=True)
 
 # ── Buscar con IA ────────────────────────────────────────────
 elif pagina == "Buscar (IA)":
