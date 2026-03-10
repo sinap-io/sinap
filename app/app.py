@@ -22,6 +22,11 @@ def run_query(sql, params=None):
 def safe_str(val):
     return str(val) if pd.notna(val) and str(val) not in ("None", "") else ""
 
+def ir_a(pagina):
+    st.session_state["destino"] = pagina
+
+PAGINAS = ["Inicio", "Red de actores", "Servicios", "Necesidades", "Financiamiento", "Buscar (IA)"]
+
 TIPO_BADGE = {
     "laboratorio":   "🟢 Laboratorio",
     "empresa":       "🔵 Empresa",
@@ -91,33 +96,20 @@ st.markdown("""
     border-radius: 12px; padding: 20px; margin-bottom: 16px;
 }
 .actor-name { font-size: 1.1rem; font-weight: 700; color: #ffffff; margin-bottom: 6px; }
-.actor-badge {
-    display: inline-block; padding: 3px 10px; border-radius: 20px;
-    font-size: 0.75rem; font-weight: 600; margin-bottom: 10px;
-}
+.actor-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-bottom: 10px; }
 .actor-meta { font-size: 0.85rem; color: #aaa; margin-bottom: 4px; }
 .actor-link { color: #aad4e8; font-size: 0.8rem; display: block; margin-bottom: 8px; }
 .actor-stats { display: flex; gap: 16px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #333; }
 .stat-item { text-align: center; }
 .stat-number { font-size: 1.3rem; font-weight: 700; color: #fff; }
 .stat-label { font-size: 0.7rem; color: #888; text-transform: uppercase; }
-.result-card {
-    background: #1a1a2e; border: 1px solid #2a2a3e;
-    border-radius: 10px; padding: 16px 20px; margin-bottom: 12px;
-    border-left: 4px solid #3498db;
-}
+.result-card { background: #1a1a2e; border: 1px solid #2a2a3e; border-radius: 10px; padding: 16px 20px; margin-bottom: 12px; border-left: 4px solid #3498db; }
 .result-title { font-size: 1rem; font-weight: 700; color: #ffffff; margin-bottom: 4px; }
 .result-meta { font-size: 0.8rem; color: #888; margin-bottom: 8px; }
 .result-desc { font-size: 0.9rem; color: #ccc; margin-bottom: 10px; }
 .result-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-.tag {
-    display: inline-block; padding: 2px 8px; border-radius: 12px;
-    font-size: 0.72rem; font-weight: 600;
-}
-.hero-box {
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    border-radius: 16px; padding: 48px 40px; margin-bottom: 32px; text-align: center;
-}
+.tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; }
+.hero-box { background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); border-radius: 16px; padding: 48px 40px; margin-bottom: 32px; text-align: center; }
 .hero-title { font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 12px; }
 .hero-subtitle { font-size: 1.1rem; color: #aad4e8; margin-bottom: 24px; }
 .hero-stats { display: flex; justify-content: center; gap: 48px; margin-top: 32px; }
@@ -126,10 +118,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-pagina = st.sidebar.radio(
-    "Navegación",
-    ["Inicio", "Red de actores", "Servicios", "Necesidades", "Financiamiento", "Buscar (IA)"]
-)
+# ── Navegación con session_state ─────────────────────────────
+if "destino" not in st.session_state:
+    st.session_state["destino"] = "Inicio"
+
+idx = PAGINAS.index(st.session_state["destino"]) if st.session_state["destino"] in PAGINAS else 0
+pagina = st.sidebar.radio("Navegación", PAGINAS, index=idx)
+st.session_state["destino"] = pagina
+
 st.sidebar.divider()
 st.sidebar.caption("Impulsado por el Clúster de Biotecnología de Córdoba")
 
@@ -163,10 +159,19 @@ if pagina == "Inicio":
     col1, col2, col3 = st.columns(3)
     with col1:
         st.info("**🏢 Explorar la red**\n\nConocé los actores del ecosistema — labs, empresas, universidades e instituciones de investigación.")
+        if st.button("Ver red de actores →", key="btn_red", use_container_width=True):
+            st.session_state["destino"] = "Red de actores"
+            st.rerun()
     with col2:
         st.success("**🔍 Buscar con IA**\n\nDescribí lo que necesitás en lenguaje libre y la IA encontrará los servicios más relevantes.")
+        if st.button("Buscar con IA →", key="btn_ia", use_container_width=True):
+            st.session_state["destino"] = "Buscar (IA)"
+            st.rerun()
     with col3:
         st.warning("**💰 Acceder a financiamiento**\n\nExplorá subsidios, créditos y fondos disponibles para proyectos de innovación biotech.")
+        if st.button("Ver financiamiento →", key="btn_fin", use_container_width=True):
+            st.session_state["destino"] = "Financiamiento"
+            st.rerun()
 
 # ── Red de actores ───────────────────────────────────────────
 elif pagina == "Red de actores":
@@ -253,9 +258,7 @@ elif pagina == "Servicios":
         color = COLOR_TIPO.get(row["tipo_actor"], "#888")
         tipo_text = TIPO_LABEL.get(row["tipo_actor"], row["tipo_actor"])
         disp_color = "#2ecc71" if row["disponibilidad"] == "disponible" else "#e67e22" if row["disponibilidad"] == "parcial" else "#e74c3c"
-        disp_text = row["disponibilidad"].capitalize()
         desc = safe_str(row["descripcion"])
-
         card = (
             f'<div class="result-card" style="border-left-color:{color};">'
             f'<div class="result-title">{row["servicio_label"]}</div>'
@@ -264,7 +267,7 @@ elif pagina == "Servicios":
             f'<div class="result-tags">'
             f'<span class="tag" style="background:{color}22;color:{color};border:1px solid {color}44;">{tipo_text}</span>'
             f'<span class="tag" style="background:#ffffff11;color:#aaa;border:1px solid #333;">{row["area_label"]}</span>'
-            f'<span class="tag" style="background:{disp_color}22;color:{disp_color};border:1px solid {disp_color}44;">{disp_text}</span>'
+            f'<span class="tag" style="background:{disp_color}22;color:{disp_color};border:1px solid {disp_color}44;">{row["disponibilidad"].capitalize()}</span>'
             f'</div></div>'
         )
         st.markdown(card, unsafe_allow_html=True)
@@ -287,8 +290,7 @@ elif pagina == "Necesidades":
 
     col1, col2 = st.columns(2)
     busqueda = col1.text_input("🔍 Buscar", placeholder="Ej: diagnóstico, validación...")
-    urgencias = ["Todas"] + ["alta", "normal", "baja"]
-    urgencia_sel = col2.selectbox("Urgencia", urgencias)
+    urgencia_sel = col2.selectbox("Urgencia", ["Todas", "alta", "normal", "baja"])
 
     if busqueda:
         df = df[df["descripcion"].str.contains(busqueda, case=False, na=False) |
@@ -303,9 +305,7 @@ elif pagina == "Necesidades":
         color_actor = COLOR_TIPO.get(row["tipo_actor"], "#888")
         tipo_text = TIPO_LABEL.get(row["tipo_actor"], row["tipo_actor"])
         urg_color = COLOR_URGENCIA.get(row["urgencia"], "#888")
-        urg_text = row["urgencia"].capitalize()
         desc = safe_str(row["descripcion"])
-
         card = (
             f'<div class="result-card" style="border-left-color:{urg_color};">'
             f'<div class="result-title">{row["servicio_label"]}</div>'
@@ -314,7 +314,7 @@ elif pagina == "Necesidades":
             f'<div class="result-tags">'
             f'<span class="tag" style="background:{color_actor}22;color:{color_actor};border:1px solid {color_actor}44;">{tipo_text}</span>'
             f'<span class="tag" style="background:#ffffff11;color:#aaa;border:1px solid #333;">{row["area_label"]}</span>'
-            f'<span class="tag" style="background:{urg_color}22;color:{urg_color};border:1px solid {urg_color}44;">Urgencia: {urg_text}</span>'
+            f'<span class="tag" style="background:{urg_color}22;color:{urg_color};border:1px solid {urg_color}44;">Urgencia: {row["urgencia"].capitalize()}</span>'
             f'</div></div>'
         )
         st.markdown(card, unsafe_allow_html=True)
@@ -325,8 +325,8 @@ elif pagina == "Financiamiento":
     st.write("Fondos, subsidios y créditos disponibles para actores del ecosistema biotech.")
 
     df = run_query("SELECT nombre, tipo, organismo, sectores_elegibles, status, url FROM instrumento ORDER BY tipo, nombre")
-
     df["tipo_label"] = df["tipo"].map(TIPO_INSTRUMENTO).fillna(df["tipo"])
+    df["url"] = df["url"].fillna("")
 
     col1, col2 = st.columns(2)
     busqueda = col1.text_input("🔍 Buscar", placeholder="Ej: FONARSEC, biotecnología...")
@@ -345,21 +345,19 @@ elif pagina == "Financiamiento":
 
     for _, row in df.iterrows():
         status_color = "#2ecc71" if row["status"] == "activo" else "#e67e22" if row["status"] == "proximamente" else "#888"
-        status_text = row["status"].capitalize()
         tipo_text = safe_str(row["tipo_label"])
         sectores = safe_str(row["sectores_elegibles"])
         url = safe_str(row["url"])
-        url_part = f'<a style="color:#aad4e8;font-size:0.8rem;" href="{url}" target="_blank">🔗 Más información</a>' if url else ''
-
+        url_part = f'<a style="color:#aad4e8;font-size:0.8rem;display:block;margin-bottom:8px;" href="{url}" target="_blank">🔗 Más información</a>' if url else ''
         card = (
             f'<div class="result-card" style="border-left-color:{status_color};">'
             f'<div class="result-title">{row["nombre"]}</div>'
             f'<div class="result-meta">{row["organismo"]}</div>'
             f'<div class="result-desc">Sectores elegibles: {sectores}</div>'
             f'{url_part}'
-            f'<div class="result-tags" style="margin-top:10px;">'
+            f'<div class="result-tags">'
             f'<span class="tag" style="background:#3498db22;color:#3498db;border:1px solid #3498db44;">{tipo_text}</span>'
-            f'<span class="tag" style="background:{status_color}22;color:{status_color};border:1px solid {status_color}44;">{status_text}</span>'
+            f'<span class="tag" style="background:{status_color}22;color:{status_color};border:1px solid {status_color}44;">{row["status"].capitalize()}</span>'
             f'</div></div>'
         )
         st.markdown(card, unsafe_allow_html=True)
