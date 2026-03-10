@@ -33,6 +33,12 @@ Perfiles de investigadores y graduados recomendados por facultades para necesida
 ### Gaps automáticos
 Detección automática de necesidades sin oferta disponible → oportunidades de mercado para el Clúster.
 
+### Búsqueda con IA — seguimiento conversacional ante gaps
+- Cuando la IA detecta cobertura baja o nula, iniciar una pregunta de seguimiento en lenguaje libre
+- Ejemplos: etapa del proyecto (investigación/prototipo/escala), si tienen equipamiento propio, si buscan servicio puntual o colaboración I+D
+- Objetivo: refinar el match con más contexto y documentar mejor el gap en la tabla `gap`
+- Prerequisito: más actores y servicios cargados en la red para que el matching sea útil
+
 ---
 
 *Actualizado: marzo 2026*
