@@ -163,7 +163,7 @@ if pagina == "Inicio":
             st.session_state["destino"] = "Red de actores"
             st.rerun()
     with col2:
-        st.success("**🔍 Buscar con IA**\n\nDescribí lo que necesitás en lenguaje libre y la IA encontrará los servicios más relevantes.")
+        st.success("**🔍 Buscar servicio con IA**\n\nDescribí lo que necesitás en lenguaje libre y la IA encontrará los servicios más relevantes.")
         if st.button("Buscar con IA →", key="btn_ia", use_container_width=True):
             st.session_state["destino"] = "Buscar (IA)"
             st.rerun()
