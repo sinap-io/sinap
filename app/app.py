@@ -20,7 +20,11 @@ def run_query(sql, params=None):
         return pd.read_sql_query(text(sql), conn, params=params)
 
 def safe_str(val):
-    return str(val) if pd.notna(val) and str(val) not in ("None", "") else ""
+    if isinstance(val, float):
+        import math
+        if math.isnan(val):
+            return ""
+    return str(val) if val is not None and str(val) not in ("None", "nan", "") else ""
 
 def ir_a(pagina):
     st.session_state["destino"] = pagina
@@ -84,9 +88,6 @@ COLOR_URGENCIA = {
     "baja":    "#888888",
 }
 
-def badge(tipo):
-    return TIPO_BADGE.get(tipo, f"⚪ {tipo.capitalize()}")
-
 st.set_page_config(page_title="Plataforma Biotech de Córdoba", page_icon="🔬", layout="wide")
 
 st.markdown("""
@@ -98,6 +99,7 @@ st.markdown("""
 .actor-name { font-size: 1.1rem; font-weight: 700; color: #ffffff; margin-bottom: 6px; }
 .actor-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-bottom: 10px; }
 .actor-meta { font-size: 0.85rem; color: #aaa; margin-bottom: 4px; }
+.actor-desc { font-size: 0.85rem; color: #ccc; margin-bottom: 8px; }
 .actor-link { color: #aad4e8; font-size: 0.8rem; display: block; margin-bottom: 8px; }
 .actor-stats { display: flex; gap: 16px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #333; }
 .stat-item { text-align: center; }
@@ -118,14 +120,13 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ── Navegación con session_state ─────────────────────────────
+# ── Navegación ───────────────────────────────────────────────
 if "destino" not in st.session_state:
     st.session_state["destino"] = "Inicio"
 
 idx = PAGINAS.index(st.session_state["destino"]) if st.session_state["destino"] in PAGINAS else 0
 pagina = st.sidebar.radio("Navegación", PAGINAS, index=idx)
 st.session_state["destino"] = pagina
-
 st.sidebar.divider()
 st.sidebar.caption("Impulsado por el Clúster de Biotecnología de Córdoba")
 
@@ -178,13 +179,13 @@ elif pagina == "Red de actores":
     st.header("Red de actores")
 
     df = run_query("""
-        SELECT a.id, a.nombre, a.tipo, a.subtipo, a.mercado, a.website,
+        SELECT a.id, a.nombre, a.tipo, a.subtipo, a.mercado, a.website, a.descripcion,
                COUNT(DISTINCT c.id) AS servicios,
                COUNT(DISTINCT n.id) AS necesidades
         FROM actor a
         LEFT JOIN capacidad c ON c.actor_id = a.id
         LEFT JOIN necesidad n ON n.actor_id = a.id
-        GROUP BY a.id, a.nombre, a.tipo, a.subtipo, a.mercado, a.website
+        GROUP BY a.id, a.nombre, a.tipo, a.subtipo, a.mercado, a.website, a.descripcion
         ORDER BY a.tipo, a.nombre
     """)
 
@@ -208,13 +209,15 @@ elif pagina == "Red de actores":
         tipo_text = TIPO_LABEL.get(row["tipo"], row["tipo"])
         mercado = safe_str(row["mercado"])
         website = safe_str(row["website"])
+        descripcion = safe_str(row["descripcion"])
         mercado_part = f'<div class="actor-meta">🏭 {mercado}</div>' if mercado else ''
         website_part = f'<a class="actor-link" href="{website}" target="_blank">🔗 {website}</a>' if website else ''
+        desc_part = f'<div class="actor-desc">{descripcion}</div>' if descripcion else ''
         card = (
             f'<div class="actor-card">'
             f'<div class="actor-name">{row["nombre"]}</div>'
             f'<span class="actor-badge" style="background:{color}22;color:{color};border:1px solid {color}44;">{tipo_text}</span>'
-            f'{mercado_part}{website_part}'
+            f'{mercado_part}{desc_part}{website_part}'
             f'<div class="actor-stats">'
             f'<div class="stat-item"><div class="stat-number">{int(row["servicios"])}</div><div class="stat-label">Servicios</div></div>'
             f'<div class="stat-item"><div class="stat-number">{int(row["necesidades"])}</div><div class="stat-label">Necesidades</div></div>'
@@ -228,7 +231,7 @@ elif pagina == "Servicios":
 
     df = run_query("""
         SELECT a.nombre AS actor, a.tipo AS tipo_actor,
-               c.area_tematica, c.tipo_servicio, c.descripcion, c.disponibilidad
+               c.area_tematica, c.tipo_servicio, c.descripcion, c.descripcion_extendida, c.disponibilidad
         FROM capacidad c JOIN actor a ON a.id = c.actor_id
         ORDER BY a.nombre, c.area_tematica
     """)
@@ -259,11 +262,14 @@ elif pagina == "Servicios":
         tipo_text = TIPO_LABEL.get(row["tipo_actor"], row["tipo_actor"])
         disp_color = "#2ecc71" if row["disponibilidad"] == "disponible" else "#e67e22" if row["disponibilidad"] == "parcial" else "#e74c3c"
         desc = safe_str(row["descripcion"])
+        desc_ext = safe_str(row["descripcion_extendida"])
+        desc_ext_part = f'<div style="font-size:0.8rem;color:#aaa;margin-bottom:8px;">{desc_ext}</div>' if desc_ext else ''
         card = (
             f'<div class="result-card" style="border-left-color:{color};">'
             f'<div class="result-title">{row["servicio_label"]}</div>'
             f'<div class="result-meta">{row["actor"]}</div>'
             f'<div class="result-desc">{desc}</div>'
+            f'{desc_ext_part}'
             f'<div class="result-tags">'
             f'<span class="tag" style="background:{color}22;color:{color};border:1px solid {color}44;">{tipo_text}</span>'
             f'<span class="tag" style="background:#ffffff11;color:#aaa;border:1px solid #333;">{row["area_label"]}</span>'
@@ -278,7 +284,7 @@ elif pagina == "Necesidades":
 
     df = run_query("""
         SELECT a.nombre AS actor, a.tipo AS tipo_actor,
-               n.area_tematica, n.tipo_servicio, n.descripcion, n.urgencia, n.status
+               n.area_tematica, n.tipo_servicio, n.descripcion, n.descripcion_extendida, n.urgencia, n.status
         FROM necesidad n JOIN actor a ON a.id = n.actor_id
         ORDER BY CASE n.urgencia
             WHEN 'critica' THEN 1 WHEN 'alta' THEN 2
@@ -306,11 +312,14 @@ elif pagina == "Necesidades":
         tipo_text = TIPO_LABEL.get(row["tipo_actor"], row["tipo_actor"])
         urg_color = COLOR_URGENCIA.get(row["urgencia"], "#888")
         desc = safe_str(row["descripcion"])
+        desc_ext = safe_str(row["descripcion_extendida"])
+        desc_ext_part = f'<div style="font-size:0.8rem;color:#aaa;margin-bottom:8px;">{desc_ext}</div>' if desc_ext else ''
         card = (
             f'<div class="result-card" style="border-left-color:{urg_color};">'
             f'<div class="result-title">{row["servicio_label"]}</div>'
             f'<div class="result-meta">{row["actor"]}</div>'
             f'<div class="result-desc">{desc}</div>'
+            f'{desc_ext_part}'
             f'<div class="result-tags">'
             f'<span class="tag" style="background:{color_actor}22;color:{color_actor};border:1px solid {color_actor}44;">{tipo_text}</span>'
             f'<span class="tag" style="background:#ffffff11;color:#aaa;border:1px solid #333;">{row["area_label"]}</span>'
@@ -405,9 +414,13 @@ elif pagina == "Financiamiento":
     st.header("Instrumentos de financiamiento")
     st.write("Fondos, subsidios y créditos disponibles para actores del ecosistema biotech.")
 
-    df = run_query("SELECT nombre, tipo, organismo, sectores_elegibles, status, url FROM instrumento ORDER BY tipo, nombre")
+    df = run_query("""
+        SELECT nombre, tipo, organismo, sectores_elegibles, status, url,
+               monto_maximo, cobertura_porcentaje, plazo_ejecucion,
+               contrapartida, gastos_elegibles, descripcion_extendida
+        FROM instrumento ORDER BY tipo, nombre
+    """)
     df["tipo_label"] = df["tipo"].map(TIPO_INSTRUMENTO).fillna(df["tipo"])
-    df["url"] = df["url"].fillna("")
 
     col1, col2 = st.columns(2)
     busqueda = col1.text_input("🔍 Buscar", placeholder="Ej: FONARSEC, biotecnología...")
@@ -429,12 +442,25 @@ elif pagina == "Financiamiento":
         tipo_text = safe_str(row["tipo_label"])
         sectores = safe_str(row["sectores_elegibles"])
         url = safe_str(row["url"])
+        monto = safe_str(row["monto_maximo"])
+        cobertura = row["cobertura_porcentaje"]
+        plazo = safe_str(row["plazo_ejecucion"])
+        contrapartida = safe_str(row["contrapartida"])
+        desc_ext = safe_str(row["descripcion_extendida"])
+
         url_part = f'<a style="color:#aad4e8;font-size:0.8rem;display:block;margin-bottom:8px;" href="{url}" target="_blank">🔗 Más información</a>' if url else ''
+        monto_part = f'<div style="font-size:0.9rem;color:#2ecc71;font-weight:600;margin-bottom:4px;">💰 {monto} — cubre hasta {int(cobertura)}%</div>' if monto and cobertura and str(cobertura) not in ("None","nan","") else ''
+        plazo_part = f'<div style="font-size:0.82rem;color:#aaa;margin-bottom:4px;">⏱ Plazo de ejecución: {plazo}</div>' if plazo else ''
+        contrapartida_part = f'<div style="font-size:0.82rem;color:#aaa;margin-bottom:4px;">🤝 Contrapartida: {contrapartida}</div>' if contrapartida else ''
+        desc_ext_part = f'<div style="font-size:0.85rem;color:#ccc;margin-bottom:8px;">{desc_ext}</div>' if desc_ext else ''
+
         card = (
             f'<div class="result-card" style="border-left-color:{status_color};">'
             f'<div class="result-title">{row["nombre"]}</div>'
             f'<div class="result-meta">{row["organismo"]}</div>'
+            f'{monto_part}{plazo_part}{contrapartida_part}'
             f'<div class="result-desc">Sectores elegibles: {sectores}</div>'
+            f'{desc_ext_part}'
             f'{url_part}'
             f'<div class="result-tags">'
             f'<span class="tag" style="background:#3498db22;color:#3498db;border:1px solid #3498db44;">{tipo_text}</span>'
@@ -456,11 +482,20 @@ elif pagina == "Buscar (IA)":
         if consulta:
             with st.spinner("Buscando en la plataforma..."):
                 df_caps = run_query("""
-                    SELECT a.nombre AS actor, a.website,
-                           c.area_tematica, c.tipo_servicio, c.descripcion, c.disponibilidad
+                    SELECT a.nombre AS actor, a.tipo AS tipo_actor,
+                           a.descripcion AS descripcion_actor, a.website,
+                           c.area_tematica, c.tipo_servicio,
+                           c.descripcion, c.descripcion_extendida, c.disponibilidad
                     FROM capacidad c JOIN actor a ON a.id = c.actor_id
                     WHERE c.disponibilidad != 'no_disponible'
                 """)
+                df_instr = run_query("""
+                    SELECT nombre, organismo, sectores_elegibles,
+                           monto_maximo, cobertura_porcentaje,
+                           plazo_ejecucion, descripcion_extendida
+                    FROM instrumento WHERE status = 'activo'
+                """)
+
                 from anthropic import Anthropic
                 import json
                 client = Anthropic()
@@ -474,11 +509,15 @@ Un actor del ecosistema tiene esta necesidad: "{consulta}"
 Estos son los servicios disponibles en la plataforma:
 {df_caps.to_string(index=False)}
 
+Estos son los instrumentos de financiamiento disponibles:
+{df_instr.to_string(index=False)}
+
 Tu tarea:
 1. Evaluá qué tan bien cubren los servicios disponibles la necesidad planteada.
 2. Si hay buenos matches, listá los 3 más relevantes con una explicación breve.
-3. Si el match es parcial o bajo, sé honesto: indicá qué parte de la necesidad SÍ está cubierta y qué parte NO.
-4. Al final, respondé SIEMPRE con un bloque JSON con este formato exacto (sin markdown, sin backticks):
+3. Si algún instrumento de financiamiento es relevante para esta necesidad, mencionalo.
+4. Si el match es parcial o bajo, sé honesto: indicá qué parte de la necesidad SÍ está cubierta y qué parte NO.
+5. Al final, respondé SIEMPRE con un bloque JSON con este formato exacto (sin markdown, sin backticks):
 
 GAPS_JSON
 {{"necesidad_cubierta": true/false, "cobertura_parcial": true/false, "gaps_detectados": ["gap1", "gap2"]}}
