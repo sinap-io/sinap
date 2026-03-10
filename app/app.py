@@ -25,7 +25,7 @@ def safe_str(val):
 def ir_a(pagina):
     st.session_state["destino"] = pagina
 
-PAGINAS = ["Inicio", "Red de actores", "Servicios", "Necesidades", "Financiamiento", "Buscar (IA)"]
+PAGINAS = ["Inicio", "Red de actores", "Servicios", "Necesidades", "Gaps de oferta", "Financiamiento", "Buscar (IA)"]
 
 TIPO_BADGE = {
     "laboratorio":   "🟢 Laboratorio",
@@ -319,6 +319,87 @@ elif pagina == "Necesidades":
         )
         st.markdown(card, unsafe_allow_html=True)
 
+# ── Gaps de oferta ───────────────────────────────────────────
+elif pagina == "Gaps de oferta":
+    st.header("⚠️ Gaps de oferta")
+    st.write("Necesidades activas en la red que no tienen cobertura de servicio disponible. Oportunidades de inversión para nuevos actores.")
+
+    df = run_query("""
+        SELECT
+            n.tipo_servicio,
+            n.area_tematica,
+            COUNT(DISTINCT n.id) AS demanda,
+            COUNT(DISTINCT c.id) AS oferta_disponible,
+            STRING_AGG(DISTINCT a.nombre, ', ') AS actores_demandantes
+        FROM necesidad n
+        JOIN actor a ON a.id = n.actor_id
+        LEFT JOIN capacidad c
+            ON c.tipo_servicio = n.tipo_servicio
+            AND c.disponibilidad = 'disponible'
+        WHERE n.status = 'activa'
+        GROUP BY n.tipo_servicio, n.area_tematica
+        ORDER BY demanda DESC
+    """)
+
+    df["servicio_label"] = df["tipo_servicio"].map(SERVICIO_LABEL).fillna(df["tipo_servicio"])
+    df["area_label"] = df["area_tematica"].map(AREA_LABEL).fillna(df["area_tematica"])
+
+    total_gaps = len(df[df["oferta_disponible"] == 0])
+    total_parcial = len(df[df["oferta_disponible"] > 0])
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Gaps totales", total_gaps, help="Servicios demandados sin oferta disponible en la red")
+    col2.metric("Cobertura parcial", total_parcial, help="Servicios con alguna oferta pero demanda insatisfecha")
+    col3.metric("Actores demandantes", df["demanda"].sum())
+
+    st.divider()
+
+    filtro = st.selectbox("Mostrar", ["Solo gaps (sin oferta)", "Todos (incluye cobertura parcial)"])
+    if filtro == "Solo gaps (sin oferta)":
+        df = df[df["oferta_disponible"] == 0]
+
+    for _, row in df.iterrows():
+        es_gap = row["oferta_disponible"] == 0
+        border_color = "#e74c3c" if es_gap else "#e67e22"
+        label_gap = "Sin cobertura" if es_gap else f"{int(row['oferta_disponible'])} proveedor(es)"
+        label_color = "#e74c3c" if es_gap else "#e67e22"
+        demandantes = safe_str(row["actores_demandantes"])
+        card = (
+            f'<div class="result-card" style="border-left-color:{border_color};">'
+            f'<div class="result-title">{row["servicio_label"]}</div>'
+            f'<div class="result-meta">Área: {row["area_label"]}</div>'
+            f'<div class="result-desc">Demandado por: {demandantes}</div>'
+            f'<div class="result-tags">'
+            f'<span class="tag" style="background:{label_color}22;color:{label_color};border:1px solid {label_color}44;">Oferta: {label_gap}</span>'
+            f'<span class="tag" style="background:#ffffff11;color:#aaa;border:1px solid #333;">{int(row["demanda"])} actor(es) demandante(s)</span>'
+            f'</div></div>'
+        )
+        st.markdown(card, unsafe_allow_html=True)
+
+    st.divider()
+    st.subheader("🔍 Señales de demanda por búsquedas IA")
+    st.caption("Consultas registradas por usuarios de la plataforma — indican demanda real no declarada formalmente.")
+
+    df_busquedas = run_query("""
+        SELECT consulta, creado_en
+        FROM busqueda
+        ORDER BY creado_en DESC
+        LIMIT 20
+    """)
+
+    if df_busquedas.empty:
+        st.info("Todavía no hay búsquedas registradas. Las consultas de la página 'Buscar con IA' aparecerán aquí.")
+    else:
+        for _, row in df_busquedas.iterrows():
+            fecha = str(row["creado_en"])[:16]
+            st.markdown(
+                f'<div class="result-card" style="border-left-color:#9b59b6;">'
+                f'<div class="result-desc">"{row["consulta"]}"</div>'
+                f'<div class="result-meta">{fecha}</div>'
+                f'</div>',
+                unsafe_allow_html=True
+            )
+
 # ── Financiamiento ───────────────────────────────────────────
 elif pagina == "Financiamiento":
     st.header("Instrumentos de financiamiento")
@@ -364,7 +445,7 @@ elif pagina == "Financiamiento":
 
 # ── Buscar con IA ────────────────────────────────────────────
 elif pagina == "Buscar (IA)":
-    st.header("🤖 Buscar servicios con IA")
+    st.header("🤖 Buscar servicio con IA")
     st.write("Describí lo que necesitás en lenguaje libre y el sistema encontrará servicios relevantes en la plataforma.")
 
     consulta = st.text_area("¿Qué necesitás?",
@@ -381,19 +462,77 @@ elif pagina == "Buscar (IA)":
                     WHERE c.disponibilidad != 'no_disponible'
                 """)
                 from anthropic import Anthropic
+                import json
                 client = Anthropic()
                 respuesta = client.messages.create(
                     model="claude-opus-4-5",
-                    max_tokens=1000,
+                    max_tokens=1500,
                     messages=[{"role": "user", "content":
                         f"""Sos un asistente del ecosistema biotech de Córdoba, Argentina.
 Un actor del ecosistema tiene esta necesidad: "{consulta}"
+
 Estos son los servicios disponibles en la plataforma:
 {df_caps.to_string(index=False)}
-Identificá los 3 servicios más relevantes y explicá brevemente por qué cada uno es útil.
-Respondé en español, de forma concisa y directa."""}]
+
+Tu tarea:
+1. Evaluá qué tan bien cubren los servicios disponibles la necesidad planteada.
+2. Si hay buenos matches, listá los 3 más relevantes con una explicación breve.
+3. Si el match es parcial o bajo, sé honesto: indicá qué parte de la necesidad SÍ está cubierta y qué parte NO.
+4. Al final, respondé SIEMPRE con un bloque JSON con este formato exacto (sin markdown, sin backticks):
+
+GAPS_JSON
+{{"necesidad_cubierta": true/false, "cobertura_parcial": true/false, "gaps_detectados": ["gap1", "gap2"]}}
+END_JSON
+
+Si la necesidad está bien cubierta, gaps_detectados debe ser una lista vacía [].
+Si hay gaps, listá los tipos de servicio o capacidades que faltan en la red.
+
+Respondé en español, de forma clara y directa."""}]
                 )
-                st.success("Resultados encontrados")
-                st.write(respuesta.content[0].text)
+
+                texto = respuesta.content[0].text
+
+                # Separar respuesta del JSON de gaps
+                gaps_data = None
+                if "GAPS_JSON" in texto and "END_JSON" in texto:
+                    try:
+                        json_str = texto.split("GAPS_JSON")[1].split("END_JSON")[0].strip()
+                        gaps_data = json.loads(json_str)
+                        texto_visible = texto.split("GAPS_JSON")[0].strip()
+                    except:
+                        texto_visible = texto
+                else:
+                    texto_visible = texto
+
+                # Guardar búsqueda en BD
+                engine = get_engine()
+                with engine.begin() as conn:
+                    conn.execute(
+                        text("INSERT INTO busqueda (consulta) VALUES (:q)"),
+                        {"q": consulta}
+                    )
+
+                # Si hay gaps detectados, guardarlos en tabla gap
+                if gaps_data and gaps_data.get("gaps_detectados"):
+                    with engine.begin() as conn:
+                        for gap_desc in gaps_data["gaps_detectados"]:
+                            conn.execute(
+                                text("""
+                                    INSERT INTO gap (descripcion, origen, status)
+                                    VALUES (:desc, 'busqueda_ia', 'detectado')
+                                """),
+                                {"desc": f"{gap_desc} — detectado desde consulta: {consulta[:100]}"}
+                            )
+
+                # Mostrar resultado
+                if gaps_data and not gaps_data.get("necesidad_cubierta") and not gaps_data.get("cobertura_parcial"):
+                    st.warning("⚠️ Esta necesidad no está cubierta actualmente por la red. Se registró como gap para análisis.")
+                elif gaps_data and gaps_data.get("cobertura_parcial"):
+                    st.info("ℹ️ Cobertura parcial — parte de la necesidad está cubierta, parte no.")
+                else:
+                    st.success("✅ Servicios relevantes encontrados")
+
+                st.write(texto_visible)
+
         else:
             st.warning("Escribí tu consulta antes de buscar.")
