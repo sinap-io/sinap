@@ -1,0 +1,41 @@
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from api.db.connection import engine, settings
+from api.routers import actors, services, needs, instruments, gaps, search
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield
+    await engine.dispose()
+
+
+app = FastAPI(
+    title="SINAP API",
+    description="Inteligencia territorial para el ecosistema biotech de Córdoba",
+    version="0.1.0",
+    lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.allowed_origins.split(","),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(actors.router)
+app.include_router(services.router)
+app.include_router(needs.router)
+app.include_router(instruments.router)
+app.include_router(gaps.router)
+app.include_router(search.router)
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}

@@ -1,4 +1,9 @@
 venv/
 .env
+**/.env
 __pycache__/
+**/__pycache__/
 *.pyc
+*.log
+openapi.json
+.claude/
