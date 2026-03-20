@@ -2,7 +2,7 @@
 
 > Documento vivo. Captura el estado del proyecto, las decisiones de diseño y el razonamiento detrás de cada una. Actualizar al cerrar cada sprint.
 >
-> Última actualización: marzo 2026
+> Última actualización: 20 marzo 2026
 
 ---
 
@@ -239,11 +239,12 @@ python -m api.db.seed
 
 ## Próximos pasos en orden de prioridad
 
-### 1. Deploy (próximo sprint)
+### 1. Deploy (en curso)
 - **FastAPI → Railway** (soporte Python nativo, free tier suficiente para empezar)
 - **Next.js → Vercel** (deploy nativo, integración con GitHub, free tier)
 - Variables de entorno a configurar en cada plataforma: `DATABASE_URL`, `ANTHROPIC_API_KEY`, `ALLOWED_ORIGINS`, `NEXT_PUBLIC_API_URL`
 - El deploy desbloquea mostrar la plataforma a stakeholders del cluster
+- **Estado:** Crear cuenta en Railway con Login via GitHub → conectar repo → configurar variables de entorno → deploy
 
 ### 2. Módulo Vinculador — Backend
 Tablas ya creadas en `sinap-production` (migración 001). Faltan los routers:
