@@ -1,7 +1,6 @@
 from pathlib import Path
 
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from pydantic_settings import BaseSettings
 
 # api/.env — resuelto relativo a este archivo (api/db/connection.py → api/)
@@ -25,9 +24,8 @@ engine = create_async_engine(
     pool_recycle=300,
 )
 
-AsyncSessionLocal = sessionmaker(
+AsyncSessionLocal = async_sessionmaker(
     engine,
-    class_=AsyncSession,
     expire_on_commit=False,
 )
 
