@@ -5,35 +5,35 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Variables SINAP — tema oscuro permanente */
-  --bg:        #1e293b;
-  --bg-card:   #1a1a2e;
-  --bg-hover:  #222238;
-  --text:      #ffffff;
-  --text-muted:#9ca3af;
+  /* Variables SINAP — contenido claro, sidebar oscuro */
+  --bg:        #f8fafc;
+  --bg-card:   #ffffff;
+  --bg-hover:  #f1f5f9;
+  --text:      #0f172a;
+  --text-muted:#64748b;
   --blue:      #0d9488;
   --orange:    #f97316;
-  --green:     #22c55e;
-  --red:       #ef4444;
+  --green:     #16a34a;
+  --red:       #dc2626;
 
-  /* Variables shadcn mapeadas al tema SINAP */
-  --background:          #1e293b;
-  --foreground:          #ffffff;
-  --card:                #1a1a2e;
-  --card-foreground:     #ffffff;
-  --popover:             #1a1a2e;
-  --popover-foreground:  #ffffff;
+  /* Variables shadcn mapeadas al tema claro SINAP */
+  --background:          #f8fafc;
+  --foreground:          #0f172a;
+  --card:                #ffffff;
+  --card-foreground:     #0f172a;
+  --popover:             #ffffff;
+  --popover-foreground:  #0f172a;
   --primary:             #0d9488;
   --primary-foreground:  #ffffff;
-  --secondary:           #222238;
-  --secondary-foreground:#ffffff;
-  --muted:               #222238;
-  --muted-foreground:    #9ca3af;
+  --secondary:           #f1f5f9;
+  --secondary-foreground:#0f172a;
+  --muted:               #f1f5f9;
+  --muted-foreground:    #64748b;
   --accent:              #0d9488;
   --accent-foreground:   #ffffff;
-  --destructive:         #ef4444;
-  --border:              #2a2a3e;
-  --input:               #2a2a3e;
+  --destructive:         #dc2626;
+  --border:              #e2e8f0;
+  --input:               #e2e8f0;
   --ring:                #0d9488;
   --radius:              0.625rem;
 }

@@ -23,25 +23,37 @@ const links = [
   { href: "/search",      label: "Buscar IA",      icon: Search },
 ];
 
+// Sidebar siempre oscuro independientemente del tema del contenido
+const S = {
+  bg:       "#1e293b",
+  border:   "#2d3748",
+  muted:    "#94a3b8",
+  hover:    "#263347",
+  accent:   "#0d9488",
+};
+
 export default function Nav() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed top-0 left-0 h-screen w-60 flex flex-col border-r border-[var(--border)] bg-[var(--bg-card)] z-40">
+    <aside
+      className="fixed top-0 left-0 h-screen w-60 flex flex-col z-40"
+      style={{ background: S.bg, borderRight: `1px solid ${S.border}` }}
+    >
       {/* Logo */}
-      <div className="h-16 flex items-center gap-3 px-5 border-b border-[var(--border)]">
-        <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "var(--accent)" }}>
+      <div className="h-16 flex items-center gap-3 px-5" style={{ borderBottom: `1px solid ${S.border}` }}>
+        <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: S.accent }}>
           <Dna size={15} className="text-white" strokeWidth={2.5} />
         </div>
         <div>
           <div className="text-sm font-bold text-white tracking-wider">SINAP</div>
-          <div className="text-[10px] text-[var(--text-muted)] leading-tight">Biotech Córdoba</div>
+          <div className="text-[10px] leading-tight" style={{ color: S.muted }}>Biotech Córdoba</div>
         </div>
       </div>
 
       {/* Nav links */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-muted)] px-3 pb-2">
+        <p className="text-[10px] font-semibold uppercase tracking-widest px-3 pb-2" style={{ color: S.muted }}>
           Plataforma
         </p>
         {links.map(({ href, label, icon: Icon }) => {
@@ -50,11 +62,28 @@ export default function Nav() {
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-150 ${
-                active
-                  ? "bg-[var(--accent)]/15 text-white font-medium border-l-2 border-[var(--accent)] pl-[10px]"
-                  : "text-[var(--text-muted)] hover:text-white hover:bg-[var(--bg-hover)]"
-              }`}
+              className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-150"
+              style={active ? {
+                background: `${S.accent}22`,
+                color: "#ffffff",
+                fontWeight: 500,
+                borderLeft: `2px solid ${S.accent}`,
+                paddingLeft: "10px",
+              } : {
+                color: S.muted,
+              }}
+              onMouseEnter={e => {
+                if (!active) {
+                  (e.currentTarget as HTMLElement).style.background = S.hover;
+                  (e.currentTarget as HTMLElement).style.color = "#ffffff";
+                }
+              }}
+              onMouseLeave={e => {
+                if (!active) {
+                  (e.currentTarget as HTMLElement).style.background = "transparent";
+                  (e.currentTarget as HTMLElement).style.color = S.muted;
+                }
+              }}
             >
               <Icon size={16} strokeWidth={active ? 2.5 : 2} />
               {label}
@@ -64,8 +93,8 @@ export default function Nav() {
       </nav>
 
       {/* Footer */}
-      <div className="px-5 py-4 border-t border-[var(--border)]">
-        <p className="text-[10px] text-[var(--text-muted)] leading-relaxed">
+      <div className="px-5 py-4" style={{ borderTop: `1px solid ${S.border}` }}>
+        <p className="text-[10px] leading-relaxed" style={{ color: S.muted }}>
           Clúster de Biotecnología<br />de Córdoba, Argentina
         </p>
       </div>
