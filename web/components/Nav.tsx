@@ -25,11 +25,12 @@ const links = [
 
 // Sidebar siempre oscuro independientemente del tema del contenido
 const S = {
-  bg:       "#243447",
-  border:   "#2d3748",
-  muted:    "#94a3b8",
-  hover:    "#263347",
+  bg:       "#f0f7f6",
+  border:   "#d1e8e5",
+  muted:    "#5a8a84",
+  hover:    "#e0f0ee",
   accent:   "#0d9488",
+  text:     "#0f172a",
 };
 
 export default function Nav() {
@@ -46,7 +47,7 @@ export default function Nav() {
           <Dna size={15} className="text-white" strokeWidth={2.5} />
         </div>
         <div>
-          <div className="text-sm font-bold text-white tracking-wider">SINAP</div>
+          <div className="text-sm font-bold tracking-wider" style={{ color: S.text }}>SINAP</div>
           <div className="text-[10px] leading-tight" style={{ color: S.muted }}>Biotech Córdoba</div>
         </div>
       </div>
@@ -64,8 +65,8 @@ export default function Nav() {
               href={href}
               className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-150"
               style={active ? {
-                background: `${S.accent}22`,
-                color: "#ffffff",
+                background: `${S.accent}18`,
+                color: S.text,
                 fontWeight: 500,
                 borderLeft: `2px solid ${S.accent}`,
                 paddingLeft: "10px",
@@ -75,7 +76,7 @@ export default function Nav() {
               onMouseEnter={e => {
                 if (!active) {
                   (e.currentTarget as HTMLElement).style.background = S.hover;
-                  (e.currentTarget as HTMLElement).style.color = "#ffffff";
+                  (e.currentTarget as HTMLElement).style.color = S.text;
                 }
               }}
               onMouseLeave={e => {
