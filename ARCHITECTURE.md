@@ -2,7 +2,7 @@
 
 > Documento vivo. Captura el estado del proyecto, las decisiones de diseño y el razonamiento detrás de cada una. Actualizar al cerrar cada sprint.
 >
-> Última actualización: 20 marzo 2026
+> Última actualización: 25 marzo 2026
 
 ---
 
@@ -267,9 +267,23 @@ Tablas ya creadas en `sinap-production` (migración 001). Faltan los routers:
 
 ---
 
+## Cuentas e infraestructura
+
+| Servicio | Cuenta | Estado |
+|---|---|---|
+| Gmail del proyecto | sinap.io.dev@gmail.com | ✅ Creado |
+| GitHub | sebasbizzi/sinap-prototype | ⏳ Migrar a org sinap-io |
+| Cloudflare / sinap.io | sinap.io.dev@gmail.com | ⏳ Registrar dominio |
+| Railway (FastAPI) | sinap.io.dev@gmail.com | ⏳ Crear cuenta |
+| Vercel (Next.js) | sinap.io.dev@gmail.com | ⏳ Crear cuenta |
+| Neon.tech | Migrar a org | ⏳ Pendiente |
+| Anthropic API | — | ✅ Operativo (key en api/.env) |
+
+**Principio:** Todo bajo la identidad sinap-io, no bajo cuentas personales. Esto permite delegar el mantenimiento sin transferir accesos personales.
+
 ## Repositorio
 
-- **GitHub:** `sebasbizzi/sinap-prototype`
+- **GitHub:** `sebasbizzi/sinap-prototype` → migrar a `sinap-io/sinap`
 - **Branch de desarrollo:** `claude/distracted-lamarr`
 - **PR pendiente de merge a main**
 
