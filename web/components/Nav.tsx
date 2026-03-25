@@ -25,12 +25,12 @@ const links = [
 
 // Sidebar siempre oscuro independientemente del tema del contenido
 const S = {
-  bg:       "#f4f6f8",
-  border:   "#e2e8f0",
-  muted:    "#64748b",
-  hover:    "#edf2f7",
-  accent:   "#64748b",
-  text:     "#0f172a",
+  bg:     "#1e293b",
+  border: "#2d3748",
+  muted:  "#94a3b8",
+  hover:  "rgba(255,255,255,0.06)",
+  accent: "#64748b",
+  text:   "#f1f5f9",
 };
 
 export default function Nav() {

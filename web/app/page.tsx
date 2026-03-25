@@ -73,14 +73,14 @@ export default async function HomePage() {
   return (
     <div className="space-y-10">
       {/* Hero */}
-      <section className="rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[#e6f7f5] via-[#f0faf9] to-[#e8f4f8] p-10 text-center">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">
+      <section className="rounded-2xl bg-gradient-to-br from-[#1e293b] via-[#273549] to-[#1e293b] p-10 text-center">
+        <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">
           Ecosistema Biotech · Córdoba, Argentina
         </p>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-[var(--text)] mb-3">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-3">
           Plataforma de Inteligencia Territorial
         </h1>
-        <p className="text-[var(--text-muted)] max-w-xl mx-auto mb-10 leading-relaxed">
+        <p className="text-slate-300 max-w-xl mx-auto mb-10 leading-relaxed">
           Conectamos laboratorios, empresas, universidades e instituciones.<br />
           Encontrá servicios, identificá oportunidades y accedé a financiamiento.
         </p>
@@ -89,8 +89,8 @@ export default async function HomePage() {
         <div className="flex flex-wrap justify-center gap-8">
           {METRICS.map(({ label, value }) => (
             <div key={label} className="text-center">
-              <div className="text-4xl font-black text-[var(--text)]">{value}</div>
-              <div className="text-xs uppercase tracking-wide text-[var(--text-muted)] mt-1">{label}</div>
+              <div className="text-4xl font-black text-white">{value}</div>
+              <div className="text-xs uppercase tracking-wide text-slate-400 mt-1">{label}</div>
             </div>
           ))}
         </div>
