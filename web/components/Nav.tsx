@@ -25,11 +25,11 @@ const links = [
 
 // Sidebar siempre oscuro independientemente del tema del contenido
 const S = {
-  bg:       "#f0f7f6",
-  border:   "#d1e8e5",
-  muted:    "#5a8a84",
-  hover:    "#e0f0ee",
-  accent:   "#0d9488",
+  bg:       "#f4f6f8",
+  border:   "#e2e8f0",
+  muted:    "#64748b",
+  hover:    "#edf2f7",
+  accent:   "#64748b",
   text:     "#0f172a",
 };
 
