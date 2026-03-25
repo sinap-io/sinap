@@ -9,7 +9,7 @@ _ENV_FILE = Path(__file__).resolve().parents[1] / ".env"
 
 
 class Settings(BaseSettings):
-    database_url_production: str
+    database_url: str
     anthropic_api_key: str
     allowed_origins: str = "http://localhost:3000"
 
@@ -19,7 +19,7 @@ class Settings(BaseSettings):
 settings = Settings()
 
 engine = create_async_engine(
-    settings.database_url_production,
+    settings.database_url,
     pool_size=5,
     max_overflow=10,
     pool_recycle=300,
