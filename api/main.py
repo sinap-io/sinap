@@ -3,14 +3,15 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from db.connection import engine, settings
+from db.connection import get_pool, settings
 from routers import actors, services, needs, instruments, gaps, search
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Inicializar pool de conexiones al arrancar
+    await get_pool()
     yield
-    await engine.dispose()
 
 
 app = FastAPI(

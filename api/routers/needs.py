@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
+import asyncpg
 
 from db.connection import get_db
 from schemas.need import NeedItem
@@ -12,11 +11,28 @@ _URGENCIA_ORDER = "CASE n.urgencia WHEN 'critica' THEN 1 WHEN 'alta' THEN 2 WHEN
 
 @router.get("", response_model=list[NeedItem])
 async def list_needs(
-    search: str | None = Query(None, description="Buscar en descripcion o nombre de actor"),
-    urgencia: str | None = Query(None, description="critica | alta | normal | baja"),
-    status: str | None = Query("activa", description="activa | resuelta | cancelada"),
-    db: AsyncSession = Depends(get_db),
+    search: str | None = Query(None),
+    urgencia: str | None = Query(None),
+    status: str | None = Query("activa"),
+    db: asyncpg.Connection = Depends(get_db),
 ):
+    conditions = []
+    args = []
+
+    if search:
+        args.append(f"%{search.lower()}%")
+        conditions.append(f"(LOWER(n.descripcion) LIKE ${len(args)} OR LOWER(a.nombre) LIKE ${len(args)})")
+
+    if urgencia:
+        args.append(urgencia)
+        conditions.append(f"n.urgencia = ${len(args)}")
+
+    if status:
+        args.append(status)
+        conditions.append(f"n.status = ${len(args)}")
+
+    where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+
     query = f"""
         SELECT
             a.nombre        AS actor,
@@ -29,28 +45,8 @@ async def list_needs(
             n.status
         FROM necesidad n
         JOIN actor a ON a.id = n.actor_id
-        WHERE 1=1
+        {where}
+        ORDER BY {_URGENCIA_ORDER}, a.nombre
     """
-    params: dict = {}
-
-    if search:
-        query += """
-            AND (
-                LOWER(n.descripcion) LIKE :search
-                OR LOWER(a.nombre)   LIKE :search
-            )
-        """
-        params["search"] = f"%{search.lower()}%"
-
-    if urgencia:
-        query += " AND n.urgencia = :urgencia"
-        params["urgencia"] = urgencia
-
-    if status:
-        query += " AND n.status = :status"
-        params["status"] = status
-
-    query += f" ORDER BY {_URGENCIA_ORDER}, a.nombre"
-
-    result = await db.execute(text(query), params)
-    return [NeedItem(**row) for row in result.mappings()]
+    rows = await db.fetch(query, *args)
+    return [NeedItem(**dict(row)) for row in rows]

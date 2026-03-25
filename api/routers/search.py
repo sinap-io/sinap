@@ -1,10 +1,9 @@
 import json
 import logging
 
+import asyncpg
 from anthropic import AsyncAnthropic
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.connection import get_db
 from schemas.search import SearchRequest, SearchResponse
@@ -47,30 +46,23 @@ Respondé en español, de forma clara y directa.\
 """
 
 
-def _rows_to_text(rows: list[dict], columns: list[str]) -> str:
-    """Formatea filas de BD como tabla de texto para el prompt."""
+def _rows_to_text(rows: list, columns: list[str]) -> str:
     if not rows:
         return "(sin datos disponibles)"
     header = " | ".join(columns)
     sep = "-" * len(header)
     lines = [header, sep]
     for row in rows:
-        lines.append(" | ".join(str(row.get(c, "")) for c in columns))
+        d = dict(row)
+        lines.append(" | ".join(str(d.get(c, "")) for c in columns))
     return "\n".join(lines)
 
 
 def _parse_claude_response(texto: str) -> tuple[str, dict]:
-    """
-    Separa la respuesta legible del bloque GAPS_JSON.
-    Retorna (texto_visible, gaps_data).
-    gaps_data tiene keys: necesidad_cubierta, cobertura_parcial, gaps_detectados.
-    """
     default = {"necesidad_cubierta": False, "cobertura_parcial": False, "gaps_detectados": []}
-
     if "GAPS_JSON" not in texto or "END_JSON" not in texto:
         logger.warning("Respuesta de Claude sin bloque GAPS_JSON")
         return texto, default
-
     try:
         json_str = texto.split("GAPS_JSON")[1].split("END_JSON")[0].strip()
         gaps_data = json.loads(json_str)
@@ -82,45 +74,30 @@ def _parse_claude_response(texto: str) -> tuple[str, dict]:
 
 
 @router.post("", response_model=SearchResponse)
-async def search(body: SearchRequest, db: AsyncSession = Depends(get_db)):
-    """
-    Búsqueda con IA en lenguaje libre.
-    - Cruza la consulta con capacidades e instrumentos activos.
-    - Registra la búsqueda en `busqueda`.
-    - Persiste gaps detectados en `gap`.
-    """
-    # 1. Traer contexto de BD
-    caps_result = await db.execute(text("""
+async def search(body: SearchRequest, db: asyncpg.Connection = Depends(get_db)):
+    caps = await db.fetch("""
         SELECT a.nombre AS actor, a.tipo AS tipo_actor,
-               a.descripcion AS descripcion_actor,
                c.area_tematica, c.tipo_servicio,
-               c.descripcion, c.descripcion_extendida, c.disponibilidad
+               c.descripcion, c.disponibilidad
         FROM capacidad c
         JOIN actor a ON a.id = c.actor_id
         WHERE c.disponibilidad != 'no_disponible'
-    """))
-    caps = [dict(r) for r in caps_result.mappings()]
+    """)
 
-    instr_result = await db.execute(text("""
+    instrs = await db.fetch("""
         SELECT nombre, organismo, sectores_elegibles,
-               monto_maximo, cobertura_porcentaje,
-               plazo_ejecucion, descripcion_extendida
+               monto_maximo, cobertura_porcentaje
         FROM instrumento
         WHERE status = 'activo'
-    """))
-    instrs = [dict(r) for r in instr_result.mappings()]
+    """)
 
-    # 2. Formatear contexto para el prompt
     servicios_txt = _rows_to_text(caps, [
-        "actor", "tipo_actor", "tipo_servicio", "area_tematica",
-        "descripcion", "disponibilidad"
+        "actor", "tipo_actor", "tipo_servicio", "area_tematica", "descripcion", "disponibilidad"
     ])
     instrumentos_txt = _rows_to_text(instrs, [
-        "nombre", "organismo", "sectores_elegibles",
-        "monto_maximo", "cobertura_porcentaje"
+        "nombre", "organismo", "sectores_elegibles", "monto_maximo", "cobertura_porcentaje"
     ])
 
-    # 3. Llamar a Claude
     try:
         respuesta_claude = await _client.messages.create(
             model="claude-opus-4-5",
@@ -141,24 +118,14 @@ async def search(body: SearchRequest, db: AsyncSession = Depends(get_db)):
     texto_completo = respuesta_claude.content[0].text
     texto_visible, gaps_data = _parse_claude_response(texto_completo)
 
-    # 4. Persistir búsqueda
-    await db.execute(
-        text("INSERT INTO busqueda (consulta) VALUES (:q)"),
-        {"q": body.consulta},
-    )
+    await db.execute("INSERT INTO busqueda (consulta) VALUES ($1)", body.consulta)
 
-    # 5. Persistir gaps detectados
     gaps_detectados: list[str] = gaps_data.get("gaps_detectados", [])
     for gap_desc in gaps_detectados:
         await db.execute(
-            text("""
-                INSERT INTO gap (descripcion, origen, status)
-                VALUES (:desc, 'busqueda_ia', 'detectado')
-            """),
-            {"desc": f"{gap_desc} — detectado desde consulta: {body.consulta[:100]}"},
+            "INSERT INTO gap (descripcion, origen, status) VALUES ($1, 'busqueda_ia', 'detectado')",
+            f"{gap_desc} — detectado desde consulta: {body.consulta[:100]}",
         )
-
-    await db.commit()
 
     return SearchResponse(
         respuesta=texto_visible,

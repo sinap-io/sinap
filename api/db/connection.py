@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+import asyncpg
 from pydantic_settings import BaseSettings
 
 # api/.env — resuelto relativo a este archivo (api/db/connection.py → api/)
@@ -17,19 +17,21 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-engine = create_async_engine(
-    settings.database_url,
-    pool_size=5,
-    max_overflow=10,
-    pool_recycle=300,
-)
+# Pool global de conexiones asyncpg
+_pool: asyncpg.Pool | None = None
 
-AsyncSessionLocal = async_sessionmaker(
-    engine,
-    expire_on_commit=False,
-)
+
+async def get_pool() -> asyncpg.Pool:
+    global _pool
+    if _pool is None:
+        # Convertir URL de SQLAlchemy a formato asyncpg
+        url = settings.database_url
+        url = url.replace("postgresql+asyncpg://", "postgresql://")
+        _pool = await asyncpg.create_pool(url, min_size=1, max_size=10)
+    return _pool
 
 
 async def get_db():
-    async with AsyncSessionLocal() as session:
-        yield session
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        yield conn

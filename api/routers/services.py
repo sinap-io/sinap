@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncSession
+import asyncpg
 
 from db.connection import get_db
 from schemas.service import ServiceItem
@@ -10,13 +9,34 @@ router = APIRouter(prefix="/services", tags=["services"])
 
 @router.get("", response_model=list[ServiceItem])
 async def list_services(
-    search: str | None = Query(None, description="Buscar en descripcion o nombre de actor"),
-    area_tematica: str | None = Query(None, description="Filtrar por area tematica"),
-    tipo_servicio: str | None = Query(None, description="Filtrar por tipo de servicio"),
-    disponibilidad: str | None = Query(None, description="disponible | parcial | no_disponible"),
-    db: AsyncSession = Depends(get_db),
+    search: str | None = Query(None),
+    area_tematica: str | None = Query(None),
+    tipo_servicio: str | None = Query(None),
+    disponibilidad: str | None = Query(None),
+    db: asyncpg.Connection = Depends(get_db),
 ):
-    query = """
+    conditions = []
+    args = []
+
+    if search:
+        args.append(f"%{search.lower()}%")
+        conditions.append(f"(LOWER(c.descripcion) LIKE ${len(args)} OR LOWER(a.nombre) LIKE ${len(args)})")
+
+    if area_tematica:
+        args.append(area_tematica)
+        conditions.append(f"c.area_tematica = ${len(args)}")
+
+    if tipo_servicio:
+        args.append(tipo_servicio)
+        conditions.append(f"c.tipo_servicio = ${len(args)}")
+
+    if disponibilidad:
+        args.append(disponibilidad)
+        conditions.append(f"c.disponibilidad = ${len(args)}")
+
+    where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+
+    query = f"""
         SELECT
             a.nombre        AS actor,
             a.tipo          AS tipo_actor,
@@ -27,32 +47,8 @@ async def list_services(
             c.disponibilidad
         FROM capacidad c
         JOIN actor a ON a.id = c.actor_id
-        WHERE 1=1
+        {where}
+        ORDER BY a.nombre, c.area_tematica
     """
-    params: dict = {}
-
-    if search:
-        query += """
-            AND (
-                LOWER(c.descripcion) LIKE :search
-                OR LOWER(a.nombre)   LIKE :search
-            )
-        """
-        params["search"] = f"%{search.lower()}%"
-
-    if area_tematica:
-        query += " AND c.area_tematica = :area"
-        params["area"] = area_tematica
-
-    if tipo_servicio:
-        query += " AND c.tipo_servicio = :tipo"
-        params["tipo"] = tipo_servicio
-
-    if disponibilidad:
-        query += " AND c.disponibilidad = :disp"
-        params["disp"] = disponibilidad
-
-    query += " ORDER BY a.nombre, c.area_tematica"
-
-    result = await db.execute(text(query), params)
-    return [ServiceItem(**row) for row in result.mappings()]
+    rows = await db.fetch(query, *args)
+    return [ServiceItem(**dict(row)) for row in rows]
