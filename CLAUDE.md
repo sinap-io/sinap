@@ -49,7 +49,7 @@ Configurar la infraestructura bajo la organización sinap-io:
 | Servicio | Cuenta | Estado |
 |---|---|---|
 | Gmail | sinap.io.dev@gmail.com | ✅ Creado |
-| GitHub | sebasbizzi/sinap-prototype | ⏳ Migrar a org sinap-io |
+| GitHub | sinap-io/sinap | ✅ Organización creada, repo transferido y renombrado |
 | Neon.tech | sinap-production (9 tablas) | ✅ Operativo |
 | Railway | — | ⏳ Crear con Gmail del proyecto |
 | Vercel | — | ⏳ Crear con Gmail del proyecto |

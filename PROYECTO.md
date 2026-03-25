@@ -163,7 +163,7 @@ Todo está bajo una identidad propia del proyecto, separada de las cuentas perso
 | Servicio | Cuenta del proyecto | Estado |
 |---|---|---|
 | Email base | sinap.io.dev@gmail.com | ✅ Creado |
-| GitHub | org sinap-io | ⏳ Pendiente |
+| GitHub | sinap-io/sinap | ✅ Organización creada, repo transferido |
 | Cloudflare | sinap.io.dev@gmail.com | ⏳ Pendiente (dominio sinap.io) |
 | Railway | sinap.io.dev@gmail.com | ⏳ Pendiente |
 | Vercel | sinap.io.dev@gmail.com | ⏳ Pendiente |

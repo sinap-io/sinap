@@ -272,7 +272,7 @@ Tablas ya creadas en `sinap-production` (migración 001). Faltan los routers:
 | Servicio | Cuenta | Estado |
 |---|---|---|
 | Gmail del proyecto | sinap.io.dev@gmail.com | ✅ Creado |
-| GitHub | sebasbizzi/sinap-prototype | ⏳ Migrar a org sinap-io |
+| GitHub | sinap-io/sinap | ✅ Organización creada, repo transferido y renombrado |
 | Cloudflare / sinap.io | sinap.io.dev@gmail.com | ⏳ Registrar dominio |
 | Railway (FastAPI) | sinap.io.dev@gmail.com | ⏳ Crear cuenta |
 | Vercel (Next.js) | sinap.io.dev@gmail.com | ⏳ Crear cuenta |
@@ -283,7 +283,7 @@ Tablas ya creadas en `sinap-production` (migración 001). Faltan los routers:
 
 ## Repositorio
 
-- **GitHub:** `sebasbizzi/sinap-prototype` → migrar a `sinap-io/sinap`
+- **GitHub:** `sinap-io/sinap` (github.com/sinap-io/sinap)
 - **Branch de desarrollo:** `claude/distracted-lamarr`
 - **PR pendiente de merge a main**
 
