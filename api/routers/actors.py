@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.db.connection import get_db
-from api.schemas.actor import ActorDetail, ActorList, NeedSummary, ServiceSummary
+from db.connection import get_db
+from schemas.actor import ActorDetail, ActorList, NeedSummary, ServiceSummary
 
 router = APIRouter(prefix="/actors", tags=["actors"])
 

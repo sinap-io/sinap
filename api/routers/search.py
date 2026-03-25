@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.db.connection import get_db
-from api.schemas.search import SearchRequest, SearchResponse
+from db.connection import get_db
+from schemas.search import SearchRequest, SearchResponse
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/search", tags=["search"])

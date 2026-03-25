@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.db.connection import get_db
-from api.schemas.gap import GapItem, GapSummary, SearchLog
+from db.connection import get_db
+from schemas.gap import GapItem, GapSummary, SearchLog
 
 router = APIRouter(prefix="/gaps", tags=["gaps"])
 

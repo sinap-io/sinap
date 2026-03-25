@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.db.connection import get_db
-from api.schemas.instrument import InstrumentItem
+from db.connection import get_db
+from schemas.instrument import InstrumentItem
 
 router = APIRouter(prefix="/instruments", tags=["instruments"])
 

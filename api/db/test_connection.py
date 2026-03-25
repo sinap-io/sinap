@@ -14,7 +14,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import sqlalchemy
-from api.db.connection import engine
+from db.connection import engine
 
 
 async def main():

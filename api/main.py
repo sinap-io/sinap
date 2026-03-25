@@ -3,8 +3,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.db.connection import engine, settings
-from api.routers import actors, services, needs, instruments, gaps, search
+from db.connection import engine, settings
+from routers import actors, services, needs, instruments, gaps, search
 
 
 @asynccontextmanager
