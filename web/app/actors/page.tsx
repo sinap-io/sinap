@@ -27,7 +27,7 @@ export default async function ActorsPage() {
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         {[
           { tipo: "laboratorio",   label: "Laboratorios",   color: "#22c55e" },
-          { tipo: "empresa",       label: "Empresas",       color: "#3b82f6" },
+          { tipo: "empresa",       label: "Empresas",       color: "#0d9488" },
           { tipo: "startup",       label: "Startups",       color: "#a855f7" },
           { tipo: "universidad",   label: "Universidades",  color: "#eab308" },
           { tipo: "investigacion", label: "Investigación",  color: "#f97316" },
