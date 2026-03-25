@@ -60,9 +60,9 @@ export default function SearchClient() {
             <button
               key={ej}
               onClick={() => handleExample(ej)}
-              className="text-xs px-3 py-1.5 rounded-full border border-[var(--border)]
+              className="text-xs px-3 py-1.5 rounded-full border border-[var(--border)] bg-[var(--bg-card)]
                          text-[var(--text-muted)] hover:text-[var(--text)] hover:border-[var(--accent)]
-                         transition-colors text-left"
+                         shadow-sm transition-colors text-left"
             >
               {ej.length > 55 ? ej.slice(0, 55) + "…" : ej}
             </button>

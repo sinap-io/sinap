@@ -73,7 +73,7 @@ export default async function HomePage() {
   return (
     <div className="space-y-10">
       {/* Hero */}
-      <section className="rounded-2xl bg-gradient-to-br from-[#1e293b] via-[#273549] to-[#1e293b] p-10 text-center">
+      <section className="rounded-2xl bg-gradient-to-br from-[#2d3f55] via-[#344460] to-[#2d3f55] p-10 text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">
           Ecosistema Biotech · Córdoba, Argentina
         </p>
