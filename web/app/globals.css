@@ -6,7 +6,7 @@
 
 :root {
   /* Variables SINAP — tema oscuro permanente */
-  --bg:        #0f0f1a;
+  --bg:        #0f172a;
   --bg-card:   #1a1a2e;
   --bg-hover:  #222238;
   --text:      #ffffff;
@@ -17,7 +17,7 @@
   --red:       #ef4444;
 
   /* Variables shadcn mapeadas al tema SINAP */
-  --background:          #0f0f1a;
+  --background:          #0f172a;
   --foreground:          #ffffff;
   --card:                #1a1a2e;
   --card-foreground:     #ffffff;

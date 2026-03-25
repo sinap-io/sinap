@@ -21,7 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </main>
           <footer className="px-8 py-4 border-t border-[var(--border)] text-xs text-[var(--text-muted)]">
-            SINAP · Impulsado por el Clúster de Biotecnología de Córdoba
+            SINAP · sinap.io
           </footer>
         </div>
       </body>
