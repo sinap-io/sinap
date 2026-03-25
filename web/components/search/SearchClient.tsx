@@ -61,7 +61,7 @@ export default function SearchClient() {
               key={ej}
               onClick={() => handleExample(ej)}
               className="text-xs px-3 py-1.5 rounded-full border border-[var(--border)]
-                         text-[var(--text-muted)] hover:text-white hover:border-[var(--accent)]
+                         text-[var(--text-muted)] hover:text-[var(--text)] hover:border-[var(--accent)]
                          transition-colors text-left"
             >
               {ej.length > 55 ? ej.slice(0, 55) + "…" : ej}
@@ -78,7 +78,7 @@ export default function SearchClient() {
           placeholder="Ej: necesito un laboratorio que haga análisis microbiológicos de productos lácteos..."
           rows={4}
           className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)]
-                     px-4 py-3 text-sm text-white placeholder-[var(--text-muted)] resize-none
+                     px-4 py-3 text-sm text-[var(--text)] placeholder-[var(--text-muted)] resize-none
                      focus:outline-none focus:border-[var(--accent)] transition-colors"
         />
         <div className="flex items-center justify-between">
@@ -158,7 +158,7 @@ export default function SearchClient() {
           {/* Nueva búsqueda */}
           <button
             onClick={() => { setStatus("idle"); setResult(null); setConsulta(""); }}
-            className="text-sm text-[var(--text-muted)] hover:text-white transition-colors"
+            className="text-sm text-[var(--text-muted)] hover:text-[var(--text)] transition-colors"
           >
             ← Nueva búsqueda
           </button>

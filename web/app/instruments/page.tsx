@@ -18,7 +18,7 @@ export default async function InstrumentsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-1">Instrumentos de financiamiento</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)] mb-1">Instrumentos de financiamiento</h1>
         <p className="text-[var(--text-muted)] text-sm">
           Fondos, subsidios y créditos para actores del ecosistema biotech
         </p>
@@ -41,7 +41,7 @@ export default async function InstrumentsPage() {
             className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-3 text-center"
             style={{ borderTopColor: color, borderTopWidth: "2px" }}
           >
-            <div className="text-2xl font-bold text-white">{value}</div>
+            <div className="text-2xl font-bold text-[var(--text)]">{value}</div>
             <div className="text-xs text-[var(--text-muted)] mt-0.5">{label}</div>
           </div>
         ))}

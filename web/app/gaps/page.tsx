@@ -11,7 +11,7 @@ export default async function GapsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-1">Gaps de oferta</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)] mb-1">Gaps de oferta</h1>
         <p className="text-[var(--text-muted)] text-sm max-w-2xl">
           Necesidades activas en la red sin cobertura disponible.
           Oportunidades de inversión e incorporación de nuevos actores al ecosistema.

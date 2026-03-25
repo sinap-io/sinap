@@ -6,9 +6,9 @@
 
 :root {
   /* Variables SINAP — contenido claro, sidebar oscuro */
-  --bg:        #f8fafc;
+  --bg:        #f1f5f9;
   --bg-card:   #ffffff;
-  --bg-hover:  #f1f5f9;
+  --bg-hover:  #e8eef5;
   --text:      #0f172a;
   --text-muted:#64748b;
   --blue:      #0d9488;

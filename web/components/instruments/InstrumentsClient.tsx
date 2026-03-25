@@ -33,14 +33,14 @@ export default function InstrumentsClient({ instruments }: { instruments: Instru
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)]
-                     px-4 py-2 text-sm text-white placeholder-[var(--text-muted)]
+                     px-4 py-2 text-sm text-[var(--text)] placeholder-[var(--text-muted)]
                      focus:outline-none focus:border-[var(--accent)]"
         />
         <select
           value={tipo}
           onChange={(e) => setTipo(e.target.value)}
           className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)]
-                     px-4 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent)]"
+                     px-4 py-2 text-sm text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
         >
           <option value="">Todos los tipos</option>
           {TIPOS.map((t) => (
@@ -68,7 +68,7 @@ export default function InstrumentsClient({ instruments }: { instruments: Instru
                 {/* Header */}
                 <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                   <div>
-                    <h3 className="font-semibold text-white text-base">{ins.nombre}</h3>
+                    <h3 className="font-semibold text-[var(--text)] text-base">{ins.nombre}</h3>
                     <p className="text-sm text-[var(--text-muted)]">{ins.organismo}</p>
                   </div>
                   <div className="flex gap-2">

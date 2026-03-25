@@ -32,7 +32,7 @@ export default function GapsClient({
             className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-4 text-center"
             style={{ borderTopColor: color, borderTopWidth: "2px" }}
           >
-            <div className="text-3xl font-black text-white">{value}</div>
+            <div className="text-3xl font-black text-[var(--text)]">{value}</div>
             <div className="text-xs text-[var(--text-muted)] mt-1">{label}</div>
           </div>
         ))}
@@ -45,7 +45,7 @@ export default function GapsClient({
           className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
             soloSinOferta
               ? "bg-[#ef444422] text-[#ef4444] border border-[#ef444444]"
-              : "text-[var(--text-muted)] hover:text-white border border-[var(--border)]"
+              : "text-[var(--text-muted)] hover:text-[var(--text)] border border-[var(--border)]"
           }`}
         >
           Solo gaps (sin oferta)
@@ -55,7 +55,7 @@ export default function GapsClient({
           className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
             !soloSinOferta
               ? "bg-[#f9731622] text-[#f97316] border border-[#f9731644]"
-              : "text-[var(--text-muted)] hover:text-white border border-[var(--border)]"
+              : "text-[var(--text-muted)] hover:text-[var(--text)] border border-[var(--border)]"
           }`}
         >
           Todos (incluye parciales)
@@ -85,7 +85,7 @@ export default function GapsClient({
               >
                 <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
                   <div>
-                    <h3 className="font-semibold text-white">
+                    <h3 className="font-semibold text-[var(--text)]">
                       {SERVICIO_LABEL[g.tipo_servicio] ?? g.tipo_servicio}
                     </h3>
                     <p className="text-xs text-[var(--text-muted)] mt-0.5">

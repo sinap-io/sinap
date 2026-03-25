@@ -17,7 +17,7 @@ export default async function ActorsPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white mb-1">Red de actores</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)] mb-1">Red de actores</h1>
         <p className="text-[var(--text-muted)] text-sm">
           {actors.length} actores registrados en el ecosistema biotech de Córdoba
         </p>
@@ -37,7 +37,7 @@ export default async function ActorsPage() {
             className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-3 text-center"
             style={{ borderTopColor: color, borderTopWidth: "2px" }}
           >
-            <div className="text-2xl font-bold text-white">
+            <div className="text-2xl font-bold text-[var(--text)]">
               {totales[tipo as keyof typeof totales]}
             </div>
             <div className="text-xs text-[var(--text-muted)] mt-0.5">{label}</div>

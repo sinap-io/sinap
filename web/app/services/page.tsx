@@ -18,7 +18,7 @@ export default async function ServicesPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-1">Servicios del ecosistema</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)] mb-1">Servicios del ecosistema</h1>
         <p className="text-[var(--text-muted)] text-sm">
           {services.length} servicios disponibles en la red
         </p>
@@ -32,7 +32,7 @@ export default async function ServicesPage() {
               key={area}
               className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-3 text-center"
             >
-              <div className="text-2xl font-bold text-white">{count}</div>
+              <div className="text-2xl font-bold text-[var(--text)]">{count}</div>
               <div className="text-xs text-[var(--text-muted)] mt-0.5">
                 {AREA_LABEL[area] ?? area}
               </div>

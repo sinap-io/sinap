@@ -25,7 +25,7 @@ export default async function ActorDetailPage(props: PageProps<"/actors/[id]">) 
   return (
     <div className="space-y-8 max-w-4xl">
       {/* Volver */}
-      <Link href="/actors" className="text-sm text-[var(--text-muted)] hover:text-white transition-colors">
+      <Link href="/actors" className="text-sm text-[var(--text-muted)] hover:text-[var(--text)] transition-colors">
         ← Volver a la red
       </Link>
 
@@ -35,7 +35,7 @@ export default async function ActorDetailPage(props: PageProps<"/actors/[id]">) 
         style={{ borderLeftColor: color, borderLeftWidth: "4px" }}
       >
         <div className="flex flex-wrap items-start gap-3 mb-3">
-          <h1 className="text-2xl font-bold text-white flex-1">{actor.nombre}</h1>
+          <h1 className="text-2xl font-bold text-[var(--text)] flex-1">{actor.nombre}</h1>
           <Badge label={tipoLabel} color={color} />
           {actor.etapa && (
             <Badge label={actor.etapa} color="#6b7280" />
@@ -70,7 +70,7 @@ export default async function ActorDetailPage(props: PageProps<"/actors/[id]">) 
 
       {/* Servicios */}
       <section>
-        <h2 className="text-lg font-semibold text-white mb-4">
+        <h2 className="text-lg font-semibold text-[var(--text)] mb-4">
           Servicios ofrecidos
           <span className="ml-2 text-sm font-normal text-[var(--text-muted)]">
             ({actor.servicios.length})
@@ -88,7 +88,7 @@ export default async function ActorDetailPage(props: PageProps<"/actors/[id]">) 
                   className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-4"
                 >
                   <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="font-medium text-white text-sm">
+                    <span className="font-medium text-[var(--text)] text-sm">
                       {SERVICIO_LABEL[s.tipo_servicio] ?? s.tipo_servicio}
                     </span>
                     <Badge
@@ -109,7 +109,7 @@ export default async function ActorDetailPage(props: PageProps<"/actors/[id]">) 
 
       {/* Necesidades */}
       <section>
-        <h2 className="text-lg font-semibold text-white mb-4">
+        <h2 className="text-lg font-semibold text-[var(--text)] mb-4">
           Necesidades declaradas
           <span className="ml-2 text-sm font-normal text-[var(--text-muted)]">
             ({actor.necesidades.length})
@@ -128,7 +128,7 @@ export default async function ActorDetailPage(props: PageProps<"/actors/[id]">) 
                   style={{ borderLeftColor: urgColor, borderLeftWidth: "3px" }}
                 >
                   <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="font-medium text-white text-sm">
+                    <span className="font-medium text-[var(--text)] text-sm">
                       {SERVICIO_LABEL[n.tipo_servicio] ?? n.tipo_servicio}
                     </span>
                     <Badge

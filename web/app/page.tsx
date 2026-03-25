@@ -98,7 +98,7 @@ export default async function HomePage() {
 
       {/* Cards de navegación */}
       <section>
-        <h2 className="text-lg font-semibold text-white mb-4">¿Qué querés hacer?</h2>
+        <h2 className="text-lg font-semibold text-[var(--text)] mb-4">¿Qué querés hacer?</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {NAV_CARDS.map(({ href, title, desc, accent }) => (
             <Link
@@ -108,7 +108,7 @@ export default async function HomePage() {
                          hover:border-[var(--accent)] hover:bg-[var(--bg-hover)] transition-all duration-150"
               style={{ borderLeftColor: accent, borderLeftWidth: "3px" }}
             >
-              <h3 className="font-semibold text-white mb-2 group-hover:text-[var(--accent)] transition-colors">
+              <h3 className="font-semibold text-[var(--text)] mb-2 group-hover:text-[var(--accent)] transition-colors">
                 {title}
               </h3>
               <p className="text-sm text-[var(--text-muted)] leading-relaxed">{desc}</p>

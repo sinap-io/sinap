@@ -31,14 +31,14 @@ export default function ActorsClient({ actors }: { actors: ActorList[] }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)]
-                     px-4 py-2 text-sm text-white placeholder-[var(--text-muted)]
+                     px-4 py-2 text-sm text-[var(--text)] placeholder-[var(--text-muted)]
                      focus:outline-none focus:border-[var(--accent)]"
         />
         <select
           value={tipo}
           onChange={(e) => setTipo(e.target.value)}
           className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)]
-                     px-4 py-2 text-sm text-white
+                     px-4 py-2 text-sm text-[var(--text)]
                      focus:outline-none focus:border-[var(--accent)]"
         >
           <option value="">Todos los tipos</option>
@@ -76,7 +76,7 @@ export default function ActorsClient({ actors }: { actors: ActorList[] }) {
               >
                 {/* Nombre y badges */}
                 <div className="flex items-start justify-between gap-3 mb-2">
-                  <h3 className="font-semibold text-white group-hover:text-[var(--accent)] transition-colors leading-tight">
+                  <h3 className="font-semibold text-[var(--text)] group-hover:text-[var(--accent)] transition-colors leading-tight">
                     {actor.nombre}
                   </h3>
                   <Badge label={label} color={color} className="shrink-0" />
@@ -99,11 +99,11 @@ export default function ActorsClient({ actors }: { actors: ActorList[] }) {
                 {/* Stats */}
                 <div className="flex gap-6 pt-3 border-t border-[var(--border)]">
                   <div className="text-center">
-                    <div className="text-lg font-bold text-white">{actor.total_servicios}</div>
+                    <div className="text-lg font-bold text-[var(--text)]">{actor.total_servicios}</div>
                     <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">Servicios</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-bold text-white">{actor.total_necesidades}</div>
+                    <div className="text-lg font-bold text-[var(--text)]">{actor.total_necesidades}</div>
                     <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">Necesidades</div>
                   </div>
                   {actor.sitio_web && (

@@ -25,7 +25,7 @@ const links = [
 
 // Sidebar siempre oscuro independientemente del tema del contenido
 const S = {
-  bg:       "#1e293b",
+  bg:       "#243447",
   border:   "#2d3748",
   muted:    "#94a3b8",
   hover:    "#263347",

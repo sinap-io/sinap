@@ -42,14 +42,14 @@ export default function ServicesClient({ services }: { services: ServiceItem[] }
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)]
-                     px-4 py-2 text-sm text-white placeholder-[var(--text-muted)]
+                     px-4 py-2 text-sm text-[var(--text)] placeholder-[var(--text-muted)]
                      focus:outline-none focus:border-[var(--accent)]"
         />
         <select
           value={area}
           onChange={(e) => setArea(e.target.value)}
           className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)]
-                     px-4 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent)]"
+                     px-4 py-2 text-sm text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
         >
           <option value="">Todas las áreas</option>
           {AREAS.map((a) => (
@@ -60,7 +60,7 @@ export default function ServicesClient({ services }: { services: ServiceItem[] }
           value={disp}
           onChange={(e) => setDisp(e.target.value)}
           className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)]
-                     px-4 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent)]"
+                     px-4 py-2 text-sm text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
         >
           <option value="">Toda disponibilidad</option>
           {DISPONIBILIDADES.map((d) => (
@@ -88,7 +88,7 @@ export default function ServicesClient({ services }: { services: ServiceItem[] }
               >
                 <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
                   <div>
-                    <h3 className="font-semibold text-white">
+                    <h3 className="font-semibold text-[var(--text)]">
                       {SERVICIO_LABEL[s.tipo_servicio] ?? s.tipo_servicio}
                     </h3>
                     <p className="text-sm text-[var(--text-muted)]">{s.actor}</p>
