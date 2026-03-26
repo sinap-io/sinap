@@ -28,16 +28,22 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Registrar dominio sinap.io en Cloudflare
 - Módulo Vinculador: routers backend + pantallas frontend (tablas ya creadas en DB)
 - Sistema de autenticación y usuarios
-- Mejoras de estética (en curso en el branch activo)
+- Mejoras de estética: paleta definida — azul #dbeafe + naranja #e8622a ✅ (pendiente feedback diseñadora)
 
 ---
 
 ## Próximo paso concreto
 
-1. Terminar de definir la estética (sidebar/hero color, tipografía, detalles visuales)
-2. Merge `claude/distracted-lamarr` → `main` → producción actualizada
-3. Módulo Vinculador backend (routers)
-4. Módulo Vinculador frontend (pantallas)
+1. Merge `claude/distracted-lamarr` → `main` → producción actualizada
+2. Módulo Vinculador backend (routers)
+3. Módulo Vinculador frontend (pantallas)
+4. Sistema de autenticación y usuarios
+
+**Paleta actual (branch activo):**
+- Sidebar/cards: azul `#dbeafe`
+- Acento: naranja `#e8622a`
+- Hero: naranja suave `#fde0d0`
+- Fondo: blanco `#ffffff`
 
 ---
 
