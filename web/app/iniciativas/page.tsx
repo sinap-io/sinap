@@ -6,7 +6,12 @@ import type { IniciativaList } from "@/lib/types";
 import IniciativasClient from "@/components/iniciativas/IniciativasClient";
 
 export default async function IniciativasPage() {
-  const iniciativas = await fetchApi<IniciativaList[]>("/iniciativas");
+  let iniciativas: IniciativaList[] = [];
+  try {
+    iniciativas = await fetchApi<IniciativaList[]>("/iniciativas");
+  } catch {
+    // API no disponible aún (ej: endpoint no desplegado en este entorno)
+  }
 
   const metricas = {
     abierta:    iniciativas.filter((i) => i.estado === "abierta").length,

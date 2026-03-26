@@ -6,7 +6,12 @@ import type { VinculadorItem } from "@/lib/types";
 import NuevaIniciativaClient from "@/components/iniciativas/NuevaIniciativaClient";
 
 export default async function NuevaIniciativaPage() {
-  const vinculadores = await fetchApi<VinculadorItem[]>("/vinculador/operadores");
+  let vinculadores: VinculadorItem[] = [];
+  try {
+    vinculadores = await fetchApi<VinculadorItem[]>("/vinculador/operadores");
+  } catch {
+    // API no disponible aún
+  }
 
   return (
     <div className="space-y-8 max-w-2xl">
