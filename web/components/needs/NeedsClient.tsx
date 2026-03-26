@@ -36,14 +36,14 @@ export default function NeedsClient({ needs }: { needs: NeedItem[] }) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)]
-                     px-4 py-2 text-sm text-white placeholder-[var(--text-muted)]
+                     px-4 py-2 text-sm text-[var(--text)] placeholder-[var(--text-muted)]
                      focus:outline-none focus:border-[var(--accent)]"
         />
         <select
           value={urgencia}
           onChange={(e) => setUrgencia(e.target.value)}
           className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)]
-                     px-4 py-2 text-sm text-white focus:outline-none focus:border-[var(--accent)]"
+                     px-4 py-2 text-sm text-[var(--text)] focus:outline-none focus:border-[var(--accent)]"
         >
           <option value="">Toda urgencia</option>
           {URGENCIAS.map((u) => (
@@ -71,7 +71,7 @@ export default function NeedsClient({ needs }: { needs: NeedItem[] }) {
               >
                 <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
                   <div>
-                    <h3 className="font-semibold text-white">
+                    <h3 className="font-semibold text-[var(--text)]">
                       {SERVICIO_LABEL[n.tipo_servicio] ?? n.tipo_servicio}
                     </h3>
                     <p className="text-sm text-[var(--text-muted)]">{n.actor}</p>

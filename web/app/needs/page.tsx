@@ -20,7 +20,7 @@ export default async function NeedsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-white mb-1">Necesidades activas</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)] mb-1">Necesidades activas</h1>
         <p className="text-[var(--text-muted)] text-sm">
           Demanda declarada por actores del ecosistema, ordenada por urgencia
         </p>
@@ -34,7 +34,7 @@ export default async function NeedsPage() {
             className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-3 text-center"
             style={{ borderTopColor: color, borderTopWidth: "2px" }}
           >
-            <div className="text-2xl font-bold text-white">{byUrgencia[key] ?? 0}</div>
+            <div className="text-2xl font-bold text-[var(--text)]">{byUrgencia[key] ?? 0}</div>
             <div className="text-xs text-[var(--text-muted)] mt-0.5">{label}</div>
           </div>
         ))}

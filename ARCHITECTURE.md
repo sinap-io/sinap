@@ -2,7 +2,7 @@
 
 > Documento vivo. Captura el estado del proyecto, las decisiones de diseño y el razonamiento detrás de cada una. Actualizar al cerrar cada sprint.
 >
-> Última actualización: 25 marzo 2026
+> Última actualización: 26 marzo 2026
 
 ---
 
@@ -239,12 +239,12 @@ python -m api.db.seed
 
 ## Próximos pasos en orden de prioridad
 
-### 1. Deploy (en curso)
-- **FastAPI → Railway** (soporte Python nativo, free tier suficiente para empezar)
-- **Next.js → Vercel** (deploy nativo, integración con GitHub, free tier)
-- Variables de entorno a configurar en cada plataforma: `DATABASE_URL`, `ANTHROPIC_API_KEY`, `ALLOWED_ORIGINS`, `NEXT_PUBLIC_API_URL`
-- El deploy desbloquea mostrar la plataforma a stakeholders del cluster
-- **Estado:** Crear cuenta en Railway con Login via GitHub → conectar repo → configurar variables de entorno → deploy
+### 1. Deploy ✅ COMPLETADO
+- **FastAPI → Railway:** `https://sinap-production.up.railway.app` — operativo
+- **Next.js → Vercel:** `https://sinap-psi.vercel.app` — operativo
+- Conector Vercel MCP instalado en Claude para gestión directa de deploys
+- Branch activo `claude/distracted-lamarr` en preview; pendiente merge a main
+- **Pendiente:** Registrar dominio sinap.io en Cloudflare y configurar DNS
 
 ### 2. Módulo Vinculador — Backend
 Tablas ya creadas en `sinap-production` (migración 001). Faltan los routers:
@@ -259,7 +259,19 @@ Tablas ya creadas en `sinap-production` (migración 001). Faltan los routers:
 - `/vinculador/casos/[id]` — Detalle con timeline visual de hitos
 - `/vinculador/casos/nuevo` — Formulario: seleccionar actor demandante, necesidad, asignar vinculador
 
-### 4. Capacidades de IA (versión final, ver BACKLOG.md)
+### 4. Sistema de autenticación y roles
+Orden de implementación definido:
+- **Login** — autenticación básica (JWT o similar). Toda la plataforma requiere login; no hay acceso como invitado.
+- **Rol oferente** — cualquier tipo de actor (laboratorio, empresa, startup, universidad, investigación) puede ser oferente. Paga membresía. Tiene perfil completo con capacidades editables.
+- **Rol demandante** — acceso free. Ve todo el catálogo (actores, servicios, necesidades, instrumentos) en modo lectura. No puede publicar capacidades.
+- La tabla `vinculador` (ya creada) se conectará con la tabla de usuarios cuando se implemente auth.
+
+### 5. Vista marketplace diferenciada
+- Oferente: ve su perfil propio + puede editar capacidades + acceso completo a búsqueda IA
+- Demandante: vista del catálogo en modo lectura + acceso a búsqueda IA
+- La distinción NO es por tipo de actor, sino por el rol que eligió al registrarse
+
+### 6. Capacidades de IA (versión final, ver BACKLOG.md)
 - Matching automático proactivo (sin búsqueda manual)
 - Recomendación de financiamiento por perfil de actor
 - Procesamiento de documentos (actor sube ficha técnica, IA pre-carga su perfil)
@@ -274,8 +286,8 @@ Tablas ya creadas en `sinap-production` (migración 001). Faltan los routers:
 | Gmail del proyecto | sinap.io.dev@gmail.com | ✅ Creado |
 | GitHub | sinap-io/sinap | ✅ Organización creada, repo transferido y renombrado |
 | Cloudflare / sinap.io | sinap.io.dev@gmail.com | ⏳ Registrar dominio |
-| Railway (FastAPI) | sinap.io.dev@gmail.com | ⏳ Crear cuenta |
-| Vercel (Next.js) | sinap.io.dev@gmail.com | ⏳ Crear cuenta |
+| Railway (FastAPI) | cuenta Google (sebabizzi) | ✅ sinap-production.up.railway.app |
+| Vercel (Next.js) | cuenta Google (sebabizzi) | ✅ sinap-psi.vercel.app |
 | Neon.tech | Migrar a org | ⏳ Pendiente |
 | Anthropic API | — | ✅ Operativo (key en api/.env) |
 

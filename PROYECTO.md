@@ -3,7 +3,7 @@
 > Este documento está escrito para Sebastián. No asume conocimientos de programación.
 > Explica qué es cada parte del sistema, por qué existe, y cómo se conecta todo.
 >
-> Última actualización: 25 marzo 2026
+> Última actualización: 26 marzo 2026
 
 ---
 
@@ -168,6 +168,28 @@ Todo está bajo una identidad propia del proyecto, separada de las cuentas perso
 | Railway | sinap.io.dev@gmail.com | ⏳ Pendiente |
 | Vercel | sinap.io.dev@gmail.com | ⏳ Pendiente |
 | Neon.tech | Migrar a org | ⏳ Pendiente |
+
+---
+
+## Quién usa SINAP y cómo
+
+### Los dos tipos de usuarios
+
+**Oferente** — es cualquier actor del ecosistema que ofrece servicios: laboratorio, empresa, startup, universidad o centro de investigación. Paga una membresía para estar en la plataforma. Tiene un perfil completo que puede editar, con sus capacidades, equipo y áreas de trabajo.
+
+**Demandante** — es quien busca servicios. El acceso es gratuito. Puede ver todo el catálogo: actores, servicios disponibles, necesidades del ecosistema e instrumentos de financiamiento. No puede publicar servicios propios.
+
+**Regla importante:** el tipo de organización no define el rol. Una startup puede ser oferente y también demandante. Una universidad puede ofrecer servicios y también necesitar otros. El rol lo elige el actor al registrarse.
+
+### El acceso a la plataforma
+
+Toda la plataforma requiere crear una cuenta. No hay acceso como "visitante" sin identificarse — esto garantiza que los datos del ecosistema son accesibles solo para sus actores.
+
+### El orden en que se va a construir lo que falta
+
+1. **Módulo Vinculador** (lo que sigue ahora) — gestión de casos de vinculación entre actores
+2. **Sistema de login y roles** — registro, acceso diferenciado por rol
+3. **Vista marketplace** — el catálogo diferenciado según si sos oferente o demandante
 
 ---
 

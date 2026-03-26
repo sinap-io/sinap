@@ -73,14 +73,14 @@ export default async function HomePage() {
   return (
     <div className="space-y-10">
       {/* Hero */}
-      <section className="rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[#0f2027] via-[#1a2a3a] to-[#0f1a2a] p-10 text-center">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--accent)] mb-3">
+      <section className="rounded-2xl bg-gradient-to-br from-[#fde0d0] via-[#fde8dc] to-[#fde0d0] p-10 text-center">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[#64748b] mb-3">
           Ecosistema Biotech · Córdoba, Argentina
         </p>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-3">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1e293b] mb-3">
           Plataforma de Inteligencia Territorial
         </h1>
-        <p className="text-[var(--text-muted)] max-w-xl mx-auto mb-10 leading-relaxed">
+        <p className="text-[#64748b] max-w-xl mx-auto mb-10 leading-relaxed">
           Conectamos laboratorios, empresas, universidades e instituciones.<br />
           Encontrá servicios, identificá oportunidades y accedé a financiamiento.
         </p>
@@ -89,8 +89,8 @@ export default async function HomePage() {
         <div className="flex flex-wrap justify-center gap-8">
           {METRICS.map(({ label, value }) => (
             <div key={label} className="text-center">
-              <div className="text-4xl font-black text-white">{value}</div>
-              <div className="text-xs uppercase tracking-wide text-[var(--text-muted)] mt-1">{label}</div>
+              <div className="text-4xl font-black text-[#1e293b]">{value}</div>
+              <div className="text-xs uppercase tracking-wide text-[#64748b] mt-1">{label}</div>
             </div>
           ))}
         </div>
@@ -98,7 +98,7 @@ export default async function HomePage() {
 
       {/* Cards de navegación */}
       <section>
-        <h2 className="text-lg font-semibold text-white mb-4">¿Qué querés hacer?</h2>
+        <h2 className="text-lg font-semibold text-[var(--text)] mb-4">¿Qué querés hacer?</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {NAV_CARDS.map(({ href, title, desc, accent }) => (
             <Link
@@ -108,7 +108,7 @@ export default async function HomePage() {
                          hover:border-[var(--accent)] hover:bg-[var(--bg-hover)] transition-all duration-150"
               style={{ borderLeftColor: accent, borderLeftWidth: "3px" }}
             >
-              <h3 className="font-semibold text-white mb-2 group-hover:text-[var(--accent)] transition-colors">
+              <h3 className="font-semibold text-[var(--text)] mb-2 group-hover:text-[var(--accent)] transition-colors">
                 {title}
               </h3>
               <p className="text-sm text-[var(--text-muted)] leading-relaxed">{desc}</p>

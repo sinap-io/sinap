@@ -14,26 +14,52 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (25 marzo 2026)
+## Estado actual (26 marzo 2026)
 
-**Lo que funciona localmente:**
-- Backend FastAPI (`api/`) — 10 endpoints, conectado a `sinap-production` en Neon.tech
-- Frontend Next.js (`web/`) — 9 rutas, conectado al backend
+**Lo que funciona en producción:**
+- Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
+- Frontend Next.js → Vercel: `https://sinap-psi.vercel.app` ✅
 - Prototipo Streamlit (`app/`) — conectado a `sinap-production` — NO TOCAR
 
+**Branch activo:** `claude/distracted-lamarr` (pendiente merge a main)
+
 **Lo que está pendiente:**
-- Migrar cuentas a organización sinap-io (Gmail ya creado: sinap.io.dev@gmail.com)
-- Deploy: FastAPI → Railway, Next.js → Vercel (bajo cuentas de la organización)
+- Merge PR `claude/distracted-lamarr` → `main` cuando se apruebe el diseño final
+- Registrar dominio sinap.io en Cloudflare
 - Módulo Vinculador: routers backend + pantallas frontend (tablas ya creadas en DB)
+- Sistema de autenticación y usuarios (con roles oferente/demandante)
+- Vista marketplace diferenciada por rol
+- Estética: paleta definida ✅ (pendiente feedback final diseñadora)
+
+---
+
+## Modelo de negocio y roles
+
+**Oferente:** cualquier tipo de actor (laboratorio, empresa, startup, universidad, investigación) que ofrece servicios. Paga membresía. Tiene perfil completo editable.
+
+**Demandante:** actor que busca servicios. Acceso free. Puede ver todo el catálogo de capacidades, necesidades e instrumentos. Necesita login para acceder.
+
+**Acceso sin login (invitado):** no hay — toda la plataforma requiere autenticación.
+
+**Regla importante:** no hay distinción por tipo de actor para ser oferente. Cualquier actor puede serlo.
 
 ---
 
 ## Próximo paso concreto
 
-Configurar la infraestructura bajo la organización sinap-io:
-1. GitHub Organization con sinap.io.dev@gmail.com
-2. Registrar sinap.io en Cloudflare
-3. Deploy en Railway (FastAPI) y Vercel (Next.js)
+En orden de prioridad:
+
+1. **Módulo Vinculador backend** — routers (tablas ya están en DB)
+2. **Módulo Vinculador frontend** — panel + detalle de casos
+3. **Sistema de autenticación y roles** — login, oferente vs demandante
+4. **Vista marketplace** — catálogo diferenciado por rol (oferente ve todo + puede editar su perfil; demandante ve catálogo en modo lectura)
+5. Merge `claude/distracted-lamarr` → `main` cuando diseño esté aprobado
+
+**Paleta actual (branch activo):**
+- Sidebar/cards: azul `#dbeafe`
+- Acento: naranja `#e8622a`
+- Hero: naranja suave `#fde0d0`
+- Fondo: blanco `#ffffff`
 
 ---
 
@@ -51,6 +77,6 @@ Configurar la infraestructura bajo la organización sinap-io:
 | Gmail | sinap.io.dev@gmail.com | ✅ Creado |
 | GitHub | sinap-io/sinap | ✅ Organización creada, repo transferido y renombrado |
 | Neon.tech | sinap-production (9 tablas) | ✅ Operativo |
-| Railway | — | ⏳ Crear con Gmail del proyecto |
-| Vercel | — | ⏳ Crear con Gmail del proyecto |
+| Railway | sinap-production.up.railway.app | ✅ Operativo (FastAPI) |
+| Vercel | sinap-psi.vercel.app | ✅ Operativo (Next.js) |
 | Cloudflare / sinap.io | — | ⏳ Registrar dominio |

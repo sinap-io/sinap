@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Nav from "@/components/Nav";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "SINAP — Plataforma Biotech Córdoba",
@@ -9,15 +13,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
-      <body className="min-h-screen flex flex-col">
+    <html lang="es" className={cn("font-sans", geist.variable)}>
+      <body className="min-h-screen bg-[var(--bg)]">
         <Nav />
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {children}
-        </main>
-        <footer className="border-t border-[var(--border)] py-4 text-center text-xs text-[var(--text-muted)]">
-          SINAP · Impulsado por el Clúster de Biotecnología de Córdoba
-        </footer>
+        <div className="ml-60 min-h-screen flex flex-col">
+          <main className="flex-1 px-8 py-8 max-w-5xl w-full">
+            {children}
+          </main>
+          <footer className="px-8 py-4 border-t border-[var(--border)] text-xs text-[var(--text-muted)]">
+            SINAP · sinap.io
+          </footer>
+        </div>
       </body>
     </html>
   );

@@ -83,6 +83,45 @@ export interface GapSummary {
   total_demanda: number;
 }
 
+// ── Vinculador ────────────────────────────────────────────────
+export interface VinculadorItem {
+  id: number;
+  nombre: string;
+  email: string;
+  activo: boolean;
+}
+
+export interface HitoItem {
+  id: number;
+  tipo: string;
+  descripcion: string | null;
+  fecha: string;
+  evidencia_url: string | null;
+  creado_en: string;
+}
+
+export interface CasoList {
+  id: number;
+  estado: string;
+  notas: string | null;
+  creado_en: string;
+  actualizado_en: string;
+  demandante_id: number;
+  demandante_nombre: string;
+  oferente_id: number | null;
+  oferente_nombre: string | null;
+  necesidad_id: number;
+  necesidad_tipo: string;
+  vinculador_id: number;
+  vinculador_nombre: string;
+}
+
+export interface CasoDetail extends CasoList {
+  capacidad_id: number | null;
+  capacidad_tipo: string | null;
+  hitos: HitoItem[];
+}
+
 // ── Search ────────────────────────────────────────────────────
 export interface SearchResponse {
   respuesta: string;
