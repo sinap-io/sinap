@@ -239,12 +239,12 @@ python -m api.db.seed
 
 ## Próximos pasos en orden de prioridad
 
-### 1. Deploy (en curso)
-- **FastAPI → Railway** (soporte Python nativo, free tier suficiente para empezar)
-- **Next.js → Vercel** (deploy nativo, integración con GitHub, free tier)
-- Variables de entorno a configurar en cada plataforma: `DATABASE_URL`, `ANTHROPIC_API_KEY`, `ALLOWED_ORIGINS`, `NEXT_PUBLIC_API_URL`
-- El deploy desbloquea mostrar la plataforma a stakeholders del cluster
-- **Estado:** Crear cuenta en Railway con Login via GitHub → conectar repo → configurar variables de entorno → deploy
+### 1. Deploy ✅ COMPLETADO
+- **FastAPI → Railway:** `https://sinap-production.up.railway.app` — operativo
+- **Next.js → Vercel:** `https://sinap-psi.vercel.app` — operativo
+- Conector Vercel MCP instalado en Claude para gestión directa de deploys
+- Branch activo `claude/distracted-lamarr` en preview; pendiente merge a main
+- **Pendiente:** Registrar dominio sinap.io en Cloudflare y configurar DNS
 
 ### 2. Módulo Vinculador — Backend
 Tablas ya creadas en `sinap-production` (migración 001). Faltan los routers:
@@ -274,8 +274,8 @@ Tablas ya creadas en `sinap-production` (migración 001). Faltan los routers:
 | Gmail del proyecto | sinap.io.dev@gmail.com | ✅ Creado |
 | GitHub | sinap-io/sinap | ✅ Organización creada, repo transferido y renombrado |
 | Cloudflare / sinap.io | sinap.io.dev@gmail.com | ⏳ Registrar dominio |
-| Railway (FastAPI) | sinap.io.dev@gmail.com | ⏳ Crear cuenta |
-| Vercel (Next.js) | sinap.io.dev@gmail.com | ⏳ Crear cuenta |
+| Railway (FastAPI) | cuenta Google (sebabizzi) | ✅ sinap-production.up.railway.app |
+| Vercel (Next.js) | cuenta Google (sebabizzi) | ✅ sinap-psi.vercel.app |
 | Neon.tech | Migrar a org | ⏳ Pendiente |
 | Anthropic API | — | ✅ Operativo (key en api/.env) |
 

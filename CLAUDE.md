@@ -16,24 +16,28 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ## Estado actual (25 marzo 2026)
 
-**Lo que funciona localmente:**
-- Backend FastAPI (`api/`) — 10 endpoints, conectado a `sinap-production` en Neon.tech
-- Frontend Next.js (`web/`) — 9 rutas, conectado al backend
+**Lo que funciona en producción:**
+- Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
+- Frontend Next.js → Vercel: `https://sinap-psi.vercel.app` ✅
 - Prototipo Streamlit (`app/`) — conectado a `sinap-production` — NO TOCAR
 
+**Branch activo:** `claude/distracted-lamarr` (pendiente merge a main)
+
 **Lo que está pendiente:**
-- Migrar cuentas a organización sinap-io (Gmail ya creado: sinap.io.dev@gmail.com)
-- Deploy: FastAPI → Railway, Next.js → Vercel (bajo cuentas de la organización)
+- Merge PR `claude/distracted-lamarr` → `main` cuando se apruebe el diseño final
+- Registrar dominio sinap.io en Cloudflare
 - Módulo Vinculador: routers backend + pantallas frontend (tablas ya creadas en DB)
+- Sistema de autenticación y usuarios
+- Mejoras de estética (en curso en el branch activo)
 
 ---
 
 ## Próximo paso concreto
 
-Configurar la infraestructura bajo la organización sinap-io:
-1. GitHub Organization con sinap.io.dev@gmail.com
-2. Registrar sinap.io en Cloudflare
-3. Deploy en Railway (FastAPI) y Vercel (Next.js)
+1. Terminar de definir la estética (sidebar/hero color, tipografía, detalles visuales)
+2. Merge `claude/distracted-lamarr` → `main` → producción actualizada
+3. Módulo Vinculador backend (routers)
+4. Módulo Vinculador frontend (pantallas)
 
 ---
 
@@ -51,6 +55,6 @@ Configurar la infraestructura bajo la organización sinap-io:
 | Gmail | sinap.io.dev@gmail.com | ✅ Creado |
 | GitHub | sinap-io/sinap | ✅ Organización creada, repo transferido y renombrado |
 | Neon.tech | sinap-production (9 tablas) | ✅ Operativo |
-| Railway | — | ⏳ Crear con Gmail del proyecto |
-| Vercel | — | ⏳ Crear con Gmail del proyecto |
+| Railway | sinap-production.up.railway.app | ✅ Operativo (FastAPI) |
+| Vercel | sinap-psi.vercel.app | ✅ Operativo (Next.js) |
 | Cloudflare / sinap.io | — | ⏳ Registrar dominio |
