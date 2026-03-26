@@ -14,8 +14,8 @@
   --border:      #d5e0ec;
 
   /* Acento azul acero */
-  --blue:        #5b7fa6;
-  --accent:      #5b7fa6;
+  --blue:        #e8622a;
+  --accent:      #e8622a;
 
   /* Colores pastel para categorías */
   --orange:      #f9a870;
@@ -29,18 +29,18 @@
   --card-foreground:     #1e293b;
   --popover:             #ffffff;
   --popover-foreground:  #1e293b;
-  --primary:             #5b7fa6;
+  --primary:             #e8622a;
   --primary-foreground:  #ffffff;
   --secondary:           #edf2f8;
   --secondary-foreground:#1e293b;
   --muted:               #edf2f8;
   --muted-foreground:    #64748b;
-  --accent:              #5b7fa6;
+  --accent:              #e8622a;
   --accent-foreground:   #ffffff;
   --destructive:         #e07878;
   --border:              #e2e8f0;
   --input:               #e2e8f0;
-  --ring:                #5b7fa6;
+  --ring:                #e8622a;
   --radius:              0.625rem;
 }
 

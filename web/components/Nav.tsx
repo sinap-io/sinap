@@ -27,8 +27,8 @@ const S = {
   bg:     "#edf2f8",
   border: "#d5e0ec",
   muted:  "#7a9bb8",
-  hover:  "rgba(91,127,166,0.08)",
-  accent: "#5b7fa6",
+  hover:  "rgba(232,98,42,0.08)",
+  accent: "#e8622a",
   text:   "#1e293b",
 };
 
