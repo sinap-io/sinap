@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { fetchApi } from "@/lib/api";
 import type { ActorList, ActorDetail, VinculadorItem } from "@/lib/types";

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { fetchApi } from "@/lib/api";
 import type { CasoList, VinculadorItem } from "@/lib/types";
