@@ -23,14 +23,13 @@ const links = [
   { href: "/search",      label: "Buscar IA",      icon: Search },
 ];
 
-// Sidebar siempre oscuro independientemente del tema del contenido
 const S = {
-  bg:     "#4a6075",
-  border: "#5a7085",
-  muted:  "#b0c4d4",
-  hover:  "rgba(255,255,255,0.10)",
-  accent: "#b0c4d4",
-  text:   "#f1f5f9",
+  bg:     "#f0f4f8",
+  border: "#e2e8f0",
+  muted:  "#64748b",
+  hover:  "rgba(0,0,0,0.04)",
+  accent: "#be84ae",
+  text:   "#1e293b",
 };
 
 export default function Nav() {
