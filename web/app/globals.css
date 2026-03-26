@@ -5,13 +5,13 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Tema claro estilo Notion */
+  /* Tema claro — tinte mauve suave */
   --bg:          #ffffff;
-  --bg-card:     #f0f4f8;
-  --bg-hover:    #e8eef4;
+  --bg-card:     #f7f2f6;
+  --bg-hover:    #ead8e6;
   --text:        #1e293b;
   --text-muted:  #64748b;
-  --border:      #e2e8f0;
+  --border:      #e8dce5;
 
   /* Acento mauve */
   --blue:        #be84ae;
@@ -25,15 +25,15 @@
   /* shadcn */
   --background:          #ffffff;
   --foreground:          #1e293b;
-  --card:                #f0f4f8;
+  --card:                #f7f2f6;
   --card-foreground:     #1e293b;
   --popover:             #ffffff;
   --popover-foreground:  #1e293b;
   --primary:             #be84ae;
   --primary-foreground:  #ffffff;
-  --secondary:           #f0f4f8;
+  --secondary:           #f7f2f6;
   --secondary-foreground:#1e293b;
-  --muted:               #f0f4f8;
+  --muted:               #f7f2f6;
   --muted-foreground:    #64748b;
   --accent:              #be84ae;
   --accent-foreground:   #ffffff;
