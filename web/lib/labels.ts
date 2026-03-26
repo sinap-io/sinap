@@ -67,20 +67,56 @@ export const STATUS_INSTRUMENTO_COLOR: Record<string, string> = {
   cerrado:      "#6b7280",
 };
 
-export const ESTADO_CASO_LABEL: Record<string, string> = {
-  abierto:    "Abierto",
-  en_gestion: "En gestión",
-  vinculado:  "Vinculado",
-  cerrado:    "Cerrado",
-  cancelado:  "Cancelado",
+export const TIPO_INICIATIVA_LABEL: Record<string, string> = {
+  oportunidad: "Oportunidad",
+  consorcio:   "Consorcio",
+  demanda:     "Demanda",
+  oferta:      "Oferta",
+  instrumento: "Instrumento",
+  gap:         "Gap",
 };
 
-export const ESTADO_CASO_COLOR: Record<string, string> = {
-  abierto:    "#3b82f6",
-  en_gestion: "#f97316",
-  vinculado:  "#22c55e",
-  cerrado:    "#6b7280",
-  cancelado:  "#ef4444",
+export const TIPO_INICIATIVA_COLOR: Record<string, string> = {
+  oportunidad: "#22c55e",
+  consorcio:   "#3b82f6",
+  demanda:     "#f97316",
+  oferta:      "#a855f7",
+  instrumento: "#eab308",
+  gap:         "#ef4444",
+};
+
+export const TIPO_INICIATIVA_DESC: Record<string, string> = {
+  oportunidad: "Oportunidad de mercado detectada",
+  consorcio:   "Formación de grupo multi-actor",
+  demanda:     "Actor tiene una necesidad concreta",
+  oferta:      "Actor tiene capacidad disponible",
+  instrumento: "Instrumento de financiamiento disponible",
+  gap:         "Brecha tecnológica o de mercado a resolver",
+};
+
+export const ESTADO_INICIATIVA_LABEL: Record<string, string> = {
+  abierta:    "Abierta",
+  en_curso:   "En curso",
+  concretada: "Concretada",
+  cerrada:    "Cerrada",
+  cancelada:  "Cancelada",
+};
+
+export const ESTADO_INICIATIVA_COLOR: Record<string, string> = {
+  abierta:    "#3b82f6",
+  en_curso:   "#f97316",
+  concretada: "#22c55e",
+  cerrada:    "#6b7280",
+  cancelada:  "#ef4444",
+};
+
+export const ROL_ACTOR_LABEL: Record<string, string> = {
+  lider:       "Líder",
+  demandante:  "Demandante",
+  oferente:    "Oferente",
+  miembro:     "Miembro",
+  candidato:   "Candidato",
+  financiador: "Financiador",
 };
 
 export const TIPO_HITO_LABEL: Record<string, string> = {

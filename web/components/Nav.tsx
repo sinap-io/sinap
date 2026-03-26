@@ -11,7 +11,7 @@ import {
   Banknote,
   Search,
   Dna,
-  GitMerge,
+  Lightbulb,
 } from "lucide-react";
 
 const links = [
@@ -22,7 +22,7 @@ const links = [
   { href: "/gaps",        label: "Gaps",           icon: TrendingUp },
   { href: "/instruments", label: "Financiamiento", icon: Banknote },
   { href: "/search",      label: "Buscar IA",      icon: Search },
-  { href: "/vinculador",  label: "Vinculador",     icon: GitMerge },
+  { href: "/iniciativas", label: "Iniciativas",    icon: Lightbulb },
 ];
 
 const S = {
