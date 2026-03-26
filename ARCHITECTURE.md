@@ -2,7 +2,7 @@
 
 > Documento vivo. Captura el estado del proyecto, las decisiones de diseño y el razonamiento detrás de cada una. Actualizar al cerrar cada sprint.
 >
-> Última actualización: 25 marzo 2026
+> Última actualización: 26 marzo 2026
 
 ---
 
@@ -259,7 +259,19 @@ Tablas ya creadas en `sinap-production` (migración 001). Faltan los routers:
 - `/vinculador/casos/[id]` — Detalle con timeline visual de hitos
 - `/vinculador/casos/nuevo` — Formulario: seleccionar actor demandante, necesidad, asignar vinculador
 
-### 4. Capacidades de IA (versión final, ver BACKLOG.md)
+### 4. Sistema de autenticación y roles
+Orden de implementación definido:
+- **Login** — autenticación básica (JWT o similar). Toda la plataforma requiere login; no hay acceso como invitado.
+- **Rol oferente** — cualquier tipo de actor (laboratorio, empresa, startup, universidad, investigación) puede ser oferente. Paga membresía. Tiene perfil completo con capacidades editables.
+- **Rol demandante** — acceso free. Ve todo el catálogo (actores, servicios, necesidades, instrumentos) en modo lectura. No puede publicar capacidades.
+- La tabla `vinculador` (ya creada) se conectará con la tabla de usuarios cuando se implemente auth.
+
+### 5. Vista marketplace diferenciada
+- Oferente: ve su perfil propio + puede editar capacidades + acceso completo a búsqueda IA
+- Demandante: vista del catálogo en modo lectura + acceso a búsqueda IA
+- La distinción NO es por tipo de actor, sino por el rol que eligió al registrarse
+
+### 6. Capacidades de IA (versión final, ver BACKLOG.md)
 - Matching automático proactivo (sin búsqueda manual)
 - Recomendación de financiamiento por perfil de actor
 - Procesamiento de documentos (actor sube ficha técnica, IA pre-carga su perfil)

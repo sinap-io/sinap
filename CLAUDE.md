@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (25 marzo 2026)
+## Estado actual (26 marzo 2026)
 
 **Lo que funciona en producción:**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -27,17 +27,33 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Merge PR `claude/distracted-lamarr` → `main` cuando se apruebe el diseño final
 - Registrar dominio sinap.io en Cloudflare
 - Módulo Vinculador: routers backend + pantallas frontend (tablas ya creadas en DB)
-- Sistema de autenticación y usuarios
-- Mejoras de estética: paleta definida — azul #dbeafe + naranja #e8622a ✅ (pendiente feedback diseñadora)
+- Sistema de autenticación y usuarios (con roles oferente/demandante)
+- Vista marketplace diferenciada por rol
+- Estética: paleta definida ✅ (pendiente feedback final diseñadora)
+
+---
+
+## Modelo de negocio y roles
+
+**Oferente:** cualquier tipo de actor (laboratorio, empresa, startup, universidad, investigación) que ofrece servicios. Paga membresía. Tiene perfil completo editable.
+
+**Demandante:** actor que busca servicios. Acceso free. Puede ver todo el catálogo de capacidades, necesidades e instrumentos. Necesita login para acceder.
+
+**Acceso sin login (invitado):** no hay — toda la plataforma requiere autenticación.
+
+**Regla importante:** no hay distinción por tipo de actor para ser oferente. Cualquier actor puede serlo.
 
 ---
 
 ## Próximo paso concreto
 
-1. Merge `claude/distracted-lamarr` → `main` → producción actualizada
-2. Módulo Vinculador backend (routers)
-3. Módulo Vinculador frontend (pantallas)
-4. Sistema de autenticación y usuarios
+En orden de prioridad:
+
+1. **Módulo Vinculador backend** — routers (tablas ya están en DB)
+2. **Módulo Vinculador frontend** — panel + detalle de casos
+3. **Sistema de autenticación y roles** — login, oferente vs demandante
+4. **Vista marketplace** — catálogo diferenciado por rol (oferente ve todo + puede editar su perfil; demandante ve catálogo en modo lectura)
+5. Merge `claude/distracted-lamarr` → `main` cuando diseño esté aprobado
 
 **Paleta actual (branch activo):**
 - Sidebar/cards: azul `#dbeafe`
