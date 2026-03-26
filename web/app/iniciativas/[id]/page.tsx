@@ -71,7 +71,7 @@ export default async function IniciativaDetailPage({
 
         <div className="flex gap-6 pt-1">
           <div className="text-center">
-            <div className="text-2xl font-bold text-[var(--text)]">{iniciativa.total_actores}</div>
+            <div className="text-2xl font-bold text-[var(--text)]">{iniciativa.actores.length}</div>
             <div className="text-xs text-[var(--text-muted)]">actores</div>
           </div>
           <div className="text-center">
