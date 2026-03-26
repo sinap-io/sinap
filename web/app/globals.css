@@ -5,13 +5,13 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Tema claro — azul acero apagado */
+  /* Tema claro — azul vivo + naranja */
   --bg:          #ffffff;
-  --bg-card:     #edf2f8;
-  --bg-hover:    #dde6f0;
+  --bg-card:     #dbeafe;
+  --bg-hover:    #bfdbfe;
   --text:        #1e293b;
-  --text-muted:  #64748b;
-  --border:      #d5e0ec;
+  --text-muted:  #475569;
+  --border:      #bfdbfe;
 
   /* Acento azul acero */
   --blue:        #e8622a;
@@ -25,15 +25,15 @@
   /* shadcn */
   --background:          #ffffff;
   --foreground:          #1e293b;
-  --card:                #edf2f8;
+  --card:                #dbeafe;
   --card-foreground:     #1e293b;
   --popover:             #ffffff;
   --popover-foreground:  #1e293b;
   --primary:             #e8622a;
   --primary-foreground:  #ffffff;
-  --secondary:           #edf2f8;
+  --secondary:           #dbeafe;
   --secondary-foreground:#1e293b;
-  --muted:               #edf2f8;
+  --muted:               #dbeafe;
   --muted-foreground:    #64748b;
   --accent:              #e8622a;
   --accent-foreground:   #ffffff;
