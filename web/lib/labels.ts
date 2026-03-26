@@ -66,3 +66,39 @@ export const STATUS_INSTRUMENTO_COLOR: Record<string, string> = {
   proximamente: "#f97316",
   cerrado:      "#6b7280",
 };
+
+export const ESTADO_CASO_LABEL: Record<string, string> = {
+  abierto:    "Abierto",
+  en_gestion: "En gestión",
+  vinculado:  "Vinculado",
+  cerrado:    "Cerrado",
+  cancelado:  "Cancelado",
+};
+
+export const ESTADO_CASO_COLOR: Record<string, string> = {
+  abierto:    "#3b82f6",
+  en_gestion: "#f97316",
+  vinculado:  "#22c55e",
+  cerrado:    "#6b7280",
+  cancelado:  "#ef4444",
+};
+
+export const TIPO_HITO_LABEL: Record<string, string> = {
+  contacto_establecido:   "Contacto establecido",
+  reunion_realizada:      "Reunión realizada",
+  acuerdo_alcanzado:      "Acuerdo alcanzado",
+  convenio_firmado:       "Convenio firmado",
+  proyecto_iniciado:      "Proyecto iniciado",
+  financiamiento_obtenido: "Financiamiento obtenido",
+  otro:                   "Otro",
+};
+
+export const TIPO_HITO_COLOR: Record<string, string> = {
+  contacto_establecido:   "#6b7280",
+  reunion_realizada:      "#3b82f6",
+  acuerdo_alcanzado:      "#a855f7",
+  convenio_firmado:       "#e8622a",
+  proyecto_iniciado:      "#22c55e",
+  financiamiento_obtenido: "#eab308",
+  otro:                   "#94a3b8",
+};
