@@ -18,6 +18,7 @@ CREATE TABLE iniciativa (
     id              SERIAL PRIMARY KEY,
     tipo            TEXT        NOT NULL
                     CHECK (tipo IN (
+                        'vinculacion',   -- conexión entre actores (paso inicial)
                         'oportunidad',   -- oportunidad de mercado detectada
                         'consorcio',     -- formación de grupo multi-actor
                         'demanda',       -- actor tiene una necesidad

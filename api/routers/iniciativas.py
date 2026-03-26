@@ -12,7 +12,7 @@ from schemas.iniciativa import (
 
 router = APIRouter(prefix="/iniciativas", tags=["iniciativas"])
 
-TIPOS_VALIDOS   = {"oportunidad", "consorcio", "demanda", "oferta", "instrumento", "gap"}
+TIPOS_VALIDOS   = {"vinculacion", "oportunidad", "consorcio", "demanda", "oferta", "instrumento", "gap"}
 ESTADOS_VALIDOS = {"abierta", "en_curso", "concretada", "cerrada", "cancelada"}
 ROLES_VALIDOS   = {"lider", "demandante", "oferente", "miembro", "candidato", "financiador"}
 TIPOS_HITO      = {

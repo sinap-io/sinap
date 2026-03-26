@@ -68,6 +68,7 @@ export const STATUS_INSTRUMENTO_COLOR: Record<string, string> = {
 };
 
 export const TIPO_INICIATIVA_LABEL: Record<string, string> = {
+  vinculacion: "Vinculación",
   oportunidad: "Oportunidad",
   consorcio:   "Consorcio",
   demanda:     "Demanda",
@@ -77,6 +78,7 @@ export const TIPO_INICIATIVA_LABEL: Record<string, string> = {
 };
 
 export const TIPO_INICIATIVA_COLOR: Record<string, string> = {
+  vinculacion: "#0ea5e9",
   oportunidad: "#22c55e",
   consorcio:   "#3b82f6",
   demanda:     "#f97316",
@@ -86,6 +88,7 @@ export const TIPO_INICIATIVA_COLOR: Record<string, string> = {
 };
 
 export const TIPO_INICIATIVA_DESC: Record<string, string> = {
+  vinculacion: "Conexión entre actores — primer contacto o relación estratégica",
   oportunidad: "Oportunidad de mercado detectada",
   consorcio:   "Formación de grupo multi-actor",
   demanda:     "Actor tiene una necesidad concreta",
