@@ -5,17 +5,17 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Tema claro — tinte mauve suave */
+  /* Tema claro — azul acero apagado */
   --bg:          #ffffff;
-  --bg-card:     #f7f2f6;
-  --bg-hover:    #ead8e6;
+  --bg-card:     #edf2f8;
+  --bg-hover:    #dde6f0;
   --text:        #1e293b;
   --text-muted:  #64748b;
-  --border:      #e8dce5;
+  --border:      #d5e0ec;
 
-  /* Acento mauve */
-  --blue:        #be84ae;
-  --accent:      #be84ae;
+  /* Acento azul acero */
+  --blue:        #5b7fa6;
+  --accent:      #5b7fa6;
 
   /* Colores pastel para categorías */
   --orange:      #f9a870;
@@ -25,22 +25,22 @@
   /* shadcn */
   --background:          #ffffff;
   --foreground:          #1e293b;
-  --card:                #f7f2f6;
+  --card:                #edf2f8;
   --card-foreground:     #1e293b;
   --popover:             #ffffff;
   --popover-foreground:  #1e293b;
-  --primary:             #be84ae;
+  --primary:             #5b7fa6;
   --primary-foreground:  #ffffff;
-  --secondary:           #f7f2f6;
+  --secondary:           #edf2f8;
   --secondary-foreground:#1e293b;
-  --muted:               #f7f2f6;
+  --muted:               #edf2f8;
   --muted-foreground:    #64748b;
-  --accent:              #be84ae;
+  --accent:              #5b7fa6;
   --accent-foreground:   #ffffff;
   --destructive:         #e07878;
   --border:              #e2e8f0;
   --input:               #e2e8f0;
-  --ring:                #be84ae;
+  --ring:                #5b7fa6;
   --radius:              0.625rem;
 }
 

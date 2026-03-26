@@ -24,11 +24,11 @@ const links = [
 ];
 
 const S = {
-  bg:     "#f7f2f6",
-  border: "#e8dce5",
-  muted:  "#9b7a8e",
-  hover:  "rgba(190,132,174,0.08)",
-  accent: "#be84ae",
+  bg:     "#edf2f8",
+  border: "#d5e0ec",
+  muted:  "#7a9bb8",
+  hover:  "rgba(91,127,166,0.08)",
+  accent: "#5b7fa6",
   text:   "#1e293b",
 };
 
