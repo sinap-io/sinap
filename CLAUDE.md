@@ -23,10 +23,16 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 **Branch activo:** `claude/distracted-lamarr` (pendiente merge a main)
 
+**Módulo Iniciativas — estado:**
+- DB: 13 tablas en Neon.tech (migración 002 aplicada) ✅
+- API: router `/iniciativas` completo en `api/routers/iniciativas.py` ✅ (solo en branch, no en Railway aún)
+- Frontend: panel `/iniciativas`, form `/nueva`, detalle `/[id]` ✅ (en branch)
+- Preview Vercel: `sinap-git-claude-distracted-lamarr-sebabizzi-7494s-projects.vercel.app` ✅ (muestra UI vacía porque Railway corre main)
+- `NEXT_PUBLIC_API_URL` configurada en Vercel para todos los entornos ✅
+
 **Lo que está pendiente:**
-- Merge PR `claude/distracted-lamarr` → `main` cuando se apruebe el diseño final
+- Merge PR `claude/distracted-lamarr` → `main` (activa módulo Iniciativas en Railway + producción)
 - Registrar dominio sinap.io en Cloudflare
-- Módulo Vinculador: routers backend + pantallas frontend (tablas ya creadas en DB)
 - Sistema de autenticación y usuarios (con roles oferente/demandante)
 - Vista marketplace diferenciada por rol
 - Estética: paleta definida ✅ (pendiente feedback final diseñadora)
@@ -49,11 +55,9 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Módulo Vinculador backend** — routers (tablas ya están en DB)
-2. **Módulo Vinculador frontend** — panel + detalle de casos
-3. **Sistema de autenticación y roles** — login, oferente vs demandante
-4. **Vista marketplace** — catálogo diferenciado por rol (oferente ve todo + puede editar su perfil; demandante ve catálogo en modo lectura)
-5. Merge `claude/distracted-lamarr` → `main` cuando diseño esté aprobado
+1. **Merge `claude/distracted-lamarr` → `main`** — activa módulo Iniciativas en Railway y producción
+2. **Sistema de autenticación y roles** — login, oferente vs demandante
+3. **Vista marketplace** — catálogo diferenciado por rol (oferente ve todo + puede editar su perfil; demandante ve catálogo en modo lectura)
 
 **Paleta actual (branch activo):**
 - Sidebar/cards: azul `#dbeafe`
@@ -76,7 +80,7 @@ En orden de prioridad:
 |---|---|---|
 | Gmail | sinap.io.dev@gmail.com | ✅ Creado |
 | GitHub | sinap-io/sinap | ✅ Organización creada, repo transferido y renombrado |
-| Neon.tech | sinap-production (9 tablas) | ✅ Operativo |
+| Neon.tech | sinap-production (13 tablas) | ✅ Operativo |
 | Railway | sinap-production.up.railway.app | ✅ Operativo (FastAPI) |
 | Vercel | sinap-psi.vercel.app | ✅ Operativo (Next.js) |
 | Cloudflare / sinap.io | — | ⏳ Registrar dominio |

@@ -41,11 +41,11 @@ Tenemos dos bases separadas:
 | Base | Para qué | Estado |
 |---|---|---|
 | `sinap-prototype` | El prototipo Streamlit | Funciona, no tocar |
-| `sinap-production` | La versión productiva | Activa, 9 tablas, datos de prueba cargados |
+| `sinap-production` | La versión productiva | Activa, 13 tablas, datos de prueba cargados |
 
 **Por qué dos bases separadas:** Para que cualquier error en el desarrollo no afecte la versión que se muestra a stakeholders.
 
-**Las 9 tablas de sinap-production:**
+**Las 13 tablas de sinap-production:**
 
 | Tabla | Qué guarda |
 |---|---|
@@ -56,8 +56,12 @@ Tenemos dos bases separadas:
 | `gap` | Gaps detectados: servicios demandados sin oferta disponible |
 | `busqueda` | Registro de todas las consultas a la IA (fuente de inteligencia) |
 | `vinculador` | Los operadores que gestionan los procesos de vinculación |
-| `caso_vinculacion` | Cada proceso de conectar dos actores |
-| `hito` | Los resultados concretos: reuniones, acuerdos, convenios firmados |
+| `iniciativa` | Cada proceso de articulación: vinculación, consorcio, oportunidad, etc. |
+| `iniciativa_actor` | Actores participantes de cada iniciativa, con su rol |
+| `iniciativa_necesidad` | Necesidades vinculadas a cada iniciativa |
+| `iniciativa_capacidad` | Capacidades vinculadas a cada iniciativa |
+| `iniciativa_instrumento` | Instrumentos de financiamiento vinculados a cada iniciativa |
+| `hito` | Resultados concretos y fechados: reuniones, acuerdos, convenios firmados |
 
 ---
 
@@ -90,7 +94,7 @@ Está construido con **FastAPI**, un framework de Python. Corre en un servidor y
 
 Es la interfaz visual: lo que ve y usa el usuario en el navegador. Construido con **Next.js**, el framework de React más usado del mundo.
 
-Las 9 pantallas actuales:
+Las 11 pantallas actuales:
 
 | Pantalla | Qué muestra |
 |---|---|
@@ -102,6 +106,9 @@ Las 9 pantallas actuales:
 | `/gaps` | Análisis de cobertura del ecosistema |
 | `/instruments` | Instrumentos de financiamiento disponibles |
 | `/search` | Búsqueda IA: escribís en lenguaje natural, Claude analiza |
+| `/iniciativas` | Panel de iniciativas con métricas y filtros |
+| `/iniciativas/nueva` | Formulario para registrar una nueva iniciativa |
+| `/iniciativas/[id]` | Detalle: actores participantes, vínculos y timeline de hitos |
 
 ---
 
@@ -187,33 +194,95 @@ Toda la plataforma requiere crear una cuenta. No hay acceso como "visitante" sin
 
 ### El orden en que se va a construir lo que falta
 
-1. **Módulo Vinculador** (lo que sigue ahora) — gestión de casos de vinculación entre actores
+1. **Merge a producción** — incorporar el módulo Iniciativas a `main` para activarlo en Railway y sinap-psi.vercel.app
 2. **Sistema de login y roles** — registro, acceso diferenciado por rol
 3. **Vista marketplace** — el catálogo diferenciado según si sos oferente o demandante
 
 ---
 
-## El Módulo Vinculador
+## El Módulo Iniciativas
 
-Es el módulo que convierte SINAP de un directorio inteligente a un sistema operativo de vinculación. Su función es gestionar el proceso completo desde que se detecta una conexión posible hasta que se produce un resultado concreto (reunión, acuerdo, convenio, financiamiento obtenido).
+### El problema que motivó este diseño
 
-**Las tres tablas que lo sostienen ya están creadas en la base de datos.** Lo que falta construir es la interfaz y los endpoints del backend.
+La primera versión del sistema tenía un módulo llamado "Vinculador" con un esquema simple: un actor que necesita algo + un actor que lo ofrece + un operador que los conecta. Ese modelo funcionaba bien para el caso más básico — pero la realidad del ecosistema biotecnológico resultó ser mucho más compleja.
 
-**Flujo de trabajo del vinculador:**
-```
-Se detecta un gap (necesidad sin oferta)
-        ↓
-Se abre un caso de vinculación
-(actor demandante + actor oferente + necesidad)
-        ↓
-El vinculador gestiona el proceso
-        ↓
-Se registran hitos: contacto → reunión → acuerdo → convenio
-        ↓
-El caso se cierra con resultado documentado
-```
+Tres situaciones que el modelo original no podía representar:
 
-Cada caso cerrado con éxito enriquece la base de conocimiento: qué actores colaboran, qué instrumentos financian, qué tipos de vinculación funcionan.
+**Primera situación:** Un consorcio de cinco laboratorios se forma para desarrollar biosensores. No hay un demandante ni un oferente — hay cinco actores co-creando algo nuevo. ¿Quién es el "demandante" y quién el "oferente"? Nadie, y los dos, a la vez.
+
+**Segunda situación:** La Universidad de Illinois visita Córdoba y pide vincularse con el Clúster. Es una oportunidad de conexión que puede derivar en muchas cosas — una colaboración académica, un proyecto conjunto, una transferencia tecnológica — pero en este momento es solo un encuentro. No hay necesidad declarada ni servicio disponible. El primer paso es simplemente registrar que esa relación existe y darle seguimiento.
+
+**Tercera situación:** Existe un instrumento de financiamiento europeo para consorcios de biotecnología. Tres actores del ecosistema podrían calificar, pero nadie lo está articulando activamente. Detectar esa oportunidad y empezar a moverla requiere registrarla de alguna forma en el sistema.
+
+En los tres casos, el modelo original no tenía cómo representarlos. El módulo Iniciativas resuelve eso.
+
+---
+
+### Qué es una Iniciativa
+
+Una **Iniciativa** es cualquier proceso de articulación que vale la pena registrar, seguir y documentar dentro del ecosistema.
+
+Puede ser:
+
+| Tipo | Descripción | Ejemplo |
+|---|---|---|
+| `vinculacion` | Conexión entre actores — el primer paso de casi todo | Reunión con Universidad de Illinois |
+| `oportunidad` | Una ventana de mercado o colaboración detectada | Demanda de análisis moleculares en el sector agroindustrial |
+| `consorcio` | Grupo de actores que se organizan para hacer algo juntos | Consorcio de biosensores con 5 laboratorios |
+| `demanda` | Un actor tiene una necesidad específica que busca cubrir | Startup necesita fermentadores industriales |
+| `oferta` | Un actor tiene una capacidad disponible que busca colocar | Laboratorio ofrece nueva línea de bioinformática |
+| `instrumento` | Un fondo, subsidio o crédito que actores pueden aprovechar | Convocatoria FONARSEC para consorcios |
+| `gap` | Una brecha detectada: se demanda algo que nadie ofrece | No hay servicios de bioseguridad nivel 3 en Córdoba |
+
+Lo que todas tienen en común: son procesos, no fotos. Tienen un estado, evolucionan en el tiempo, involucran actores, y generan resultados concretos que quedan documentados.
+
+---
+
+### Cómo funciona una Iniciativa
+
+Cada iniciativa tiene tres capas:
+
+**1. La iniciativa en sí** — un título, un tipo, un estado (abierta → en curso → concretada) y opcionalmente un vinculador asignado para gestionarla.
+
+**2. Los actores participantes** — cada actor tiene un rol dentro de la iniciativa. Los roles posibles son: líder, demandante, oferente, miembro, candidato o financiador. Una iniciativa puede tener dos actores o doce. Una empresa puede ser líder en una iniciativa y candidato en otra.
+
+**3. Los vínculos con el ecosistema** — la iniciativa puede estar ligada a necesidades, capacidades e instrumentos ya registrados en el sistema. Eso permite cruzar información: si una empresa declara formalmente que necesita fermentadores, y hay una iniciativa de consorcio que incluye fermentadores, el sistema puede detectar esa relación.
+
+Y por encima de las tres capas, están los **hitos**: los resultados concretos y fechados que documentan el avance. Una reunión realizada, un acuerdo alcanzado, un convenio firmado, un financiamiento obtenido. Los hitos son la memoria institucional del proceso.
+
+---
+
+### Por qué el Vinculador es opcional
+
+En el diseño anterior, el vinculador era el centro del módulo — todo giraba en torno a su intervención. El nuevo diseño lo convierte en un recurso disponible, no en un requisito.
+
+Algunas iniciativas van a necesitar un gestor activo — especialmente las vinculaciones complejas, las negociaciones entre múltiples partes, o los consorcios. Otras van a gestionarse solas: dos actores que ya se conocen, que abren una iniciativa de tipo "oferta" simplemente para darle visibilidad y trazabilidad a lo que ya está pasando.
+
+Esto refleja mejor cómo funciona el ecosistema real: no todo pasa por el escritorio del Clúster, pero sí conviene que todo quede registrado.
+
+---
+
+### Quién puede abrir una Iniciativa
+
+Este punto es deliberado y no menor. No cualquier actor puede abrir una iniciativa en cualquier momento — eso generaría ruido, iniciativas abandonadas y pérdida de calidad en la información.
+
+El modelo define tres perfiles con diferentes niveles de autorización:
+
+- **Comisión Directiva** — los actores que integran la conducción del Clúster. Tienen el nivel más alto de autorización y pueden abrir y gestionar cualquier tipo de iniciativa.
+- **Vinculador** — los operadores del Clúster designados para gestionar procesos. Pueden abrir iniciativas en nombre del Clúster.
+- **Actor habilitado** — en el futuro, actores específicos podrán tener permiso para abrir ciertos tipos de iniciativas (por ejemplo, publicar su propia oferta o demanda).
+
+La IA puede *sugerir* iniciativas — si detecta un gap o una oportunidad latente, puede proponerla — pero no puede crearlas. Siempre hay un humano con la autorización adecuada que confirma antes de que algo quede registrado como iniciativa activa.
+
+---
+
+### Por qué esto es central para SINAP
+
+El catálogo de actores, servicios, necesidades e instrumentos es el mapa del ecosistema — describe lo que hay. Las Iniciativas son la capa operativa — describen lo que está pasando.
+
+Sin iniciativas, SINAP es un directorio inteligente. Con iniciativas, SINAP es el sistema operativo de la articulación: cada conexión que el Clúster facilita queda registrada, tiene trazabilidad, genera métricas y acumula conocimiento institucional sobre qué tipo de colaboraciones funcionan, entre quiénes, con qué instrumentos y en qué tiempos.
+
+Con el tiempo, esa base de iniciativas concretadas se convierte en el activo más valioso de la plataforma: evidencia concreta del impacto del Clúster en el ecosistema.
 
 ---
 

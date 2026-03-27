@@ -30,9 +30,9 @@ sinap/
 
 **Prototipo (`app/`):** Streamlit conectado a `sinap-prototype` en Neon.tech. Funciona y se usa para validación con stakeholders. Se mantiene intacto en paralelo con la versión productiva.
 
-**Backend (`api/`):** FastAPI conectado a `sinap-production` en Neon.tech. 6 routers operativos, probados localmente.
+**Backend (`api/`):** FastAPI conectado a `sinap-production` en Neon.tech. 7 routers operativos (incluyendo `/iniciativas`, en branch).
 
-**Frontend (`web/`):** Next.js 16.2 conectado al backend FastAPI. 9 rutas compiladas y funcionales.
+**Frontend (`web/`):** Next.js 16.2 conectado al backend FastAPI. 12 rutas compiladas y funcionales (incluyendo módulo Iniciativas, en branch).
 
 ### Bases de datos en Neon.tech
 
@@ -98,22 +98,30 @@ Next.js App Router con Server Components es la arquitectura más apropiada para 
 
 **`gap`** — Gaps detectados automáticamente por Claude durante búsquedas, o declarados manualmente. Cada búsqueda que detecta cobertura parcial o nula inserta registros aquí.
 
-### Tablas del Módulo Vinculador (migración 001)
+### Tablas del Módulo Iniciativas (migraciones 001 + 002)
 
-Agregadas en `api/db/migrations/001_vinculador.sql`. Ya aplicadas en `sinap-production`.
+Migración 001 (`api/db/migrations/001_vinculador.sql`) — ya aplicada en `sinap-production`:
 
 **`vinculador`** — El operador humano que gestiona los procesos de vinculación. Separado de `actor` deliberadamente: no es un actor del ecosistema, es un rol interno de la plataforma. Cuando se agregue autenticación, esta tabla se conecta con la de usuarios.
 
-**`caso_vinculacion`** — El corazón del Módulo Vinculador. Registra cada proceso de vincular una necesidad de un actor con la capacidad de otro.
-- `actor_demandante_id`: quien tiene la necesidad
-- `actor_oferente_id`: quien puede satisfacerla — **nullable** porque un caso se puede abrir antes de identificar el match
-- `necesidad_id` y `capacidad_id`: referencias específicas — `capacidad_id` también es nullable por la misma razón
-- `estado`: abierto → en_gestion → vinculado → cerrado | cancelado (permite métricas de conversión)
+Migración 002 (`api/db/migrations/002_iniciativas.sql`) — ya aplicada en `sinap-production`:
 
-**`hito`** — Trazabilidad de resultados dentro de un caso.
-- 7 tipos ordenados de menor a mayor impacto: `contacto_establecido → reunion_realizada → acuerdo_alcanzado → convenio_firmado → proyecto_iniciado → financiamiento_obtenido → otro`
-- `fecha` es `DATE` (no `TIMESTAMPTZ`) porque es una fecha de evento del mundo real, no un timestamp de sistema
-- `evidencia_url` permite linkar el PDF del convenio, acta, o cualquier registro externo
+**`iniciativa`** — Corazón del módulo. Cualquier proceso de articulación entre actores.
+- `tipo`: vinculacion | oportunidad | consorcio | demanda | oferta | instrumento | gap
+- `estado`: abierta → en_curso → concretada | cerrada
+- `vinculador_id`: nullable — el gestor humano es opcional
+- `notas`: texto libre para contexto interno
+
+**`iniciativa_actor`** — Actores participantes de cada iniciativa con su rol.
+- `rol`: lider | demandante | oferente | miembro | candidato | financiador
+- Un actor puede tener roles distintos en distintas iniciativas
+
+**`iniciativa_necesidad`**, **`iniciativa_capacidad`**, **`iniciativa_instrumento`** — Vínculos con el ecosistema existente. Permiten cruzar iniciativas con los datos ya registrados.
+
+**`hito`** — Resultados concretos y fechados de una iniciativa.
+- 7 tipos: `contacto_establecido → reunion_realizada → acuerdo_alcanzado → convenio_firmado → proyecto_iniciado → financiamiento_obtenido → otro`
+- `fecha` es `DATE` (no `TIMESTAMPTZ`) — es una fecha de evento real, no un timestamp de sistema
+- `evidencia_url` permite linkar el PDF del convenio, acta o registro externo
 
 ---
 
@@ -159,12 +167,18 @@ En producción se podría migrar a `tool_use` de Anthropic para mayor confiabili
 | `GET /gaps/search-log` | Últimas consultas IA (señal de demanda no declarada) |
 | `POST /search` | Búsqueda IA: Claude analiza la consulta contra el ecosistema |
 
-**Pendiente (Módulo Vinculador):**
-- `GET/POST /vinculadores`
-- `GET/POST /casos`
-- `PATCH /casos/{id}`
-- `GET /casos/{id}`
-- `POST /casos/{id}/hitos`
+**Módulo Iniciativas (en branch `claude/distracted-lamarr`, pendiente deploy a Railway):**
+
+| Endpoint | Descripción |
+|---|---|
+| `GET /iniciativas` | Lista con filtros: `tipo`, `estado`, `vinculador_id` |
+| `POST /iniciativas` | Crear iniciativa |
+| `GET /iniciativas/{id}` | Detalle con actores, hitos y vínculos |
+| `PATCH /iniciativas/{id}/estado` | Cambiar estado |
+| `POST /iniciativas/{id}/actores` | Agregar actor con rol |
+| `DELETE /iniciativas/{id}/actores/{actor_id}` | Quitar actor |
+| `POST /iniciativas/{id}/hitos` | Agregar hito |
+| `GET /vinculador/operadores` | Lista de vinculadores disponibles |
 
 ---
 
@@ -181,10 +195,15 @@ En producción se podría migrar a `tool_use` de Anthropic para mayor confiabili
 | `/instruments` | Server + Client | Financiamiento con montos y links |
 | `/search` | Server + Client | Búsqueda IA: form, spinner, respuesta estructurada |
 
-**Pendiente (Módulo Vinculador):**
-- `/vinculador` — Panel con cartera de casos
-- `/vinculador/casos/[id]` — Detalle con timeline de hitos
-- `/vinculador/casos/nuevo` — Formulario de apertura de caso
+**Módulo Iniciativas (en branch `claude/distracted-lamarr`):**
+
+| Ruta | Tipo | Descripción |
+|---|---|---|
+| `/iniciativas` | Server (dynamic) | Panel con métricas y lista filtrable |
+| `/iniciativas/nueva` | Server (dynamic) | Formulario tipo-first con selección visual |
+| `/iniciativas/[id]` | Server (dynamic) | Detalle: actores, vínculos, hitos timeline |
+
+Las rutas `/vinculador/*` redirigen a `/iniciativas/*` (código legacy, no eliminar aún).
 
 ---
 
@@ -246,32 +265,27 @@ python -m api.db.seed
 - Branch activo `claude/distracted-lamarr` en preview; pendiente merge a main
 - **Pendiente:** Registrar dominio sinap.io en Cloudflare y configurar DNS
 
-### 2. Módulo Vinculador — Backend
-Tablas ya creadas en `sinap-production` (migración 001). Faltan los routers:
-- `POST /vinculadores` — crear operador
-- `GET/POST /casos` — listar y abrir casos
-- `PATCH /casos/{id}` — actualizar estado (en_gestion, vinculado, cerrado)
-- `POST /casos/{id}/hitos` — agregar hito con tipo, fecha, evidencia_url
-- `GET /casos/{id}` — detalle con timeline de hitos
+### 2. Módulo Iniciativas ✅ COMPLETADO (en branch, pendiente merge)
 
-### 3. Módulo Vinculador — Frontend
-- `/vinculador` — Panel: cartera de casos activos por estado, métricas de impacto (casos abiertos, vinculaciones logradas, hitos del mes)
-- `/vinculador/casos/[id]` — Detalle con timeline visual de hitos
-- `/vinculador/casos/nuevo` — Formulario: seleccionar actor demandante, necesidad, asignar vinculador
+- DB: 13 tablas en sinap-production — migración 002 aplicada ✅
+- API: router `/iniciativas` completo en `api/routers/iniciativas.py` ✅
+- Frontend: 3 rutas nuevas (`/iniciativas`, `/iniciativas/nueva`, `/iniciativas/[id]`) ✅
+- Preview Vercel: operativa, muestra UI vacía (Railway corre `main`, sin endpoint aún)
+- **Pendiente:** merge `claude/distracted-lamarr` → `main` para activar en Railway + producción
 
-### 4. Sistema de autenticación y roles
+### 3. Sistema de autenticación y roles
 Orden de implementación definido:
 - **Login** — autenticación básica (JWT o similar). Toda la plataforma requiere login; no hay acceso como invitado.
 - **Rol oferente** — cualquier tipo de actor (laboratorio, empresa, startup, universidad, investigación) puede ser oferente. Paga membresía. Tiene perfil completo con capacidades editables.
 - **Rol demandante** — acceso free. Ve todo el catálogo (actores, servicios, necesidades, instrumentos) en modo lectura. No puede publicar capacidades.
 - La tabla `vinculador` (ya creada) se conectará con la tabla de usuarios cuando se implemente auth.
 
-### 5. Vista marketplace diferenciada
+### 4. Vista marketplace diferenciada
 - Oferente: ve su perfil propio + puede editar capacidades + acceso completo a búsqueda IA
 - Demandante: vista del catálogo en modo lectura + acceso a búsqueda IA
 - La distinción NO es por tipo de actor, sino por el rol que eligió al registrarse
 
-### 6. Capacidades de IA (versión final, ver BACKLOG.md)
+### 5. Capacidades de IA (versión final, ver BACKLOG.md)
 - Matching automático proactivo (sin búsqueda manual)
 - Recomendación de financiamiento por perfil de actor
 - Procesamiento de documentos (actor sube ficha técnica, IA pre-carga su perfil)
