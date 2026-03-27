@@ -30,9 +30,9 @@ sinap/
 
 **Prototipo (`app/`):** Streamlit conectado a `sinap-prototype` en Neon.tech. Funciona y se usa para validación con stakeholders. Se mantiene intacto en paralelo con la versión productiva.
 
-**Backend (`api/`):** FastAPI conectado a `sinap-production` en Neon.tech. 7 routers operativos (incluyendo `/iniciativas`, en branch).
+**Backend (`api/`):** FastAPI conectado a `sinap-production` en Neon.tech. 7 routers operativos en Railway producción.
 
-**Frontend (`web/`):** Next.js 16.2 conectado al backend FastAPI. 12 rutas compiladas y funcionales (incluyendo módulo Iniciativas, en branch).
+**Frontend (`web/`):** Next.js 16.2 conectado al backend FastAPI. 12 rutas compiladas y funcionales en producción.
 
 ### Bases de datos en Neon.tech
 
@@ -265,13 +265,17 @@ python -m api.db.seed
 - Branch activo `claude/distracted-lamarr` en preview; pendiente merge a main
 - **Pendiente:** Registrar dominio sinap.io en Cloudflare y configurar DNS
 
-### 2. Módulo Iniciativas ✅ COMPLETADO (en branch, pendiente merge)
+### 2. Módulo Iniciativas ✅ EN PRODUCCIÓN
 
-- DB: 13 tablas en sinap-production — migración 002 aplicada ✅
-- API: router `/iniciativas` completo en `api/routers/iniciativas.py` ✅
-- Frontend: 3 rutas nuevas (`/iniciativas`, `/iniciativas/nueva`, `/iniciativas/[id]`) ✅
-- Preview Vercel: operativa, muestra UI vacía (Railway corre `main`, sin endpoint aún)
-- **Pendiente:** merge `claude/distracted-lamarr` → `main` para activar en Railway + producción
+- DB: migración 002 + 003 aplicadas en sinap-production ✅
+  - Migración 003: campo `referente` en `iniciativa_actor`, estado `postergada` reemplaza `cancelada`
+- API: router `/iniciativas` completo en Railway ✅
+- Frontend: 3 rutas en producción (`/iniciativas`, `/iniciativas/nueva`, `/iniciativas/[id]`) ✅
+- Estados: abierta / en_curso / concretada / cerrada / postergada
+- Actores: campo `referente` opcional (persona específica dentro del actor)
+- Notas: editables desde el detalle
+
+**Deuda técnica registrada:** el campo `referente` en `iniciativa_actor` es provisional. A futuro se reemplazará por una tabla `persona` vinculada a `actor`, cuando se implemente el sistema de login.
 
 ### 3. Sistema de autenticación y roles
 Orden de implementación definido:
