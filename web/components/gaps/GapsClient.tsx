@@ -23,16 +23,16 @@ export default function GapsClient({
       {/* Métricas */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "Gaps totales",       value: summary.total_gaps,    color: "#ef4444" },
-          { label: "Cobertura parcial",  value: summary.total_parcial, color: "#f97316" },
-          { label: "Actores demandantes",value: summary.total_demanda, color: "#3b82f6" },
+          { label: "Sin cobertura",      value: summary.total_gaps,    color: "#dc2626" },
+          { label: "Cobertura parcial",  value: summary.total_parcial, color: "#0d9488" },
+          { label: "Actores demandantes",value: summary.total_demanda, color: "#2563eb" },
         ].map(({ label, value, color }) => (
           <div
             key={label}
             className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-4 text-center"
             style={{ borderTopColor: color, borderTopWidth: "2px" }}
           >
-            <div className="text-3xl font-black text-[var(--text)]">{value}</div>
+            <div className="text-3xl font-black" style={{ color }}>{value}</div>
             <div className="text-xs text-[var(--text-muted)] mt-1">{label}</div>
           </div>
         ))}
@@ -44,7 +44,7 @@ export default function GapsClient({
           onClick={() => setSoloSinOferta(true)}
           className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
             soloSinOferta
-              ? "bg-[#ef444422] text-[#ef4444] border border-[#ef444444]"
+              ? "bg-[#dc262628] text-[#dc2626] border border-[#dc262677]"
               : "text-[var(--text-muted)] hover:text-[var(--text)] border border-[var(--border)]"
           }`}
         >
@@ -54,7 +54,7 @@ export default function GapsClient({
           onClick={() => setSoloSinOferta(false)}
           className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${
             !soloSinOferta
-              ? "bg-[#f9731622] text-[#f97316] border border-[#f9731644]"
+              ? "bg-[#0d948828] text-[#0d9488] border border-[#0d948877]"
               : "text-[var(--text-muted)] hover:text-[var(--text)] border border-[var(--border)]"
           }`}
         >
@@ -74,8 +74,8 @@ export default function GapsClient({
         <div className="space-y-3">
           {filtered.map((g, i) => {
             const esGap      = g.oferta_disponible === 0;
-            const borderColor = esGap ? "#ef4444" : "#f97316";
-            const tagColor    = esGap ? "#ef4444" : "#f97316";
+            const borderColor = esGap ? "#dc2626" : "#0d9488";
+            const tagColor    = esGap ? "#dc2626" : "#0d9488";
             const tagLabel    = esGap ? "Sin cobertura" : `${g.oferta_disponible} proveedor(es)`;
             return (
               <div
