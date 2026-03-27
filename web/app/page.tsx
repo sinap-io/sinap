@@ -82,7 +82,7 @@ export default async function HomePage() {
         {/* Métricas */}
         <div className="flex flex-wrap gap-10">
           {METRICS.map(({ label, value }) => (
-            <div key={label}>
+            <div key={label} className="text-center">
               <div className="text-4xl font-black text-[var(--accent)]">{value}</div>
               <div className="text-xs uppercase tracking-wide text-[var(--text-muted)] mt-1">{label}</div>
             </div>
