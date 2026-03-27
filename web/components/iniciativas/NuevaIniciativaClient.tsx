@@ -92,7 +92,7 @@ export default function NuevaIniciativaClient({
             required
             value={titulo}
             onChange={(e) => setTitulo(e.target.value)}
-            placeholder="Ej: Consorcio biosensores para diagnóstico rápido"
+            placeholder="Ej: Reunión con universidad extranjera, gap en servicios de bioinformática..."
             className={inputCls}
           />
         </div>
@@ -114,7 +114,7 @@ export default function NuevaIniciativaClient({
             value={notas}
             onChange={(e) => setNotas(e.target.value)}
             rows={2}
-            placeholder="Notas del vinculador, contexto, próximos pasos..."
+            placeholder="Contexto relevante, próximos pasos, información de contacto..."
             className={`${inputCls} resize-none`}
           />
         </div>
