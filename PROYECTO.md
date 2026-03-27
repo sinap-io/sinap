@@ -194,9 +194,10 @@ Toda la plataforma requiere crear una cuenta. No hay acceso como "visitante" sin
 
 ### El orden en que se va a construir lo que falta
 
-1. **Merge a producción** — incorporar el módulo Iniciativas a `main` para activarlo en Railway y sinap-psi.vercel.app
-2. **Sistema de login y roles** — registro, acceso diferenciado por rol
-3. **Vista marketplace** — el catálogo diferenciado según si sos oferente o demandante
+1. **Merge auth a producción** — login funcionando en `main`
+2. **Crear usuarios** del equipo (CD, vinculadores, admins)
+3. **Roles en UI** — cada rol ve lo que le corresponde
+4. **Vista marketplace** — el catálogo diferenciado según si sos oferente o demandante
 
 ---
 
