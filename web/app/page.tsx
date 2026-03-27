@@ -22,40 +22,34 @@ async function getStats() {
 
 const NAV_CARDS = [
   {
-    href:    "/actors",
-    title:   "Red de actores",
-    desc:    "Laboratorios, empresas, startups, universidades e instituciones de investigación del ecosistema.",
-    accent:  "var(--accent)",
+    href:  "/actors",
+    title: "Red de actores",
+    desc:  "Laboratorios, empresas, startups, universidades e instituciones de investigación del ecosistema.",
   },
   {
-    href:    "/search",
-    title:   "Buscar con IA",
-    desc:    "Describí lo que necesitás en lenguaje libre. La IA encuentra servicios relevantes y detecta gaps.",
-    accent:  "var(--green)",
+    href:  "/search",
+    title: "Buscar con IA",
+    desc:  "Describí lo que necesitás en lenguaje libre. La IA encuentra servicios relevantes y detecta gaps.",
   },
   {
-    href:    "/instruments",
-    title:   "Financiamiento",
-    desc:    "Subsidios, créditos y fondos disponibles para proyectos de innovación biotech.",
-    accent:  "var(--orange)",
+    href:  "/instruments",
+    title: "Financiamiento",
+    desc:  "Subsidios, créditos y fondos disponibles para proyectos de innovación biotech.",
   },
   {
-    href:    "/gaps",
-    title:   "Gaps de oferta",
-    desc:    "Necesidades activas sin cobertura. Oportunidades de inversión para nuevos actores.",
-    accent:  "var(--red)",
+    href:  "/gaps",
+    title: "Gaps de oferta",
+    desc:  "Necesidades activas sin cobertura. Oportunidades de inversión para nuevos actores.",
   },
   {
-    href:    "/services",
-    title:   "Servicios",
-    desc:    "Catálogo completo de capacidades disponibles en la red.",
-    accent:  "var(--accent)",
+    href:  "/services",
+    title: "Servicios",
+    desc:  "Catálogo completo de capacidades disponibles en la red.",
   },
   {
-    href:    "/needs",
-    title:   "Necesidades",
-    desc:    "Demanda declarada por actores del ecosistema, ordenada por urgencia.",
-    accent:  "var(--orange)",
+    href:  "/needs",
+    title: "Necesidades",
+    desc:  "Demanda declarada por actores del ecosistema, ordenada por urgencia.",
   },
 ];
 
@@ -73,7 +67,7 @@ export default async function HomePage() {
   return (
     <div className="space-y-10">
       {/* Hero */}
-      <section className="pt-4 pb-10 border-b border-[var(--border)]">
+      <section className="pt-8 pb-10 border-b border-[var(--border)]">
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--accent)] mb-4">
           Ecosistema Biotech · Córdoba, Argentina
         </p>
@@ -100,13 +94,13 @@ export default async function HomePage() {
       <section>
         <h2 className="text-lg font-semibold text-[var(--text)] mb-4">¿Qué querés hacer?</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {NAV_CARDS.map(({ href, title, desc, accent }) => (
+          {NAV_CARDS.map(({ href, title, desc }) => (
             <Link
               key={href}
               href={href}
               className="group block rounded-xl border border-[var(--border)] bg-white p-6
                          hover:border-[var(--accent)] hover:shadow-md transition-all duration-150"
-              style={{ borderTopColor: accent, borderTopWidth: "3px" }}
+              style={{ borderTopColor: "var(--accent)", borderTopWidth: "3px" }}
             >
               <h3 className="font-semibold text-[var(--text)] mb-2 group-hover:text-[var(--accent)] transition-colors">
                 {title}
