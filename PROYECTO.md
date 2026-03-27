@@ -226,9 +226,9 @@ Puede ser:
 
 | Tipo | Descripción | Ejemplo |
 |---|---|---|
-| `vinculacion` | Conexión entre actores — el primer paso de casi todo | Reunión con Universidad de Illinois |
+| `vinculacion` | Conexión entre actores — el primer paso de casi todo | Reunión con universidad extranjera |
 | `oportunidad` | Una ventana de mercado o colaboración detectada | Demanda de análisis moleculares en el sector agroindustrial |
-| `consorcio` | Grupo de actores que se organizan para hacer algo juntos | Consorcio de biosensores con 5 laboratorios |
+| `consorcio` | Grupo de actores que se organizan para hacer algo juntos | Consorcio de desarrollo tecnológico con laboratorios |
 | `demanda` | Un actor tiene una necesidad específica que busca cubrir | Startup necesita fermentadores industriales |
 | `oferta` | Un actor tiene una capacidad disponible que busca colocar | Laboratorio ofrece nueva línea de bioinformática |
 | `instrumento` | Un fondo, subsidio o crédito que actores pueden aprovechar | Convocatoria FONARSEC para consorcios |
@@ -242,9 +242,11 @@ Lo que todas tienen en común: son procesos, no fotos. Tienen un estado, evoluci
 
 Cada iniciativa tiene tres capas:
 
-**1. La iniciativa en sí** — un título, un tipo, un estado (abierta → en curso → concretada) y opcionalmente un vinculador asignado para gestionarla.
+**1. La iniciativa en sí** — un título, un tipo, un estado (abierta → en curso → concretada / cerrada / postergada) y opcionalmente un vinculador asignado para gestionarla.
 
-**2. Los actores participantes** — cada actor tiene un rol dentro de la iniciativa. Los roles posibles son: líder, demandante, oferente, miembro, candidato o financiador. Una iniciativa puede tener dos actores o doce. Una empresa puede ser líder en una iniciativa y candidato en otra.
+**2. Los actores participantes** — cada actor tiene un rol dentro de la iniciativa (líder, demandante, oferente, miembro, candidato o financiador) y opcionalmente un **referente**: la persona específica dentro de esa organización que participa. Por ejemplo: CEPROCOR como actor, Dra. García como referente. Esto permite registrar quién dentro de un laboratorio grande lleva adelante cada proceso, sin necesitar una tabla de personas separada.
+
+> **Nota técnica (para desarrolladores):** el campo `referente` es texto libre en la tabla `iniciativa_actor`. Es una solución provisional. Cuando se implemente el sistema de login y usuarios, se reemplazará por una relación con una tabla `persona` vinculada a `actor`, lo que permitirá que los propios referentes accedan a la plataforma con su cuenta.
 
 **3. Los vínculos con el ecosistema** — la iniciativa puede estar ligada a necesidades, capacidades e instrumentos ya registrados en el sistema. Eso permite cruzar información: si una empresa declara formalmente que necesita fermentadores, y hay una iniciativa de consorcio que incluye fermentadores, el sistema puede detectar esa relación.
 
