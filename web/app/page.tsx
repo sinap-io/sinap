@@ -80,7 +80,7 @@ export default async function HomePage() {
         </p>
 
         {/* Métricas */}
-        <div className="flex flex-wrap gap-10">
+        <div className="flex flex-wrap justify-center gap-10">
           {METRICS.map(({ label, value }) => (
             <div key={label} className="text-center">
               <div className="text-4xl font-black text-[var(--accent)]">{value}</div>
