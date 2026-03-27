@@ -102,7 +102,7 @@ export const ESTADO_INICIATIVA_LABEL: Record<string, string> = {
   en_curso:   "En curso",
   concretada: "Concretada",
   cerrada:    "Cerrada",
-  cancelada:  "Cancelada",
+  postergada: "Postergada",
 };
 
 export const ESTADO_INICIATIVA_COLOR: Record<string, string> = {
@@ -110,7 +110,7 @@ export const ESTADO_INICIATIVA_COLOR: Record<string, string> = {
   en_curso:   "#f97316",
   concretada: "#22c55e",
   cerrada:    "#6b7280",
-  cancelada:  "#ef4444",
+  postergada: "#a855f7",
 };
 
 export const ROL_ACTOR_LABEL: Record<string, string> = {

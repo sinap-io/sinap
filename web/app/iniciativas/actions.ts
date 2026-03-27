@@ -61,15 +61,33 @@ export async function cambiarEstado(
 
 // ── Actores ───────────────────────────────────────────────────
 
+export async function editarNotas(
+  id: number,
+  notas: string | null,
+): Promise<Result> {
+  try {
+    await fetchApi(`/iniciativas/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ notas: notas ?? "" }),
+    });
+    revalidatePath(`/iniciativas/${id}`);
+    return { ok: true };
+  } catch (e) {
+    if (e instanceof ApiError) return { ok: false, message: `Error al guardar notas (${e.status}).` };
+    return { ok: false, message: "No se pudo conectar con el servidor." };
+  }
+}
+
 export async function agregarActor(
   id: number,
   actor_id: number,
   rol: string,
+  referente?: string | null,
 ): Promise<Result> {
   try {
     await fetchApi(`/iniciativas/${id}/actores`, {
       method: "POST",
-      body: JSON.stringify({ actor_id, rol }),
+      body: JSON.stringify({ actor_id, rol, referente: referente || null }),
     });
     revalidatePath(`/iniciativas/${id}`);
     return { ok: true };

@@ -25,6 +25,7 @@ class HitoOut(BaseModel):
 class IniciativaActorAdd(BaseModel):
     actor_id: int
     rol: str
+    referente: str | None = None
 
 
 class IniciativaActorOut(BaseModel):
@@ -32,6 +33,7 @@ class IniciativaActorOut(BaseModel):
     actor_nombre: str
     actor_tipo: str
     rol: str
+    referente: str | None
 
 
 # ── Relaciones (necesidad, capacidad, instrumento) ────────────
