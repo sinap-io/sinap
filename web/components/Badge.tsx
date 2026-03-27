@@ -9,9 +9,9 @@ export default function Badge({ label, color, className = "" }: BadgeProps) {
     <span
       className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border ${className}`}
       style={{
-        background: `${color}22`,
+        background: `${color}28`,
         color,
-        borderColor: `${color}44`,
+        borderColor: `${color}77`,
       }}
     >
       {label}
