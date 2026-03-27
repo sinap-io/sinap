@@ -14,28 +14,30 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (26 marzo 2026)
+## Estado actual (27 marzo 2026)
 
 **Lo que funciona en producción:**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
 - Frontend Next.js → Vercel: `https://sinap-psi.vercel.app` ✅
 - Prototipo Streamlit (`app/`) — conectado a `sinap-production` — NO TOCAR
+- Módulo Iniciativas completo en producción ✅
 
-**Branch activo:** `claude/distracted-lamarr` (pendiente merge a main)
+**Branch activo:** `claude/distracted-lamarr` (en uso continuo, se mergea a main por PR)
 
 **Módulo Iniciativas — estado:**
-- DB: 13 tablas en Neon.tech (migración 002 aplicada) ✅
-- API: router `/iniciativas` completo en `api/routers/iniciativas.py` ✅ (solo en branch, no en Railway aún)
-- Frontend: panel `/iniciativas`, form `/nueva`, detalle `/[id]` ✅ (en branch)
-- Preview Vercel: `sinap-git-claude-distracted-lamarr-sebabizzi-7494s-projects.vercel.app` ✅ (muestra UI vacía porque Railway corre main)
-- `NEXT_PUBLIC_API_URL` configurada en Vercel para todos los entornos ✅
+- DB: 13 tablas + migración 003 aplicada (14 cambios: campo `referente` + estados) ✅
+- API: router `/iniciativas` completo en Railway ✅
+- Frontend: panel `/iniciativas`, form `/nueva`, detalle `/[id]` en producción ✅
+- Estados: abierta / en_curso / concretada / cerrada / postergada ✅
+- Actores con campo `referente` (persona dentro del actor) ✅
+- Editar notas desde el detalle ✅
 
 **Lo que está pendiente:**
-- Merge PR `claude/distracted-lamarr` → `main` (activa módulo Iniciativas en Railway + producción)
-- Registrar dominio sinap.io en Cloudflare
+- Revisión estética de la web (Sebastián quiere revisar cuando sea oportuno)
+- Tabla `persona` vinculada a `actor` — deuda técnica, a implementar con el sistema de login
 - Sistema de autenticación y usuarios (con roles oferente/demandante)
 - Vista marketplace diferenciada por rol
-- Estética: paleta definida ✅ (pendiente feedback final diseñadora)
+- Registrar dominio sinap.io en Cloudflare
 
 ---
 
@@ -55,9 +57,10 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Merge `claude/distracted-lamarr` → `main`** — activa módulo Iniciativas en Railway y producción
+1. **Revisión estética** — Sebastián quiere revisar la estética de la web cuando sea oportuno
 2. **Sistema de autenticación y roles** — login, oferente vs demandante
 3. **Vista marketplace** — catálogo diferenciado por rol (oferente ve todo + puede editar su perfil; demandante ve catálogo en modo lectura)
+4. **Tabla `persona`** — implementar cuando haya login (reemplaza el campo `referente` provisional)
 
 **Paleta actual (branch activo):**
 - Sidebar/cards: azul `#dbeafe`
@@ -80,7 +83,7 @@ En orden de prioridad:
 |---|---|---|
 | Gmail | sinap.io.dev@gmail.com | ✅ Creado |
 | GitHub | sinap-io/sinap | ✅ Organización creada, repo transferido y renombrado |
-| Neon.tech | sinap-production (13 tablas) | ✅ Operativo |
+| Neon.tech | sinap-production (13 tablas + migración 003) | ✅ Operativo |
 | Railway | sinap-production.up.railway.app | ✅ Operativo (FastAPI) |
 | Vercel | sinap-psi.vercel.app | ✅ Operativo (Next.js) |
 | Cloudflare / sinap.io | — | ⏳ Registrar dominio |
