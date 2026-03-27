@@ -16,9 +16,10 @@ import {
   agregarActor,
   quitarActor,
   agregarHito,
+  editarNotas,
 } from "@/app/iniciativas/actions";
 
-const ESTADOS   = ["abierta", "en_curso", "concretada", "cerrada", "cancelada"];
+const ESTADOS   = ["abierta", "en_curso", "concretada", "cerrada", "postergada"];
 const ROLES     = ["lider", "demandante", "oferente", "miembro", "candidato", "financiador"];
 const TIPOS_HITO = [
   "contacto_establecido", "reunion_realizada", "acuerdo_alcanzado",
@@ -35,10 +36,15 @@ export default function IniciativaDetailClient({
   const [isPending, startTransition] = useTransition();
   const [errorMsg, setErrorMsg]      = useState("");
 
+  // ── Notas form ──────────────────────────────────────────────
+  const [showNotasForm, setShowNotasForm] = useState(false);
+  const [notasEdit, setNotasEdit] = useState(iniciativa.notas ?? "");
+
   // ── Actor form ──────────────────────────────────────────────
   const [showActorForm, setShowActorForm] = useState(false);
-  const [actorId,  setActorId]  = useState("");
-  const [actorRol, setActorRol] = useState("lider");
+  const [actorId,       setActorId]       = useState("");
+  const [actorRol,      setActorRol]      = useState("lider");
+  const [actorReferente,setActorReferente]= useState("");
 
   // ── Hito form ───────────────────────────────────────────────
   const [showHitoForm, setShowHitoForm] = useState(false);
@@ -60,12 +66,21 @@ export default function IniciativaDetailClient({
     run(() => cambiarEstado(iniciativa.id, e));
   }
 
+  function handleNotasSubmit(ev: React.FormEvent) {
+    ev.preventDefault();
+    run(async () => {
+      const res = await editarNotas(iniciativa.id, notasEdit || null);
+      if (res.ok) setShowNotasForm(false);
+      return res;
+    });
+  }
+
   function handleActorSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     if (!actorId) return;
     run(async () => {
-      const res = await agregarActor(iniciativa.id, Number(actorId), actorRol);
-      if (res.ok) { setShowActorForm(false); setActorId(""); setActorRol("lider"); }
+      const res = await agregarActor(iniciativa.id, Number(actorId), actorRol, actorReferente || null);
+      if (res.ok) { setShowActorForm(false); setActorId(""); setActorRol("lider"); setActorReferente(""); }
       return res;
     });
   }
@@ -146,35 +161,46 @@ export default function IniciativaDetailClient({
         </div>
 
         {showActorForm && (
-          <form onSubmit={handleActorSubmit} className="flex gap-3 mb-4 flex-wrap">
-            <select
-              value={actorId}
-              onChange={(e) => setActorId(e.target.value)}
-              required
-              className={`${inputCls} flex-1 min-w-[160px]`}
-            >
-              <option value="">Seleccioná un actor...</option>
-              {actors.map((a) => (
-                <option key={a.id} value={a.id}>{a.nombre}</option>
-              ))}
-            </select>
-            <select
-              value={actorRol}
-              onChange={(e) => setActorRol(e.target.value)}
-              className={`${inputCls} w-40`}
-            >
-              {ROLES.map((r) => (
-                <option key={r} value={r}>{ROL_ACTOR_LABEL[r]}</option>
-              ))}
-            </select>
-            <button
-              type="submit"
-              disabled={isPending || !actorId}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-[var(--accent)]
-                         hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
-            >
-              Agregar
-            </button>
+          <form onSubmit={handleActorSubmit} className="mb-4 space-y-2">
+            <div className="flex gap-3 flex-wrap">
+              <select
+                value={actorId}
+                onChange={(e) => setActorId(e.target.value)}
+                required
+                className={`${inputCls} flex-1 min-w-[160px]`}
+              >
+                <option value="">Seleccioná un actor...</option>
+                {actors.map((a) => (
+                  <option key={a.id} value={a.id}>{a.nombre}</option>
+                ))}
+              </select>
+              <select
+                value={actorRol}
+                onChange={(e) => setActorRol(e.target.value)}
+                className={`${inputCls} w-40`}
+              >
+                {ROLES.map((r) => (
+                  <option key={r} value={r}>{ROL_ACTOR_LABEL[r]}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex gap-3">
+              <input
+                type="text"
+                value={actorReferente}
+                onChange={(e) => setActorReferente(e.target.value)}
+                placeholder="Referente (opcional) — nombre de la persona que participa"
+                className={`${inputCls} flex-1`}
+              />
+              <button
+                type="submit"
+                disabled={isPending || !actorId}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-[var(--accent)]
+                           hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+              >
+                Agregar
+              </button>
+            </div>
           </form>
         )}
 
@@ -192,7 +218,9 @@ export default function IniciativaDetailClient({
               >
                 <div>
                   <p className="text-sm font-medium text-[var(--text)]">{a.actor_nombre}</p>
-                  <p className="text-xs text-[var(--text-muted)]">{a.actor_tipo}</p>
+                  <p className="text-xs text-[var(--text-muted)]">
+                    {a.actor_tipo}{a.referente ? ` · ${a.referente}` : ""}
+                  </p>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-medium text-[var(--accent)] bg-[var(--accent)]/10
@@ -402,14 +430,45 @@ export default function IniciativaDetailClient({
         )}
 
         {/* Notas internas */}
-        {iniciativa.notas && (
-          <div className="mt-6 rounded-xl border border-[var(--border)] bg-amber-50 p-4">
-            <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2">
+        <div className="mt-6 rounded-xl border border-[var(--border)] bg-amber-50 p-4">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide">
               Notas internas
             </p>
-            <p className="text-sm text-amber-900 leading-relaxed">{iniciativa.notas}</p>
+            <button
+              onClick={() => { setShowNotasForm((v) => !v); setNotasEdit(iniciativa.notas ?? ""); }}
+              className="text-xs text-amber-600 hover:text-amber-800 underline"
+            >
+              {showNotasForm ? "Cancelar" : "Editar"}
+            </button>
           </div>
-        )}
+          {showNotasForm ? (
+            <form onSubmit={handleNotasSubmit} className="space-y-2">
+              <textarea
+                value={notasEdit}
+                onChange={(e) => setNotasEdit(e.target.value)}
+                rows={3}
+                placeholder="Contexto relevante, próximos pasos, información de contacto..."
+                className="w-full rounded-lg border border-amber-300 bg-white px-3 py-2 text-sm
+                           text-amber-900 placeholder-amber-400 focus:outline-none focus:border-amber-500 resize-none"
+              />
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="px-4 py-1.5 rounded-lg text-xs font-medium text-white bg-amber-600
+                             hover:bg-amber-700 disabled:opacity-40 transition-colors"
+                >
+                  {isPending ? "Guardando…" : "Guardar"}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <p className="text-sm text-amber-900 leading-relaxed">
+              {iniciativa.notas || <span className="italic text-amber-500">Sin notas aún.</span>}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

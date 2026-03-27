@@ -13,7 +13,7 @@ from schemas.iniciativa import (
 router = APIRouter(prefix="/iniciativas", tags=["iniciativas"])
 
 TIPOS_VALIDOS   = {"vinculacion", "oportunidad", "consorcio", "demanda", "oferta", "instrumento", "gap"}
-ESTADOS_VALIDOS = {"abierta", "en_curso", "concretada", "cerrada", "cancelada"}
+ESTADOS_VALIDOS = {"abierta", "en_curso", "concretada", "cerrada", "postergada"}
 ROLES_VALIDOS   = {"lider", "demandante", "oferente", "miembro", "candidato", "financiador"}
 TIPOS_HITO      = {
     "contacto_establecido", "reunion_realizada", "acuerdo_alcanzado",
@@ -94,7 +94,7 @@ async def get_iniciativa(iid: int, db: asyncpg.Connection = Depends(get_db)):
         raise HTTPException(404, "Iniciativa no encontrada")
 
     actores = await db.fetch("""
-        SELECT ia.actor_id, a.nombre AS actor_nombre, a.tipo AS actor_tipo, ia.rol
+        SELECT ia.actor_id, a.nombre AS actor_nombre, a.tipo AS actor_tipo, ia.rol, ia.referente
         FROM iniciativa_actor ia
         JOIN actor a ON a.id = ia.actor_id
         WHERE ia.iniciativa_id = $1
@@ -192,9 +192,9 @@ async def add_actor(
 
     try:
         await db.execute("""
-            INSERT INTO iniciativa_actor (iniciativa_id, actor_id, rol)
-            VALUES ($1, $2, $3)
-        """, iid, body.actor_id, body.rol)
+            INSERT INTO iniciativa_actor (iniciativa_id, actor_id, rol, referente)
+            VALUES ($1, $2, $3, $4)
+        """, iid, body.actor_id, body.rol, body.referente)
     except asyncpg.UniqueViolationError:
         raise HTTPException(409, "El actor ya tiene ese rol en esta iniciativa")
 
@@ -203,7 +203,7 @@ async def add_actor(
     )
     return IniciativaActorOut(
         actor_id=actor["id"], actor_nombre=actor["nombre"],
-        actor_tipo=actor["tipo"], rol=body.rol,
+        actor_tipo=actor["tipo"], rol=body.rol, referente=body.referente,
     )
 
 

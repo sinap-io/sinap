@@ -106,6 +106,7 @@ export interface IniciativaActorOut {
   actor_nombre: string;
   actor_tipo: string;
   rol: string;
+  referente: string | null;
 }
 
 export interface NecesidadRef {
