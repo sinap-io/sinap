@@ -1,6 +1,7 @@
 import { fetchApi } from "@/lib/api";
 import type { NeedItem } from "@/lib/types";
 import NeedsClient from "@/components/needs/NeedsClient";
+import { URGENCIA_COLOR } from "@/lib/labels";
 
 export default async function NeedsPage() {
   const needs = await fetchApi<NeedItem[]>("/needs");
@@ -11,10 +12,10 @@ export default async function NeedsPage() {
   }, {});
 
   const URGENCIA_META = [
-    { key: "critica", label: "Crítica",  color: "#ef4444" },
-    { key: "alta",    label: "Alta",     color: "#f97316" },
-    { key: "normal",  label: "Normal",   color: "#3b82f6" },
-    { key: "baja",    label: "Baja",     color: "#6b7280" },
+    { key: "critica", label: "Crítica", color: URGENCIA_COLOR.critica },
+    { key: "alta",    label: "Alta",    color: URGENCIA_COLOR.alta },
+    { key: "normal",  label: "Normal",  color: URGENCIA_COLOR.normal },
+    { key: "baja",    label: "Baja",    color: URGENCIA_COLOR.baja },
   ];
 
   return (
@@ -34,7 +35,7 @@ export default async function NeedsPage() {
             className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-3 text-center"
             style={{ borderTopColor: color, borderTopWidth: "2px" }}
           >
-            <div className="text-2xl font-bold text-[var(--text)]">{byUrgencia[key] ?? 0}</div>
+            <div className="text-2xl font-bold" style={{ color }}>{byUrgencia[key] ?? 0}</div>
             <div className="text-xs text-[var(--text-muted)] mt-0.5">{label}</div>
           </div>
         ))}
