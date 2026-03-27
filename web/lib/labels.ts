@@ -61,6 +61,13 @@ export const TIPO_INSTRUMENTO_LABEL: Record<string, string> = {
   concurso: "Concurso",
 };
 
+export const TIPO_INSTRUMENTO_COLOR: Record<string, string> = {
+  subsidio: "#16a34a",   // verde — aporte/regalo
+  credito:  "#2563eb",   // azul — préstamo
+  capital:  "#1e3a5f",   // navy — inversión
+  concurso: "#9333ea",   // violeta — competencia
+};
+
 export const STATUS_INSTRUMENTO_COLOR: Record<string, string> = {
   activo:       "#22c55e",
   proximamente: "#f97316",
