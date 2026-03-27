@@ -15,11 +15,12 @@ import IniciativaDetailClient from "@/components/iniciativas/IniciativaDetailCli
 export default async function IniciativaDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   let iniciativa: IniciativaDetail;
   try {
-    iniciativa = await fetchApi<IniciativaDetail>(`/iniciativas/${params.id}`);
+    iniciativa = await fetchApi<IniciativaDetail>(`/iniciativas/${id}`);
   } catch (e) {
     if (e instanceof ApiError && e.status === 404) notFound();
     throw e;
