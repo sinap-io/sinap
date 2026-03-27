@@ -41,7 +41,7 @@ Tenemos dos bases separadas:
 | Base | Para qué | Estado |
 |---|---|---|
 | `sinap-prototype` | El prototipo Streamlit | Funciona, no tocar |
-| `sinap-production` | La versión productiva | Activa, 9 tablas, datos de prueba cargados |
+| `sinap-production` | La versión productiva | Activa, 13 tablas, datos de prueba cargados |
 
 **Por qué dos bases separadas:** Para que cualquier error en el desarrollo no afecte la versión que se muestra a stakeholders.
 
@@ -94,7 +94,7 @@ Está construido con **FastAPI**, un framework de Python. Corre en un servidor y
 
 Es la interfaz visual: lo que ve y usa el usuario en el navegador. Construido con **Next.js**, el framework de React más usado del mundo.
 
-Las 9 pantallas actuales:
+Las 11 pantallas actuales:
 
 | Pantalla | Qué muestra |
 |---|---|
@@ -106,6 +106,9 @@ Las 9 pantallas actuales:
 | `/gaps` | Análisis de cobertura del ecosistema |
 | `/instruments` | Instrumentos de financiamiento disponibles |
 | `/search` | Búsqueda IA: escribís en lenguaje natural, Claude analiza |
+| `/iniciativas` | Panel de iniciativas con métricas y filtros |
+| `/iniciativas/nueva` | Formulario para registrar una nueva iniciativa |
+| `/iniciativas/[id]` | Detalle: actores participantes, vínculos y timeline de hitos |
 
 ---
 
@@ -191,7 +194,7 @@ Toda la plataforma requiere crear una cuenta. No hay acceso como "visitante" sin
 
 ### El orden en que se va a construir lo que falta
 
-1. **Módulo Iniciativas** (lo que sigue ahora) — gestión de procesos de articulación entre actores
+1. **Merge a producción** — incorporar el módulo Iniciativas a `main` para activarlo en Railway y sinap-psi.vercel.app
 2. **Sistema de login y roles** — registro, acceso diferenciado por rol
 3. **Vista marketplace** — el catálogo diferenciado según si sos oferente o demandante
 
