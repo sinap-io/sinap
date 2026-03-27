@@ -3,7 +3,11 @@ import { getToken } from "next-auth/jwt";
 
 export async function proxy(request: NextRequest) {
   const isLoginPage = request.nextUrl.pathname.startsWith("/login");
-  const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
+  // Auth.js v5 usa "authjs.session-token" (dev) o "__Secure-authjs.session-token" (prod/HTTPS)
+  const cookieName = request.url.startsWith("https")
+    ? "__Secure-authjs.session-token"
+    : "authjs.session-token";
+  const token = await getToken({ req: request, secret: process.env.AUTH_SECRET, cookieName });
   const isLoggedIn = !!token;
 
   if (isLoginPage) {
