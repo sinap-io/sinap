@@ -43,7 +43,7 @@ export const SERVICIO_LABEL: Record<string, string> = {
 
 export const URGENCIA_COLOR: Record<string, string> = {
   critica: "#dc2626",   // rojo — peligro inmediato
-  alta:    "#d97706",   // ámbar — claramente distinto del rojo
+  alta:    "#9333ea",   // violeta — atención, claramente distinto del rojo
   normal:  "#2563eb",   // azul — informacional
   baja:    "#94a3b8",   // gris claro — baja prioridad
 };
