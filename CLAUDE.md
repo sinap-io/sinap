@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (27 marzo 2026)
+## Estado actual (28 marzo 2026)
 
 **Lo que funciona en producción:**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -33,11 +33,12 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Editar notas desde el detalle ✅
 
 **Lo que está pendiente:**
-- Revisión estética de la web (Sebastián quiere revisar cuando sea oportuno)
+- Revisar título "Plataforma de Inteligencia Territorial" con Pablo — puede no representar bien la plataforma
 - Tabla `persona` vinculada a `actor` — deuda técnica, a implementar con el sistema de login
 - Sistema de autenticación y usuarios (con roles oferente/demandante)
 - Vista marketplace diferenciada por rol
 - Registrar dominio sinap.io en Cloudflare
+- Merge branch `claude/distracted-lamarr` → `main` (rediseño visual)
 
 ---
 
@@ -57,16 +58,31 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Revisión estética** — Sebastián quiere revisar la estética de la web cuando sea oportuno
-2. **Sistema de autenticación y roles** — login, oferente vs demandante
-3. **Vista marketplace** — catálogo diferenciado por rol (oferente ve todo + puede editar su perfil; demandante ve catálogo en modo lectura)
-4. **Tabla `persona`** — implementar cuando haya login (reemplaza el campo `referente` provisional)
+1. **Merge rediseño visual** → `main` (branch `claude/distracted-lamarr` listo)
+2. **Revisar título** con Pablo
+3. **Sistema de autenticación y roles** — login, oferente vs demandante
+4. **Vista marketplace** — catálogo diferenciado por rol
+5. **Tabla `persona`** — implementar cuando haya login
 
-**Paleta actual (branch activo):**
-- Sidebar/cards: azul `#dbeafe`
-- Acento: naranja `#e8622a`
-- Hero: naranja suave `#fde0d0`
+**Paleta actual (branch activo — nueva identidad visual):**
+- Fuente: Open Sans (igual al Clúster Biotecnología)
+- Sidebar: blanco `#ffffff` con borde `#e2e8f0`
+- Acento principal: teal `#0d9488`
+- Texto principal: navy `#1e3a5f`
 - Fondo: blanco `#ffffff`
+- Cards: blancas con borde superior teal + sombra al hover
+
+**Sistema de colores semánticos:**
+- Urgencia crítica: rojo `#dc2626`
+- Urgencia alta: violeta `#a855f7`
+- Urgencia normal: azul `#2563eb`
+- Urgencia baja: gris `#94a3b8`
+- Regla: el color comunica información, no decora
+
+**Principio de diseño establecido:**
+- Color solo cuando comunica algo (estado, urgencia, tipo)
+- En el home: todas las cards con el mismo color (teal) — no hay diferencia que señalar
+- Referencia visual: Clúster Biotecnología Córdoba + Bousoño Vargas
 
 ---
 

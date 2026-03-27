@@ -5,42 +5,42 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Tema claro — azul vivo + naranja */
+  /* Tema — navy + teal (identidad Clúster Biotecnología Córdoba) */
   --bg:          #ffffff;
-  --bg-card:     #dbeafe;
-  --bg-hover:    #bfdbfe;
-  --text:        #1e293b;
-  --text-muted:  #475569;
-  --border:      #bfdbfe;
+  --bg-card:     #ffffff;
+  --bg-hover:    #f0fdfa;
+  --text:        #1e3a5f;
+  --text-muted:  #5a7a9a;
+  --border:      #e2e8f0;
 
-  /* Acento azul acero */
-  --blue:        #e8622a;
-  --accent:      #e8622a;
+  /* Acento teal (igual al Clúster) */
+  --accent:      #0d9488;
 
-  /* Colores pastel para categorías */
-  --orange:      #f9a870;
-  --green:       #6dba8e;
-  --red:         #e07878;
+  /* Colores para categorías */
+  --orange:      #f59e0b;
+  --green:       #10b981;
+  --red:         #ef4444;
+  --navy:        #1e3a5f;
 
   /* shadcn */
   --background:          #ffffff;
-  --foreground:          #1e293b;
-  --card:                #dbeafe;
-  --card-foreground:     #1e293b;
+  --foreground:          #1e3a5f;
+  --card:                #ffffff;
+  --card-foreground:     #1e3a5f;
   --popover:             #ffffff;
-  --popover-foreground:  #1e293b;
-  --primary:             #e8622a;
+  --popover-foreground:  #1e3a5f;
+  --primary:             #0d9488;
   --primary-foreground:  #ffffff;
-  --secondary:           #dbeafe;
-  --secondary-foreground:#1e293b;
-  --muted:               #dbeafe;
+  --secondary:           #f0fdfa;
+  --secondary-foreground:#1e3a5f;
+  --muted:               #f8fafc;
   --muted-foreground:    #64748b;
-  --accent:              #e8622a;
+  --accent:              #0d9488;
   --accent-foreground:   #ffffff;
-  --destructive:         #e07878;
+  --destructive:         #ef4444;
   --border:              #e2e8f0;
   --input:               #e2e8f0;
-  --ring:                #e8622a;
+  --ring:                #0d9488;
   --radius:              0.625rem;
 }
 
