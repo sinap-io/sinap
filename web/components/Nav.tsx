@@ -26,12 +26,12 @@ const links = [
 ];
 
 const S = {
-  bg:     "#dbeafe",
-  border: "#bfdbfe",
-  muted:  "#6b8ab5",
-  hover:  "rgba(232,98,42,0.10)",
-  accent: "#e8622a",
-  text:   "#1e293b",
+  bg:     "#ffffff",
+  border: "#e2e8f0",
+  muted:  "#5a7a9a",
+  hover:  "rgba(13,148,136,0.08)",
+  accent: "#0d9488",
+  text:   "#1e3a5f",
 };
 
 export default function Nav() {

@@ -73,24 +73,24 @@ export default async function HomePage() {
   return (
     <div className="space-y-10">
       {/* Hero */}
-      <section className="rounded-2xl bg-gradient-to-br from-[#fde0d0] via-[#fde8dc] to-[#fde0d0] p-10 text-center">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#64748b] mb-3">
+      <section className="pt-4 pb-10 border-b border-[var(--border)]">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--accent)] mb-4">
           Ecosistema Biotech · Córdoba, Argentina
         </p>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1e293b] mb-3">
-          Plataforma de Inteligencia Territorial
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--navy)] mb-4 leading-tight">
+          Plataforma de<br />Inteligencia Territorial
         </h1>
-        <p className="text-[#64748b] max-w-xl mx-auto mb-10 leading-relaxed">
+        <p className="text-[var(--text-muted)] max-w-xl mb-10 leading-relaxed">
           Conectamos laboratorios, empresas, universidades e instituciones.<br />
           Encontrá servicios, identificá oportunidades y accedé a financiamiento.
         </p>
 
         {/* Métricas */}
-        <div className="flex flex-wrap justify-center gap-8">
+        <div className="flex flex-wrap gap-10">
           {METRICS.map(({ label, value }) => (
-            <div key={label} className="text-center">
-              <div className="text-4xl font-black text-[#1e293b]">{value}</div>
-              <div className="text-xs uppercase tracking-wide text-[#64748b] mt-1">{label}</div>
+            <div key={label}>
+              <div className="text-4xl font-black text-[var(--accent)]">{value}</div>
+              <div className="text-xs uppercase tracking-wide text-[var(--text-muted)] mt-1">{label}</div>
             </div>
           ))}
         </div>
@@ -104,9 +104,9 @@ export default async function HomePage() {
             <Link
               key={href}
               href={href}
-              className="group block rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6
-                         hover:border-[var(--accent)] hover:bg-[var(--bg-hover)] transition-all duration-150"
-              style={{ borderLeftColor: accent, borderLeftWidth: "3px" }}
+              className="group block rounded-xl border border-[var(--border)] bg-white p-6
+                         hover:border-[var(--accent)] hover:shadow-md transition-all duration-150"
+              style={{ borderTopColor: accent, borderTopWidth: "3px" }}
             >
               <h3 className="font-semibold text-[var(--text)] mb-2 group-hover:text-[var(--accent)] transition-colors">
                 {title}

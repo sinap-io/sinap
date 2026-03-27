@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Nav from "@/components/Nav";
-import { Geist } from "next/font/google";
+import { Open_Sans } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const openSans = Open_Sans({ subsets: ['latin'], variable: '--font-sans', weight: ['400','500','600','700','800'] });
 
 export const metadata: Metadata = {
   title: "SINAP — Plataforma Biotech Córdoba",
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={cn("font-sans", geist.variable)}>
+    <html lang="es" className={cn("font-sans", openSans.variable)}>
       <body className="min-h-screen bg-[var(--bg)]">
         <Nav />
         <div className="ml-60 min-h-screen flex flex-col">
