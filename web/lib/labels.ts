@@ -11,7 +11,7 @@ export const TIPO_ACTOR_LABEL: Record<string, string> = {
 export const TIPO_ACTOR_COLOR: Record<string, string> = {
   laboratorio:   "#22c55e",
   empresa:       "#3b82f6",
-  startup:       "#a855f7",
+  startup:       "#64748b",
   universidad:   "#eab308",
   investigacion: "#f97316",
 };
