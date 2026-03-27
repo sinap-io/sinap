@@ -78,8 +78,8 @@ export default async function HomePage() {
           Plataforma de<br />Inteligencia Territorial
         </h1>
         <p className="text-[var(--text-muted)] max-w-xl mb-10 leading-relaxed">
-          Conectamos laboratorios, empresas, universidades e instituciones.<br />
-          Encontrá servicios, identificá oportunidades y accedé a financiamiento.
+          Registra la actividad del Clúster de Biotecnología de Córdoba.<br />
+          Actores, capacidades, oportunidades e iniciativas en curso.
         </p>
 
         {/* Métricas */}
