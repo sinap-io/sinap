@@ -42,16 +42,16 @@ export const SERVICIO_LABEL: Record<string, string> = {
 };
 
 export const URGENCIA_COLOR: Record<string, string> = {
-  critica: "#ef4444",
-  alta:    "#f97316",
-  normal:  "#3b82f6",
-  baja:    "#6b7280",
+  critica: "#dc2626",   // rojo — peligro inmediato
+  alta:    "#d97706",   // ámbar — claramente distinto del rojo
+  normal:  "#2563eb",   // azul — informacional
+  baja:    "#94a3b8",   // gris claro — baja prioridad
 };
 
 export const DISPONIBILIDAD_COLOR: Record<string, string> = {
-  disponible:    "#22c55e",
-  parcial:       "#f97316",
-  no_disponible: "#ef4444",
+  disponible:    "#16a34a",   // verde
+  parcial:       "#d97706",   // ámbar
+  no_disponible: "#dc2626",   // rojo
 };
 
 export const TIPO_INSTRUMENTO_LABEL: Record<string, string> = {
