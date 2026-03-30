@@ -277,12 +277,37 @@ python -m api.db.seed
 
 **Deuda técnica registrada:** el campo `referente` en `iniciativa_actor` es provisional. A futuro se reemplazará por una tabla `persona` vinculada a `actor`, cuando se implemente el sistema de login.
 
-### 3. Sistema de autenticación y roles
-Orden de implementación definido:
-- **Login** — autenticación básica (JWT o similar). Toda la plataforma requiere login; no hay acceso como invitado.
-- **Rol oferente** — cualquier tipo de actor (laboratorio, empresa, startup, universidad, investigación) puede ser oferente. Paga membresía. Tiene perfil completo con capacidades editables.
-- **Rol demandante** — acceso free. Ve todo el catálogo (actores, servicios, necesidades, instrumentos) en modo lectura. No puede publicar capacidades.
-- La tabla `vinculador` (ya creada) se conectará con la tabla de usuarios cuando se implemente auth.
+### 3. Sistema de autenticación ✅ IMPLEMENTADO (en branch, pendiente merge)
+
+**Stack:** Auth.js v5 + bcryptjs + PostgreSQL (pool directo, sin ORM)
+
+**Tabla `usuario`** (migración 003, aplicada en sinap-production):
+- `email` (unique), `password` (hash bcrypt), `nombre`, `rol`, `actor_id` (FK opcional), `activo`
+
+**Roles definidos:**
+
+| Rol | Quiénes | Acceso |
+|---|---|---|
+| `admin` | Cluster Manager + Sebastián | Total — gestión de usuarios y configuración |
+| `directivo` | Miembros del Consejo Directivo | Crear/gestionar iniciativas, ver todo |
+| `vinculador` | Operadores del Clúster | Gestionar iniciativas asignadas, ver todo |
+| `oferente` | Actores con membresía | Ver todo, editar perfil propio |
+| `demandante` | Actores sin membresía | Ver catálogo, buscar con IA |
+
+**Archivos clave:**
+- `web/auth.ts` — CredentialsProvider con pg directo + callbacks JWT/session
+- `web/auth.config.ts` — config edge-safe (sin pg), para el proxy
+- `web/proxy.ts` — protección de rutas (Next.js 16.2.0: `proxy.ts` reemplaza `middleware.ts`)
+- `web/app/login/page.tsx` — pantalla de login con diseño SINAP
+- `web/app/api/auth/[...nextauth]/route.ts` — handler de Auth.js
+
+**Variables de entorno requeridas en Vercel:**
+- `AUTH_SECRET` — secreto para firmar JWTs
+- `DATABASE_URL` — conexión a Neon.tech (para el pool de pg en auth.ts)
+
+**Nota importante:** `proxy.ts` usa `getToken()` con `cookieName: "__Secure-authjs.session-token"` (Auth.js v5 cambió el nombre de cookie respecto a v4).
+
+**Registro:** solo por invitación. El Clúster crea usuarios manualmente vía script o panel admin (a implementar).
 
 ### 4. Vista marketplace diferenciada
 - Oferente: ve su perfil propio + puede editar capacidades + acceso completo a búsqueda IA

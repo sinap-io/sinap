@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import {
   Home,
   Users,
@@ -12,6 +13,7 @@ import {
   Search,
   Dna,
   Lightbulb,
+  LogOut,
 } from "lucide-react";
 
 const links = [
@@ -36,6 +38,7 @@ const S = {
 
 export default function Nav() {
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   return (
     <aside
@@ -94,8 +97,24 @@ export default function Nav() {
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="px-5 py-4" style={{ borderTop: `1px solid ${S.border}` }}>
+      {/* Footer / usuario */}
+      <div className="px-4 py-4 space-y-3" style={{ borderTop: `1px solid ${S.border}` }}>
+        {session?.user && (
+          <div className="flex items-center justify-between gap-2">
+            <div className="min-w-0">
+              <p className="text-xs font-medium truncate" style={{ color: S.text }}>{session.user.name}</p>
+              <p className="text-[10px] truncate" style={{ color: S.muted }}>{session.user.email}</p>
+            </div>
+            <button
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              title="Cerrar sesión"
+              className="shrink-0 p-1.5 rounded-md hover:bg-red-50 transition"
+              style={{ color: S.muted }}
+            >
+              <LogOut size={14} />
+            </button>
+          </div>
+        )}
         <p className="text-[10px] leading-relaxed" style={{ color: S.muted }}>
           Clúster de Biotecnología<br />de Córdoba, Argentina
         </p>
