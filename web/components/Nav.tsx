@@ -32,16 +32,24 @@ function SinapLogo() {
 }
 
 const links = [
-  { href: "/",            label: "Inicio",         icon: Home },
-  { href: "/actors",      label: "Actores",        icon: Users },
-  { href: "/services",    label: "Servicios",      icon: Wrench },
-  { href: "/needs",       label: "Necesidades",    icon: AlertCircle },
-  { href: "/gaps",        label: "Gaps",           icon: TrendingUp },
-  { href: "/instruments", label: "Financiamiento", icon: Banknote },
-  { href: "/search",      label: "Buscar IA",      icon: Search },
-  { href: "/iniciativas", label: "Iniciativas",    icon: Lightbulb },
-  { href: "/informe",     label: "Informe IA",     icon: BarChart2 },
+  { href: "/",            label: "Inicio",         icon: Home,       roles: null },
+  { href: "/actors",      label: "Actores",        icon: Users,      roles: null },
+  { href: "/services",    label: "Servicios",      icon: Wrench,     roles: null },
+  { href: "/needs",       label: "Necesidades",    icon: AlertCircle,roles: null },
+  { href: "/gaps",        label: "Gaps",           icon: TrendingUp, roles: null },
+  { href: "/instruments", label: "Financiamiento", icon: Banknote,   roles: null },
+  { href: "/search",      label: "Buscar IA",      icon: Search,     roles: null },
+  { href: "/iniciativas", label: "Iniciativas",    icon: Lightbulb,  roles: null },
+  { href: "/informe",     label: "Informe IA",     icon: BarChart2,  roles: ["admin", "directivo", "vinculador"] },
 ];
+
+const ROL_LABEL: Record<string, string> = {
+  admin:      "Administrador",
+  directivo:  "Directivo",
+  vinculador: "Vinculador",
+  oferente:   "Miembro",
+  demandante: "Invitado",
+};
 
 const S = {
   bg:     "#ffffff",
@@ -55,6 +63,7 @@ const S = {
 export default function Nav() {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const rol = (session?.user as { rol?: string })?.rol ?? "";
 
   return (
     <aside
@@ -76,7 +85,7 @@ export default function Nav() {
         <p className="text-[10px] font-semibold uppercase tracking-widest px-3 pb-2" style={{ color: S.muted }}>
           Plataforma
         </p>
-        {links.map(({ href, label, icon: Icon }) => {
+        {links.filter(({ roles }) => !roles || roles.includes(rol)).map(({ href, label, icon: Icon }) => {
           const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
           return (
             <Link
@@ -118,6 +127,9 @@ export default function Nav() {
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
               <p className="text-xs font-medium truncate" style={{ color: S.text }}>{session.user.name}</p>
+              {rol && (
+                <p className="text-[10px] truncate" style={{ color: S.muted }}>{ROL_LABEL[rol] ?? rol}</p>
+              )}
             </div>
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
