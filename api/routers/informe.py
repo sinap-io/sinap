@@ -111,7 +111,7 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
     """)
 
     instrumentos = await db.fetch("""
-        SELECT nombre, organismo, tipo, monto_maximo, fecha_cierre
+        SELECT nombre, organismo, tipo, monto_maximo, plazo_ejecucion
         FROM instrumento WHERE status = 'activo'
         LIMIT 10
     """)
@@ -165,7 +165,7 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
                     capacidades=fmt(capacidades, ["actor", "area_tematica", "tipo_servicio", "disponibilidad"]),
                     necesidades=fmt(necesidades, ["actor", "descripcion", "urgencia"]),
                     gaps=fmt(gaps, ["descripcion", "origen", "status"]),
-                    instrumentos=fmt(instrumentos, ["nombre", "organismo", "tipo", "monto_maximo", "fecha_cierre"]),
+                    instrumentos=fmt(instrumentos, ["nombre", "organismo", "tipo", "monto_maximo", "plazo_ejecucion"]),
                     iniciativas=fmt(iniciativas_rows, ["titulo", "tipo", "estado", "total_actores", "total_hitos"]),
                     hitos=fmt(hitos_recientes, ["iniciativa", "tipo", "descripcion", "fecha"]),
                 ),
