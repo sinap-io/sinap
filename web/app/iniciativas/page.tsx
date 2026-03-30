@@ -1,11 +1,15 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
+import { auth } from "@/auth";
 import { fetchApi } from "@/lib/api";
 import type { IniciativaList } from "@/lib/types";
 import IniciativasClient from "@/components/iniciativas/IniciativasClient";
 
+const CAN_MANAGE = ["admin", "directivo", "vinculador"];
+
 export default async function IniciativasPage() {
+  const session = await auth();
   let iniciativas: IniciativaList[] = [];
   try {
     iniciativas = await fetchApi<IniciativaList[]>("/iniciativas");
@@ -30,13 +34,15 @@ export default async function IniciativasPage() {
             {iniciativas.length} iniciativa{iniciativas.length !== 1 ? "s" : ""} registrada{iniciativas.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <Link
-          href="/iniciativas/nueva"
-          className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-[var(--accent)]
-                     hover:opacity-90 transition-opacity"
-        >
-          + Nueva iniciativa
-        </Link>
+        {CAN_MANAGE.includes((session?.user as { rol?: string })?.rol ?? "") && (
+          <Link
+            href="/iniciativas/nueva"
+            className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-[var(--accent)]
+                       hover:opacity-90 transition-opacity"
+          >
+            + Nueva iniciativa
+          </Link>
+        )}
       </div>
 
       {/* Métricas */}

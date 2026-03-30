@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useSession } from "next-auth/react";
 import type { IniciativaDetail, ActorList } from "@/lib/types";
 import {
   ESTADO_INICIATIVA_LABEL,
@@ -33,6 +34,10 @@ export default function IniciativaDetailClient({
   iniciativa: IniciativaDetail;
   actors: ActorList[];
 }) {
+  const { data: session } = useSession();
+  const rol = (session?.user as { rol?: string })?.rol ?? "";
+  const puedeGestionar = ["admin", "directivo", "vinculador"].includes(rol);
+
   const [isPending, startTransition] = useTransition();
   const [errorMsg, setErrorMsg]      = useState("");
 
@@ -126,12 +131,13 @@ export default function IniciativaDetailClient({
             return (
               <button
                 key={e}
-                onClick={() => handleEstado(e)}
-                disabled={isPending}
+                onClick={() => puedeGestionar && handleEstado(e)}
+                disabled={isPending || !puedeGestionar}
                 className="text-xs px-3 py-1.5 rounded-full border font-medium transition-all
                            disabled:opacity-50 disabled:cursor-not-allowed"
                 style={active ? { background: color, borderColor: color, color: "white" }
                               : { background: "transparent", borderColor: color, color }}
+                title={!puedeGestionar ? "No tenés permiso para cambiar el estado" : undefined}
               >
                 {ESTADO_INICIATIVA_LABEL[e]}
               </button>
@@ -151,13 +157,15 @@ export default function IniciativaDetailClient({
       <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
         <div className="flex items-center justify-between mb-4">
           <p className={sectionTitle + " mb-0"}>Actores participantes</p>
-          <button
-            onClick={() => setShowActorForm((v) => !v)}
-            className="text-xs px-3 py-1.5 rounded-lg border border-[var(--accent)]
-                       text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition-all"
-          >
-            {showActorForm ? "Cancelar" : "+ Agregar actor"}
-          </button>
+          {puedeGestionar && (
+            <button
+              onClick={() => setShowActorForm((v) => !v)}
+              className="text-xs px-3 py-1.5 rounded-lg border border-[var(--accent)]
+                         text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition-all"
+            >
+              {showActorForm ? "Cancelar" : "+ Agregar actor"}
+            </button>
+          )}
         </div>
 
         {showActorForm && (
@@ -227,15 +235,17 @@ export default function IniciativaDetailClient({
                                    px-2.5 py-1 rounded-full">
                     {ROL_ACTOR_LABEL[a.rol] ?? a.rol}
                   </span>
-                  <button
-                    onClick={() => handleQuitarActor(a.actor_id, a.rol)}
-                    disabled={isPending}
-                    className="text-xs text-[var(--text-muted)] hover:text-[#ef4444]
-                               disabled:opacity-40 transition-colors"
-                    title="Quitar actor"
-                  >
-                    ✕
-                  </button>
+                  {puedeGestionar && (
+                    <button
+                      onClick={() => handleQuitarActor(a.actor_id, a.rol)}
+                      disabled={isPending}
+                      className="text-xs text-[var(--text-muted)] hover:text-[#ef4444]
+                                 disabled:opacity-40 transition-colors"
+                      title="Quitar actor"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -307,13 +317,13 @@ export default function IniciativaDetailClient({
           <h2 className="text-sm font-semibold text-[var(--text)] uppercase tracking-wide">
             Hitos registrados
           </h2>
-          <button
+          {puedeGestionar && <button
             onClick={() => setShowHitoForm((v) => !v)}
             className="text-xs px-3 py-1.5 rounded-lg border border-[var(--accent)]
                        text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition-all"
           >
             {showHitoForm ? "Cancelar" : "+ Registrar hito"}
-          </button>
+          </button>}
         </div>
 
         {showHitoForm && (
