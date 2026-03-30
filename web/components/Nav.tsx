@@ -68,7 +68,6 @@ export default function Nav() {
         </div>
         <div>
           <div className="text-sm font-bold tracking-wider" style={{ color: S.text }}>sinap<span style={{ color: S.accent }}>.io</span></div>
-          <div className="text-[10px] leading-tight" style={{ color: S.muted }}>Biotech Córdoba</div>
         </div>
       </div>
 
@@ -119,7 +118,6 @@ export default function Nav() {
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
               <p className="text-xs font-medium truncate" style={{ color: S.text }}>{session.user.name}</p>
-              <p className="text-[10px] truncate" style={{ color: S.muted }}>{session.user.email}</p>
             </div>
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
