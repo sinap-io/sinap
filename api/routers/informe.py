@@ -26,16 +26,17 @@ class InformeResponse(BaseModel):
 
 _PROMPT = """\
 Sos el analista del Clúster de Biotecnología de Córdoba, Argentina.
-Tu tarea es generar un informe ejecutivo a partir de los datos de la plataforma SINAP.
+Generá un informe semanal a partir de los datos de la plataforma SINAP.
 
-REGLAS ESTRICTAS DE REDACCIÓN:
-- Solo afirmá lo que esté respaldado por los datos. Si un dato no está, no lo inferís ni inventás.
-- No usés adjetivos valorativos sin justificación numérica concreta. Prohibido: "equilibrado", "robusto", "incipiente", "sólido", "prometedor", "diversificado" y similares, salvo que puedas fundamentarlos con datos específicos.
-- No usés frases de relleno como "presenta una composición", "se observa que", "cabe destacar". Escribí directamente.
-- Si los datos son escasos, decilo explícitamente. Ejemplo: "La plataforma registra 1 iniciativa activa — no hay suficiente información para evaluar tendencias."
-- Tono: técnico, objetivo, sin retórica. Como un informe de gestión real.
-- Idioma: español neutro, sin regionalismos.
-- Extensión: máximo 500 palabras. Párrafos cortos.
+REGLAS ESTRICTAS:
+- Solo afirmá lo que esté respaldado por los datos. Si un dato no está, no lo inferís.
+- Sin adjetivos valorativos sin respaldo numérico. Prohibido: "equilibrado", "robusto", "sólido", "prometedor". Escribí directamente.
+- Sin frases de relleno: "se observa que", "cabe destacar", "es importante señalar". Ve al punto.
+- Si los datos son escasos, decilo: "La plataforma registra 1 iniciativa activa — información insuficiente para evaluar tendencias."
+- NO uses tablas markdown. Usá listas con guión (- ) para datos tabulares.
+- Tono: técnico, objetivo. Como un informe de gestión interno.
+- Idioma: español. Sin regionalismos.
+- Extensión: máximo 450 palabras.
 
 DATOS ACTUALES DE SINAP:
 
@@ -62,25 +63,25 @@ HITOS RECIENTES (últimos 90 días):
 
 ---
 
-Generá el informe con exactamente estas secciones. No agregués ni quitées ninguna:
+Generá el informe con EXACTAMENTE estas secciones en este orden. Sin agregar ni quitar ninguna:
 
 ## Resumen
-(2-3 oraciones. Qué hay registrado, qué está activo, qué llama la atención de los datos.)
+2-3 oraciones. Qué situación más relevante muestra el cruce de datos (no el conteo de actores).
+
+## Demanda del ecosistema
+Necesidades activas, cuántas son urgentes, cuáles tienen o no tienen cobertura entre los actores registrados.
+
+## Iniciativas en curso
+Qué hay registrado, en qué estado, qué hitos recientes. Si hay poca información, decilo explícitamente.
 
 ## Actores y capacidades
-(Quiénes son, cuántos por tipo, qué servicios ofrecen. Solo datos concretos.)
+Composición por tipo. Qué sectores tienen mayor cobertura de servicios. Cuáles tienen disponibilidad parcial o nula.
 
-## Necesidades sin resolver
-(Cuáles son las necesidades activas, cuántas son urgentes, si hay coincidencia con las capacidades disponibles o no.)
+## Financiamiento activo
+Lista de instrumentos activos con organismo, tipo y monto. Sin tabla — usar lista con guión.
 
-## Iniciativas activas
-(Qué iniciativas están en curso, en qué estado, qué hitos tuvieron. Si hay pocas, decilo.)
-
-## Financiamiento disponible
-(Qué instrumentos están activos, montos, organismos. Solo los que aparecen en los datos.)
-
-## Próximos pasos sugeridos
-(2-3 acciones concretas y específicas para el equipo del Clúster, basadas en los datos anteriores.)
+## Alertas para el equipo
+2-3 situaciones concretas que requieren atención del Clúster según los datos. Ser específico: qué actor, qué necesidad, qué acción.
 """
 
 

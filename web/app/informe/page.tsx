@@ -36,11 +36,19 @@ export default async function InformePage() {
     error = "No se pudo generar el informe. Intentá de nuevo en unos segundos.";
   }
 
-  const fechaFormateada = data?.generado_en
-    ? new Date(data.generado_en).toLocaleString("es-AR", {
-        day: "2-digit", month: "long", year: "numeric",
-        hour: "2-digit", minute: "2-digit",
-      })
+  const fechaCorte = data?.generado_en
+    ? (() => {
+        const d = new Date(data.generado_en);
+        // Semana del lunes al domingo
+        const dayOfWeek = d.getDay(); // 0=dom, 1=lun...
+        const diffToMonday = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
+        const monday = new Date(d);
+        monday.setDate(d.getDate() + diffToMonday);
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+        const fmt = (dt: Date) => dt.toLocaleDateString("es-AR", { day: "2-digit", month: "long" });
+        return `Semana del ${fmt(monday)} al ${fmt(sunday)}, ${d.getFullYear()}`;
+      })()
     : null;
 
   return (
@@ -51,11 +59,11 @@ export default async function InformePage() {
           Inteligencia del ecosistema
         </p>
         <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
-          Informe del Clúster
+          Informe semanal
         </h1>
-        {fechaFormateada && (
+        {fechaCorte && (
           <p className="text-sm text-[var(--text-muted)]">
-            Generado el {fechaFormateada}
+            {fechaCorte}
           </p>
         )}
       </div>
