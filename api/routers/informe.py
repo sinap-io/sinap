@@ -70,6 +70,17 @@ No uses bullet points excesivos — preferí párrafos cortos y fluidos.
 
 @router.get("", response_model=InformeResponse)
 async def generar_informe(db: asyncpg.Connection = Depends(get_db)):
+    try:
+        return await _generar(db)
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        logger.error("Error en /informe: %s\n%s", e, traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Error interno: {str(e)}")
+
+
+async def _generar(db: asyncpg.Connection) -> InformeResponse:
     # Recolectar datos del ecosistema
     actores = await db.fetch("""
         SELECT tipo, COUNT(*) as cantidad
