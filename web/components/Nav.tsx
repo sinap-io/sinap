@@ -103,7 +103,9 @@ export default function Nav() {
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
               <p className="text-xs font-medium truncate" style={{ color: S.text }}>{session.user.name}</p>
-              <p className="text-[10px] truncate" style={{ color: S.muted }}>{session.user.email}</p>
+              <p className="text-[10px] truncate capitalize" style={{ color: S.accent }}>
+                {(session.user as { rol?: string }).rol ?? ""}
+              </p>
             </div>
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
