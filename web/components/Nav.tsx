@@ -11,10 +11,24 @@ import {
   TrendingUp,
   Banknote,
   Search,
-  Dna,
   Lightbulb,
   LogOut,
 } from "lucide-react";
+
+function SinapLogo() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Líneas de conexión */}
+      <line x1="14" y1="6"  x2="6"  y2="22" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+      <line x1="14" y1="6"  x2="22" y2="22" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+      <line x1="6"  y1="22" x2="22" y2="22" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+      {/* Nodos */}
+      <circle cx="14" cy="6"  r="3" fill="white"/>
+      <circle cx="6"  cy="22" r="3" fill="white"/>
+      <circle cx="22" cy="22" r="3" fill="white"/>
+    </svg>
+  );
+}
 
 const links = [
   { href: "/",            label: "Inicio",         icon: Home },
@@ -47,11 +61,11 @@ export default function Nav() {
     >
       {/* Logo */}
       <div className="h-16 flex items-center gap-3 px-5" style={{ borderBottom: `1px solid ${S.border}` }}>
-        <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: S.accent }}>
-          <Dna size={15} className="text-white" strokeWidth={2.5} />
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: S.accent }}>
+          <SinapLogo />
         </div>
         <div>
-          <div className="text-sm font-bold tracking-wider" style={{ color: S.text }}>SINAP</div>
+          <div className="text-sm font-bold tracking-wider" style={{ color: S.text }}>sinap<span style={{ color: S.accent }}>.io</span></div>
           <div className="text-[10px] leading-tight" style={{ color: S.muted }}>Biotech Córdoba</div>
         </div>
       </div>
