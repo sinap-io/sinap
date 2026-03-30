@@ -1,11 +1,19 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 import { fetchApi } from "@/lib/api";
 import type { VinculadorItem } from "@/lib/types";
 import NuevaIniciativaClient from "@/components/iniciativas/NuevaIniciativaClient";
 
 export default async function NuevaIniciativaPage() {
+  const session = await auth();
+  const rol = (session?.user as { rol?: string })?.rol ?? "";
+  if (!["admin", "directivo", "vinculador"].includes(rol)) {
+    redirect("/iniciativas");
+  }
+
   let vinculadores: VinculadorItem[] = [];
   try {
     vinculadores = await fetchApi<VinculadorItem[]>("/vinculador/operadores");
