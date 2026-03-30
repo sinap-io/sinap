@@ -227,9 +227,8 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
         return f"{d.day} de {_MESES[d.month - 1]}"
 
     hoy = datetime.now()
-    lunes = hoy - timedelta(days=hoy.weekday())   # weekday(): 0=lun … 6=dom
-    domingo = lunes + timedelta(days=6)
-    periodo = f"Semana del {fmt_fecha(lunes)} al {fmt_fecha(domingo)} de {hoy.year}"
+    inicio = hoy - timedelta(days=6)
+    periodo = f"Semana del {fmt_fecha(inicio)} al {fmt_fecha(hoy)} de {hoy.year}"
 
     try:
         respuesta = await _client.messages.create(
