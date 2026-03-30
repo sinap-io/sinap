@@ -114,7 +114,7 @@ async def generar_informe(db: asyncpg.Connection = Depends(get_db)):
         LEFT JOIN hito h ON h.iniciativa_id = i.id
         WHERE i.estado IN ('abierta', 'en_curso')
         GROUP BY i.id, i.titulo, i.tipo, i.estado
-        ORDER BY i.estado DESC, i.created_at DESC
+        ORDER BY i.estado DESC, i.id DESC
         LIMIT 15
     """)
 
