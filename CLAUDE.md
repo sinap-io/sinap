@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (28 marzo 2026)
+## Estado actual (30 marzo 2026)
 
 **Lo que funciona en producción (main):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -22,34 +22,41 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Prototipo Streamlit (`app/`) — conectado a `sinap-production` — NO TOCAR
 - Módulo Iniciativas completo en producción ✅
 - Rediseño visual (Open Sans + navy/teal) en producción ✅
+- Auth.js v5 mergeado a main (PR #22) ✅
+- Informe IA mergeado a main ✅
+- Roles en UI mergeados a main ✅
 
-**Branch activo:** `claude/distracted-lamarr` (en uso continuo, se mergea a main por PR)
+**Branch activo:** `claude/distracted-lamarr` (continúa en uso — se mergeó PR #22 a main hoy)
 
-**Módulo Iniciativas — estado:**
-- DB: 14 tablas + migración 003 aplicada (`usuario`) ✅
-- API: router `/iniciativas` completo en Railway ✅
-- Frontend: panel `/iniciativas`, form `/nueva`, detalle `/[id]` en producción ✅
-- Estados: abierta / en_curso / concretada / cerrada / postergada ✅
-- Actores con campo `referente` (persona dentro del actor) ✅
-- Editar notas desde el detalle ✅
-
-**Sistema de autenticación — estado (en branch, pendiente merge):**
-- Auth.js v5 con email + contraseña ✅
+**Sistema de autenticación — estado:**
+- Auth.js v5 con email + contraseña ✅ (en main)
 - Tabla `usuario` en Neon.tech (migración 003) ✅
-- `proxy.ts` protege todas las rutas (Next.js 16.2.0 usa proxy.ts, no middleware.ts) ✅
+- `proxy.ts` protege todas las rutas ✅
 - Página de login `/login` con diseño SINAP ✅
-- Nav muestra usuario + botón logout ✅
-- Variables en Vercel: `AUTH_SECRET` + `DATABASE_URL` ✅
-- Primer usuario admin creado: `sebabizzi@gmail.com` ✅
-- Pendiente: crear usuarios para el resto del equipo
+- Nav muestra usuario + rol + botón logout ✅
+- Usuarios creados: `sebabizzi@gmail.com` (admin) + `pdiazazulay@gmail.com` (directivo) ✅
+- Pendiente: crear usuarios para el resto del equipo (vinculadores, oferentes)
+
+**Informe IA — estado:**
+- Endpoint `GET /informe` en Railway ✅
+- Prompt v4: análisis cruzado entre módulos ✅
+- Sección "Oportunidades de negocios" con subsecciones corto/mediano plazo ✅
+- Frontend `/informe` con métricas, período "Estado al [fecha]" y botón PDF ✅
+- Acceso restringido a admin/directivo/vinculador ✅
+- Pendiente: el deploy de Railway a veces tarda en reflejar cambios recientes
+
+**Roles en UI — estado:**
+- Nav filtra "Informe IA" según rol ✅
+- Footer del nav muestra nombre legible del rol ✅
+- `/iniciativas/nueva` redirige a oferente/demandante ✅
+- Detalle de iniciativa: botones de gestión restringidos por rol ✅
 
 **Lo que está pendiente:**
-- Merge auth → `main`
-- Revisar título "Plataforma de Inteligencia Territorial" con Pablo
-- Tabla `persona` vinculada a `actor` — deuda técnica, a implementar con login completo
-- Roles diferenciados en la UI (directivo/vinculador/oferente/demandante ven cosas distintas)
+- Cargar datos reales (actores, necesidades, instrumentos del Clúster)
 - Vista marketplace diferenciada por rol
+- Crear usuarios para el resto del equipo
 - Registrar dominio sinap.io en Cloudflare
+- Tabla `persona` vinculada a `actor` (ver BACKLOG.md)
 
 ---
 
@@ -79,12 +86,11 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Merge auth** → `main` (branch `claude/distracted-lamarr` listo)
-2. **Crear usuarios** para el equipo (Cluster Manager, CD, vinculadores)
-3. **Revisar título** con Pablo
-4. **Roles en UI** — directivo/vinculador ven botones de gestión; oferente/demandante solo ven
-5. **Vista marketplace** — catálogo diferenciado por rol
-6. **Tabla `persona`** — implementar cuando haya login completo
+1. **Cargar datos reales** — actores, necesidades, instrumentos del Clúster real
+2. **Crear usuarios** para el resto del equipo (vinculadores, oferentes)
+3. **Vista marketplace** — catálogo diferenciado por rol
+4. **Registrar dominio** sinap.io en Cloudflare
+5. **Tabla `persona`** — implementar cuando haya más usuarios activos (ver BACKLOG.md)
 
 ---
 
@@ -109,8 +115,9 @@ En orden de prioridad:
 **Referencias visuales:** Clúster Biotecnología Córdoba + Bousoño Vargas
 
 **Copy del hero:**
-- Título: "Plataforma de Inteligencia Territorial" (pendiente revisión con Pablo)
+- Título: "Plataforma de Inteligencia Territorial"
 - Subtítulo: "Registra la actividad del Clúster de Biotecnología de Córdoba. / Actores, capacidades, oportunidades e iniciativas en curso."
+- Nombre: sinap.io — aprobado por Pablo ✅
 
 ---
 

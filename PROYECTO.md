@@ -3,7 +3,7 @@
 > Este documento está escrito para Sebastián. No asume conocimientos de programación.
 > Explica qué es cada parte del sistema, por qué existe, y cómo se conecta todo.
 >
-> Última actualización: 26 marzo 2026
+> Última actualización: 30 marzo 2026
 
 ---
 
@@ -45,7 +45,7 @@ Tenemos dos bases separadas:
 
 **Por qué dos bases separadas:** Para que cualquier error en el desarrollo no afecte la versión que se muestra a stakeholders.
 
-**Las 13 tablas de sinap-production:**
+**Las 14 tablas de sinap-production:**
 
 | Tabla | Qué guarda |
 |---|---|
@@ -62,6 +62,7 @@ Tenemos dos bases separadas:
 | `iniciativa_capacidad` | Capacidades vinculadas a cada iniciativa |
 | `iniciativa_instrumento` | Instrumentos de financiamiento vinculados a cada iniciativa |
 | `hito` | Resultados concretos y fechados: reuniones, acuerdos, convenios firmados |
+| `usuario` | Usuarios del sistema con email, contraseña (hash), nombre, rol y actor_id |
 
 ---
 
@@ -194,10 +195,11 @@ Toda la plataforma requiere crear una cuenta. No hay acceso como "visitante" sin
 
 ### El orden en que se va a construir lo que falta
 
-1. **Merge auth a producción** — login funcionando en `main`
-2. **Crear usuarios** del equipo (CD, vinculadores, admins)
-3. **Roles en UI** — cada rol ve lo que le corresponde
-4. **Vista marketplace** — el catálogo diferenciado según si sos oferente o demandante
+1. ~~**Merge auth a producción**~~ ✅ Mergeado a main el 30/03/2026 (PR #22)
+2. ~~**Roles en UI**~~ ✅ Nav filtra por rol, rutas protegidas, rol visible en sidebar
+3. **Cargar datos reales** — actores, necesidades, instrumentos del Clúster
+4. **Crear usuarios** del resto del equipo (vinculadores, oferentes)
+5. **Vista marketplace** — el catálogo diferenciado según si sos oferente o demandante
 
 ---
 

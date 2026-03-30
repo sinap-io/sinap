@@ -2,7 +2,7 @@
 
 > Documento vivo. Captura el estado del proyecto, las decisiones de diseño y el razonamiento detrás de cada una. Actualizar al cerrar cada sprint.
 >
-> Última actualización: 26 marzo 2026
+> Última actualización: 30 marzo 2026
 
 ---
 
@@ -30,7 +30,7 @@ sinap/
 
 **Prototipo (`app/`):** Streamlit conectado a `sinap-prototype` en Neon.tech. Funciona y se usa para validación con stakeholders. Se mantiene intacto en paralelo con la versión productiva.
 
-**Backend (`api/`):** FastAPI conectado a `sinap-production` en Neon.tech. 7 routers operativos en Railway producción.
+**Backend (`api/`):** FastAPI conectado a `sinap-production` en Neon.tech. 8 routers operativos en Railway producción (incluye `/informe`).
 
 **Frontend (`web/`):** Next.js 16.2 conectado al backend FastAPI. 12 rutas compiladas y funcionales en producción.
 
@@ -167,7 +167,7 @@ En producción se podría migrar a `tool_use` de Anthropic para mayor confiabili
 | `GET /gaps/search-log` | Últimas consultas IA (señal de demanda no declarada) |
 | `POST /search` | Búsqueda IA: Claude analiza la consulta contra el ecosistema |
 
-**Módulo Iniciativas (en branch `claude/distracted-lamarr`, pendiente deploy a Railway):**
+**Módulo Iniciativas + Informe IA (en main desde 30/03/2026):**
 
 | Endpoint | Descripción |
 |---|---|
@@ -179,6 +179,7 @@ En producción se podría migrar a `tool_use` de Anthropic para mayor confiabili
 | `DELETE /iniciativas/{id}/actores/{actor_id}` | Quitar actor |
 | `POST /iniciativas/{id}/hitos` | Agregar hito |
 | `GET /vinculador/operadores` | Lista de vinculadores disponibles |
+| `GET /informe` | Informe analítico con Claude — análisis cruzado entre módulos |
 
 ---
 
@@ -195,13 +196,15 @@ En producción se podría migrar a `tool_use` de Anthropic para mayor confiabili
 | `/instruments` | Server + Client | Financiamiento con montos y links |
 | `/search` | Server + Client | Búsqueda IA: form, spinner, respuesta estructurada |
 
-**Módulo Iniciativas (en branch `claude/distracted-lamarr`):**
+**Módulo Iniciativas + Informe IA (en main desde 30/03/2026):**
 
 | Ruta | Tipo | Descripción |
 |---|---|---|
 | `/iniciativas` | Server (dynamic) | Panel con métricas y lista filtrable |
-| `/iniciativas/nueva` | Server (dynamic) | Formulario tipo-first con selección visual |
+| `/iniciativas/nueva` | Server (dynamic) | Formulario tipo-first — protegido por rol |
 | `/iniciativas/[id]` | Server (dynamic) | Detalle: actores, vínculos, hitos timeline |
+| `/informe` | Server (dynamic) | Informe IA semanal — solo admin/directivo/vinculador |
+| `/login` | Server | Login con Auth.js v5 |
 
 Las rutas `/vinculador/*` redirigen a `/iniciativas/*` (código legacy, no eliminar aún).
 
@@ -277,7 +280,7 @@ python -m api.db.seed
 
 **Deuda técnica registrada:** el campo `referente` en `iniciativa_actor` es provisional. A futuro se reemplazará por una tabla `persona` vinculada a `actor`, cuando se implemente el sistema de login.
 
-### 3. Sistema de autenticación ✅ IMPLEMENTADO (en branch, pendiente merge)
+### 3. Sistema de autenticación ✅ EN PRODUCCIÓN (main, PR #22 mergeado 30/03/2026)
 
 **Stack:** Auth.js v5 + bcryptjs + PostgreSQL (pool directo, sin ORM)
 
@@ -340,7 +343,7 @@ python -m api.db.seed
 
 - **GitHub:** `sinap-io/sinap` (github.com/sinap-io/sinap)
 - **Branch de desarrollo:** `claude/distracted-lamarr`
-- **PR pendiente de merge a main**
+- **PR #22 mergeado a main el 30/03/2026** — auth + informe IA + roles en UI
 
 ---
 
