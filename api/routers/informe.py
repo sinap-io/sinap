@@ -82,23 +82,25 @@ Formato: título | estado | último hito | total hitos
 
 Generá el informe con EXACTAMENTE estas secciones en este orden. Sin agregar ni quitar ninguna:
 
-## Resumen ejecutivo
+## Resumen
 2 oraciones máximo. La situación más relevante que surge del cruce de todos los datos. Qué requiere atención inmediata del equipo del Clúster.
 
-## Oportunidades sin iniciativa
-Cruzá necesidades activas con capacidades disponibles. ¿Hay actores que necesitan algo que otro actor ofrece, pero no hay ninguna iniciativa que los conecte?
-Formato por cada match: "**[Actor demandante]** necesita [descripción breve] → **[Actor oferente]** ofrece [servicio/área]"
-Si no hay matches identificables con los datos disponibles, decilo explícitamente.
+## Oportunidades de negocios
 
-## Necesidades sin cobertura
-Necesidades con urgencia crítica o alta para las que no existe ninguna capacidad registrada en el sistema que pueda dar respuesta.
+### Demandas por cubrir — corto plazo
+Cruzá necesidades activas con capacidades disponibles. ¿Hay actores que necesitan algo que otro actor del ecosistema ya ofrece, pero no hay ninguna iniciativa que los conecte? Estas son oportunidades accionables hoy.
+Formato por cada match: "**[Actor demandante]** necesita [descripción breve] → **[Actor oferente]** ofrece [servicio/área]"
+Si no hay matches identificables, decilo explícitamente.
+
+### Brechas de demanda — mediano plazo
+Necesidades con urgencia crítica o alta para las que no existe ningún actor registrado en el sistema que pueda dar respuesta. Estas son brechas reales: requieren incorporar nuevos actores o capacidades al ecosistema.
 Si todas las necesidades urgentes tienen cobertura potencial, decilo.
 
-## Iniciativas: avance y alertas
-Para las iniciativas en_curso: ¿cuáles tienen actividad esta semana? ¿cuáles no tuvieron hitos en más de 30 días?
+## Estado de iniciativas
+Para las iniciativas en_curso: ¿cuáles tienen actividad reciente? ¿cuáles no registraron hitos en más de 30 días?
 Mencioná cada iniciativa estancada por nombre con su último hito (si existe).
 
-## Financiamiento: matches disponibles
+## Financiamiento
 Cruzá actores con necesidades activas contra los instrumentos de financiamiento disponibles.
 ¿Hay algún actor con una necesidad que podría calificar para algún fondo, pero no tiene iniciativa de financiamiento en curso?
 Sé específico: actor → instrumento → por qué aplica.

@@ -14,6 +14,14 @@ const components: Components = {
       {children}
     </h2>
   ),
+  h3: ({ children }) => (
+    <h3
+      className="text-xs font-semibold uppercase tracking-widest mt-5 mb-2"
+      style={{ color: "var(--text-primary)" }}
+    >
+      {children}
+    </h3>
+  ),
   p: ({ children }) => (
     <p className="text-sm leading-relaxed mb-3" style={{ color: "var(--text-muted)" }}>
       {children}
