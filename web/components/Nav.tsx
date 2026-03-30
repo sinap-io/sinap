@@ -13,6 +13,7 @@ import {
   Search,
   Lightbulb,
   LogOut,
+  BarChart2,
 } from "lucide-react";
 
 function SinapLogo() {
@@ -39,6 +40,7 @@ const links = [
   { href: "/instruments", label: "Financiamiento", icon: Banknote },
   { href: "/search",      label: "Buscar IA",      icon: Search },
   { href: "/iniciativas", label: "Iniciativas",    icon: Lightbulb },
+  { href: "/informe",     label: "Informe IA",     icon: BarChart2 },
 ];
 
 const S = {
