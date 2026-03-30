@@ -1,9 +1,9 @@
 """
 Módulo de Inteligencia — Informe del Clúster
-Genera un informe narrativo del estado del ecosistema usando Claude.
+Genera un informe analítico cruzando datos de todos los módulos de SINAP.
 """
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import asyncpg
 from anthropic import AsyncAnthropic
@@ -21,67 +21,90 @@ _client = AsyncAnthropic()
 class InformeResponse(BaseModel):
     informe: str
     generado_en: str
+    periodo: str
     datos: dict
 
 
 _PROMPT = """\
 Sos el analista del Clúster de Biotecnología de Córdoba, Argentina.
-Generá un informe semanal a partir de los datos de la plataforma SINAP.
+Tu tarea es CRUZAR los datos de la plataforma SINAP para encontrar patrones que no son visibles mirando cada módulo por separado.
+NO hagas un resumen de cada módulo. Hacé análisis cruzado: buscá conexiones, vacíos, y situaciones que requieren acción.
 
-REGLAS ESTRICTAS:
-- Solo afirmá lo que esté respaldado por los datos. Si un dato no está, no lo inferís.
-- Sin adjetivos valorativos sin respaldo numérico. Prohibido: "equilibrado", "robusto", "sólido", "prometedor". Escribí directamente.
-- Sin frases de relleno: "se observa que", "cabe destacar", "es importante señalar". Ve al punto.
-- Si los datos son escasos, decilo: "La plataforma registra 1 iniciativa activa — información insuficiente para evaluar tendencias."
-- NO uses tablas markdown. Usá listas con guión (- ) para datos tabulares.
-- Tono: técnico, objetivo. Como un informe de gestión interno.
+REGLAS:
+- Solo afirmá lo que esté respaldado por los datos. Si un dato no está, decilo.
+- Sin adjetivos valorativos sin respaldo. Prohibido: "robusto", "prometedor", "sólido".
+- Sin frases de relleno. Ve al punto.
+- Si los datos son escasos: "La plataforma registra X — información insuficiente para evaluar tendencias."
+- Tono: técnico, como un memo interno de gestión.
 - Idioma: español. Sin regionalismos.
-- Extensión: máximo 450 palabras.
+- Extensión: máximo 500 palabras.
+- NO uses tablas markdown. Usá listas con guión (- ).
 
-DATOS ACTUALES DE SINAP:
+---
 
-ACTORES REGISTRADOS (por tipo):
+DATOS DEL ECOSISTEMA:
+
+ACTORES (por tipo):
 {actores}
 
 CAPACIDADES Y SERVICIOS DISPONIBLES:
+Formato: actor | área temática | tipo de servicio | disponibilidad
 {capacidades}
 
-NECESIDADES ACTIVAS (ordenadas por urgencia):
+NECESIDADES ACTIVAS (por urgencia):
+Formato: actor | descripción | urgencia
 {necesidades}
 
 GAPS DETECTADOS:
+Formato: descripción | origen | estado
 {gaps}
 
 INSTRUMENTOS DE FINANCIAMIENTO ACTIVOS:
+Formato: nombre | organismo | tipo | monto máximo | plazo
 {instrumentos}
 
 INICIATIVAS EN CURSO:
+Formato: título | tipo | estado | actores vinculados | total hitos
 {iniciativas}
 
-HITOS RECIENTES (últimos 90 días):
-{hitos}
+HITOS RECIENTES — ÚLTIMOS 7 DÍAS:
+Formato: iniciativa | tipo | descripción | fecha
+{hitos_semana}
+
+HITOS RECIENTES — ÚLTIMOS 90 DÍAS:
+{hitos_90}
+
+INICIATIVAS EN CURSO SIN ACTIVIDAD RECIENTE (+30 días):
+Formato: título | estado | último hito | total hitos
+{estancadas}
 
 ---
 
 Generá el informe con EXACTAMENTE estas secciones en este orden. Sin agregar ni quitar ninguna:
 
-## Resumen
-2-3 oraciones. Qué situación más relevante muestra el cruce de datos (no el conteo de actores).
+## Resumen ejecutivo
+2 oraciones máximo. La situación más relevante que surge del cruce de todos los datos. Qué requiere atención inmediata del equipo del Clúster.
 
-## Demanda del ecosistema
-Necesidades activas, cuántas son urgentes, cuáles tienen o no tienen cobertura entre los actores registrados.
+## Oportunidades sin iniciativa
+Cruzá necesidades activas con capacidades disponibles. ¿Hay actores que necesitan algo que otro actor ofrece, pero no hay ninguna iniciativa que los conecte?
+Formato por cada match: "**[Actor demandante]** necesita [descripción breve] → **[Actor oferente]** ofrece [servicio/área]"
+Si no hay matches identificables con los datos disponibles, decilo explícitamente.
 
-## Iniciativas en curso
-Qué hay registrado, en qué estado, qué hitos recientes. Si hay poca información, decilo explícitamente.
+## Necesidades sin cobertura
+Necesidades con urgencia crítica o alta para las que no existe ninguna capacidad registrada en el sistema que pueda dar respuesta.
+Si todas las necesidades urgentes tienen cobertura potencial, decilo.
 
-## Actores y capacidades
-Composición por tipo. Qué sectores tienen mayor cobertura de servicios. Cuáles tienen disponibilidad parcial o nula.
+## Iniciativas: avance y alertas
+Para las iniciativas en_curso: ¿cuáles tienen actividad esta semana? ¿cuáles no tuvieron hitos en más de 30 días?
+Mencioná cada iniciativa estancada por nombre con su último hito (si existe).
 
-## Financiamiento activo
-Lista de instrumentos activos con organismo, tipo y monto. Sin tabla — usar lista con guión.
+## Financiamiento: matches disponibles
+Cruzá actores con necesidades activas contra los instrumentos de financiamiento disponibles.
+¿Hay algún actor con una necesidad que podría calificar para algún fondo, pero no tiene iniciativa de financiamiento en curso?
+Sé específico: actor → instrumento → por qué aplica.
 
-## Alertas para el equipo
-2-3 situaciones concretas que requieren atención del Clúster según los datos. Ser específico: qué actor, qué necesidad, qué acción.
+## Esta semana
+Qué actividad registró la plataforma en los últimos 7 días según los hitos. Si no hubo actividad, decilo.
 """
 
 
@@ -146,12 +169,33 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
         LIMIT 15
     """)
 
-    hitos_recientes = await db.fetch("""
+    hitos_semana = await db.fetch("""
+        SELECT i.titulo as iniciativa, h.tipo, h.descripcion, h.fecha
+        FROM hito h JOIN iniciativa i ON i.id = h.iniciativa_id
+        WHERE h.fecha >= CURRENT_DATE - INTERVAL '7 days'
+        ORDER BY h.fecha DESC
+        LIMIT 10
+    """)
+
+    hitos_90 = await db.fetch("""
         SELECT i.titulo as iniciativa, h.tipo, h.descripcion, h.fecha
         FROM hito h JOIN iniciativa i ON i.id = h.iniciativa_id
         WHERE h.fecha >= CURRENT_DATE - INTERVAL '90 days'
         ORDER BY h.fecha DESC
-        LIMIT 10
+        LIMIT 15
+    """)
+
+    estancadas = await db.fetch("""
+        SELECT i.titulo, i.estado, i.tipo,
+               MAX(h.fecha) as ultimo_hito,
+               COUNT(h.id) as total_hitos
+        FROM iniciativa i
+        LEFT JOIN hito h ON h.iniciativa_id = i.id
+        WHERE i.estado = 'en_curso'
+        GROUP BY i.id, i.titulo, i.estado, i.tipo
+        HAVING MAX(h.fecha) < CURRENT_DATE - INTERVAL '30 days'
+            OR MAX(h.fecha) IS NULL
+        LIMIT 5
     """)
 
     def fmt(rows, cols):
@@ -171,6 +215,20 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
         "total_iniciativas_activas": len(iniciativas_rows),
     }
 
+    # Calcular período (semana actual: lunes → domingo)
+    hoy = datetime.now()
+    day_of_week = hoy.weekday()  # 0=lun, 6=dom
+    lunes = hoy - timedelta(days=day_of_week)
+    domingo = lunes + timedelta(days=6)
+    fmt_fecha = lambda d: d.strftime("%-d de %B").replace(
+        "January", "enero").replace("February", "febrero").replace(
+        "March", "marzo").replace("April", "abril").replace(
+        "May", "mayo").replace("June", "junio").replace(
+        "July", "julio").replace("August", "agosto").replace(
+        "September", "septiembre").replace("October", "octubre").replace(
+        "November", "noviembre").replace("December", "diciembre")
+    periodo = f"Semana del {fmt_fecha(lunes)} al {fmt_fecha(domingo)} de {hoy.year}"
+
     try:
         respuesta = await _client.messages.create(
             model="claude-opus-4-5",
@@ -184,7 +242,9 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
                     gaps=fmt(gaps, ["descripcion", "origen", "status"]),
                     instrumentos=fmt(instrumentos, ["nombre", "organismo", "tipo", "monto_maximo", "plazo_ejecucion"]),
                     iniciativas=fmt(iniciativas_rows, ["titulo", "tipo", "estado", "total_actores", "total_hitos"]),
-                    hitos=fmt(hitos_recientes, ["iniciativa", "tipo", "descripcion", "fecha"]),
+                    hitos_semana=fmt(hitos_semana, ["iniciativa", "tipo", "descripcion", "fecha"]),
+                    hitos_90=fmt(hitos_90, ["iniciativa", "tipo", "descripcion", "fecha"]),
+                    estancadas=fmt(estancadas, ["titulo", "estado", "ultimo_hito", "total_hitos"]),
                 ),
             }],
         )
@@ -195,5 +255,6 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
     return InformeResponse(
         informe=respuesta.content[0].text,
         generado_en=datetime.now().isoformat(),
+        periodo=periodo,
         datos=datos_resumen,
     )
