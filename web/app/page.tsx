@@ -103,9 +103,6 @@ export default async function HomePage() {
       <section className="pb-10 border-b border-[var(--border)]">
         <div className="flex items-start justify-between flex-wrap gap-4 mb-6">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)] mb-1">
-              Módulo central
-            </p>
             <h2 className="text-2xl font-bold text-[var(--navy)]">Iniciativas</h2>
             <p className="text-sm text-[var(--text-muted)] mt-1 max-w-lg">
               Registrá y seguí cada proceso de articulación del Clúster: vinculaciones,
