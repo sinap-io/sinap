@@ -218,17 +218,17 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
     }
 
     # Calcular período (semana actual: lunes → domingo)
+    _MESES = [
+        "enero", "febrero", "marzo", "abril", "mayo", "junio",
+        "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    ]
+
+    def fmt_fecha(d: datetime) -> str:
+        return f"{d.day} de {_MESES[d.month - 1]}"
+
     hoy = datetime.now()
-    day_of_week = hoy.weekday()  # 0=lun, 6=dom
-    lunes = hoy - timedelta(days=day_of_week)
+    lunes = hoy - timedelta(days=hoy.weekday())   # weekday(): 0=lun … 6=dom
     domingo = lunes + timedelta(days=6)
-    fmt_fecha = lambda d: d.strftime("%-d de %B").replace(
-        "January", "enero").replace("February", "febrero").replace(
-        "March", "marzo").replace("April", "abril").replace(
-        "May", "mayo").replace("June", "junio").replace(
-        "July", "julio").replace("August", "agosto").replace(
-        "September", "septiembre").replace("October", "octubre").replace(
-        "November", "noviembre").replace("December", "diciembre")
     periodo = f"Semana del {fmt_fecha(lunes)} al {fmt_fecha(domingo)} de {hoy.year}"
 
     try:
