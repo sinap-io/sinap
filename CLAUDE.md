@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (31 marzo 2026)
+## Estado actual (31 marzo 2026 — tarde)
 
 **Lo que funciona en producción (main):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -60,8 +60,14 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Footer del nav muestra nombre legible del rol ✅
 - `/iniciativas/nueva` redirige a oferente/demandante ✅
 
+**Usuarios — estado:**
+- Tabla `usuario` creada en Neon.tech ✅ (migración 003 aplicada manualmente)
+- `sebabizzi@gmail.com` (admin) / `sinap2026` ✅
+- `pdiazazulay@gmail.com` (directivo) / `sinap2026` ✅
+- Script `api/scripts/crear_usuario.py` para crear usuarios desde CLI ✅
+
 **Lo que está pendiente:**
-- Verificar que radar funciona después del deploy de Railway
+- Verificar que radar funciona después del deploy de Railway (fix pusheado a main eb521a8)
 - Cargar datos reales (actores, necesidades, instrumentos del Clúster)
 - Vista marketplace diferenciada por rol
 - Crear usuarios para el resto del equipo
