@@ -38,39 +38,43 @@ class RadarResponse(BaseModel):
 _PROMPT = """\
 Sos analista de inteligencia sectorial del Clúster de Biotecnología de Córdoba, Argentina.
 Generás informes internos para el equipo de gestión del Clúster (no para los miembros).
-La fecha actual es {fecha_actual}. Solo mencioná eventos que aún no ocurrieron.
+La fecha actual es {fecha_actual}.
+
+ANTES DE REDACTAR, buscá en la web:
+1. Eventos y congresos de {tema_label} confirmados para los próximos 6 meses desde {fecha_actual}
+2. Noticias relevantes del sector publicadas en las últimas semanas
+3. Convocatorias de financiamiento activas relacionadas con {tema_label}
 
 CONTEXTO DEL ECOSISTEMA:
-- Capacidades disponibles: {capacidades_ecosistema}
+- Capacidades disponibles en el Clúster: {capacidades_ecosistema}
 - Necesidades urgentes de los miembros: {necesidades_ecosistema}
 
 REGLAS:
-- Solo mencioná eventos futuros (posteriores a {fecha_actual}).
-- Sé específico pero realista: no propongas acciones que estén fuera del alcance de un clúster regional.
+- Usá solo información verificada. Si buscaste y no encontraste algo concreto, decilo.
+- Solo eventos confirmados y futuros (posteriores a {fecha_actual}).
 - Tono: memo interno de gestión. Directo, sin adjetivos vacíos.
-- Si no tenés información confiable sobre algo, no lo inventes.
-- Idioma: español. Máximo 550 palabras.
+- Sin línea de cierre ni "próxima actualización".
+- Idioma: español. Máximo 600 palabras.
 - NO uses tablas. Usá listas con guión (- ).
 
 Generá el informe con EXACTAMENTE estas secciones:
 
 ## Eventos del sector
-Eventos relevantes para {tema_label} que ocurren en los próximos 6 meses (desde {fecha_actual}).
-Solo eventos reales y futuros. Por cada uno: nombre, lugar, fecha y por qué es relevante para el ecosistema cordobés.
-Si no tenés certeza de que un evento sea posterior a {fecha_actual}, no lo incluyas.
+Eventos relevantes para {tema_label} en los próximos 6 meses.
+Por cada uno: nombre, lugar, fecha y por qué es relevante para el ecosistema cordobés.
 
 ## Tendencias
-Las 2-3 tendencias científicas o de mercado más importantes en {tema_label} en este momento.
+Las 2-3 tendencias científicas o de mercado más importantes en {tema_label} ahora mismo.
 Para cada una: qué está pasando y qué significa concretamente para los actores del Clúster.
 
 ## Financiamiento disponible
-Instrumentos activos o próximos a abrir que sean relevantes para {tema_label}.
-Priorizá los accesibles desde Argentina. Mencioná plazos si los conocés.
+Instrumentos activos o próximos a abrir relevantes para {tema_label}.
+Priorizá los accesibles desde Argentina.
 
 ## Oportunidades detectadas
-Señales del sector que podrían representar oportunidades concretas para los miembros del Clúster.
-NO es una lista de tareas para el equipo. Es inteligencia: qué está pasando afuera que abre una ventana para actores como los del ecosistema cordobés.
-Formato: "Señal → por qué es relevante para el Clúster". Máximo 3 items.
+Señales del sector que abren ventanas concretas para los miembros del Clúster.
+NO es una lista de tareas. Es inteligencia: qué está pasando afuera que es relevante para actores como los del ecosistema cordobés.
+Formato: "Señal → por qué importa al Clúster". Máximo 3 items.
 """
 
 
@@ -134,27 +138,39 @@ async def _generar(tema: str, db: asyncpg.Connection) -> RadarResponse:
         "September", "septiembre").replace("October", "octubre").replace(
         "November", "noviembre").replace("December", "diciembre")
 
+    prompt_texto = _PROMPT.format(
+        tema_label=tema_label,
+        trimestre=trimestre,
+        fecha_actual=fecha_actual,
+        capacidades_ecosistema=caps_texto,
+        necesidades_ecosistema=necs_texto,
+    )
+
     try:
         respuesta = await _client.messages.create(
             model="claude-opus-4-5",
-            max_tokens=2000,
-            messages=[{
-                "role": "user",
-                "content": _PROMPT.format(
-                    tema_label=tema_label,
-                    trimestre=trimestre,
-                    fecha_actual=fecha_actual,
-                    capacidades_ecosistema=caps_texto,
-                    necesidades_ecosistema=necs_texto,
-                ),
+            max_tokens=3000,
+            tools=[{
+                "type": "web_search_20250305",
+                "name": "web_search",
+                "max_uses": 5,
             }],
+            messages=[{"role": "user", "content": prompt_texto}],
         )
     except Exception as e:
         logger.error("Error llamando a Claude: %s", e)
         raise HTTPException(status_code=502, detail="Error al generar el radar")
 
+    # Extraer el texto final (el modelo puede incluir bloques de tool_use internos)
+    texto = next(
+        (block.text for block in respuesta.content if hasattr(block, "text")),
+        "",
+    )
+    if not texto:
+        raise HTTPException(status_code=502, detail="El modelo no devolvió texto")
+
     return RadarResponse(
-        radar=respuesta.content[0].text,
+        radar=texto,
         tema=tema,
         tema_label=tema_label,
         generado_en=datetime.now().isoformat(),
