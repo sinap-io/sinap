@@ -11,7 +11,7 @@ export const TIPO_ACTOR_LABEL: Record<string, string> = {
 export const TIPO_ACTOR_COLOR: Record<string, string> = {
   laboratorio:   "#22c55e",
   empresa:       "#3b82f6",
-  startup:       "#a855f7",
+  startup:       "#64748b",
   universidad:   "#eab308",
   investigacion: "#f97316",
 };
@@ -42,16 +42,16 @@ export const SERVICIO_LABEL: Record<string, string> = {
 };
 
 export const URGENCIA_COLOR: Record<string, string> = {
-  critica: "#ef4444",
-  alta:    "#f97316",
-  normal:  "#3b82f6",
-  baja:    "#6b7280",
+  critica: "#dc2626",   // rojo — peligro inmediato
+  alta:    "#a855f7",   // violeta — atención, claramente distinto del rojo
+  normal:  "#2563eb",   // azul — informacional
+  baja:    "#94a3b8",   // gris claro — baja prioridad
 };
 
 export const DISPONIBILIDAD_COLOR: Record<string, string> = {
-  disponible:    "#22c55e",
-  parcial:       "#f97316",
-  no_disponible: "#ef4444",
+  disponible:    "#16a34a",   // verde
+  parcial:       "#d97706",   // ámbar
+  no_disponible: "#dc2626",   // rojo
 };
 
 export const TIPO_INSTRUMENTO_LABEL: Record<string, string> = {
@@ -61,26 +61,72 @@ export const TIPO_INSTRUMENTO_LABEL: Record<string, string> = {
   concurso: "Concurso",
 };
 
+export const TIPO_INSTRUMENTO_COLOR: Record<string, string> = {
+  subsidio: "#16a34a",   // verde — aporte/regalo
+  credito:  "#2563eb",   // azul — préstamo
+  capital:  "#1e3a5f",   // navy — inversión
+  concurso: "#9333ea",   // violeta — competencia
+};
+
 export const STATUS_INSTRUMENTO_COLOR: Record<string, string> = {
   activo:       "#22c55e",
   proximamente: "#f97316",
   cerrado:      "#6b7280",
 };
 
-export const ESTADO_CASO_LABEL: Record<string, string> = {
-  abierto:    "Abierto",
-  en_gestion: "En gestión",
-  vinculado:  "Vinculado",
-  cerrado:    "Cerrado",
-  cancelado:  "Cancelado",
+export const TIPO_INICIATIVA_LABEL: Record<string, string> = {
+  vinculacion: "Vinculación",
+  oportunidad: "Oportunidad",
+  consorcio:   "Consorcio",
+  demanda:     "Demanda",
+  oferta:      "Oferta",
+  instrumento: "Instrumento",
+  gap:         "Gap",
 };
 
-export const ESTADO_CASO_COLOR: Record<string, string> = {
-  abierto:    "#3b82f6",
-  en_gestion: "#f97316",
-  vinculado:  "#22c55e",
-  cerrado:    "#6b7280",
-  cancelado:  "#ef4444",
+export const TIPO_INICIATIVA_COLOR: Record<string, string> = {
+  vinculacion: "#0ea5e9",
+  oportunidad: "#22c55e",
+  consorcio:   "#3b82f6",
+  demanda:     "#f97316",
+  oferta:      "#a855f7",
+  instrumento: "#eab308",
+  gap:         "#ef4444",
+};
+
+export const TIPO_INICIATIVA_DESC: Record<string, string> = {
+  vinculacion: "Conexión entre actores — primer contacto o relación estratégica",
+  oportunidad: "Oportunidad de mercado detectada",
+  consorcio:   "Formación de grupo multi-actor",
+  demanda:     "Actor tiene una necesidad concreta",
+  oferta:      "Actor tiene capacidad disponible",
+  instrumento: "Instrumento de financiamiento disponible",
+  gap:         "Brecha tecnológica o de mercado a resolver",
+};
+
+export const ESTADO_INICIATIVA_LABEL: Record<string, string> = {
+  abierta:    "Abierta",
+  en_curso:   "En curso",
+  concretada: "Concretada",
+  cerrada:    "Cerrada",
+  postergada: "Postergada",
+};
+
+export const ESTADO_INICIATIVA_COLOR: Record<string, string> = {
+  abierta:    "#3b82f6",
+  en_curso:   "#f97316",
+  concretada: "#22c55e",
+  cerrada:    "#6b7280",
+  postergada: "#a855f7",
+};
+
+export const ROL_ACTOR_LABEL: Record<string, string> = {
+  lider:       "Líder",
+  demandante:  "Demandante",
+  oferente:    "Oferente",
+  miembro:     "Miembro",
+  candidato:   "Candidato",
+  financiador: "Financiador",
 };
 
 export const TIPO_HITO_LABEL: Record<string, string> = {

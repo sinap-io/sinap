@@ -1,7 +1,7 @@
 import { fetchApi } from "@/lib/api";
 import type { InstrumentItem } from "@/lib/types";
 import InstrumentsClient from "@/components/instruments/InstrumentsClient";
-import { TIPO_INSTRUMENTO_LABEL, STATUS_INSTRUMENTO_COLOR } from "@/lib/labels";
+import { TIPO_INSTRUMENTO_LABEL, TIPO_INSTRUMENTO_COLOR, STATUS_INSTRUMENTO_COLOR } from "@/lib/labels";
 
 export default async function InstrumentsPage() {
   const instruments = await fetchApi<InstrumentItem[]>("/instruments");
@@ -33,7 +33,7 @@ export default async function InstrumentsPage() {
           ...Object.entries(byTipo).map(([tipo, count]) => ({
             label: TIPO_INSTRUMENTO_LABEL[tipo] ?? tipo,
             value: count,
-            color: "#3b82f6",
+            color: TIPO_INSTRUMENTO_COLOR[tipo] ?? "#64748b",
           })),
         ].map(({ label, value, color }) => (
           <div
@@ -41,7 +41,7 @@ export default async function InstrumentsPage() {
             className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] p-3 text-center"
             style={{ borderTopColor: color, borderTopWidth: "2px" }}
           >
-            <div className="text-2xl font-bold text-[var(--text)]">{value}</div>
+            <div className="text-2xl font-bold" style={{ color }}>{value}</div>
             <div className="text-xs text-[var(--text-muted)] mt-0.5">{label}</div>
           </div>
         ))}

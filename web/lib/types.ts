@@ -91,6 +91,7 @@ export interface VinculadorItem {
   activo: boolean;
 }
 
+// ── Iniciativas ───────────────────────────────────────────────
 export interface HitoItem {
   id: number;
   tipo: string;
@@ -100,25 +101,59 @@ export interface HitoItem {
   creado_en: string;
 }
 
-export interface CasoList {
-  id: number;
-  estado: string;
-  notas: string | null;
-  creado_en: string;
-  actualizado_en: string;
-  demandante_id: number;
-  demandante_nombre: string;
-  oferente_id: number | null;
-  oferente_nombre: string | null;
-  necesidad_id: number;
-  necesidad_tipo: string;
-  vinculador_id: number;
-  vinculador_nombre: string;
+export interface IniciativaActorOut {
+  actor_id: number;
+  actor_nombre: string;
+  actor_tipo: string;
+  rol: string;
+  referente: string | null;
 }
 
-export interface CasoDetail extends CasoList {
-  capacidad_id: number | null;
-  capacidad_tipo: string | null;
+export interface NecesidadRef {
+  necesidad_id: number;
+  actor_nombre: string;
+  tipo_servicio: string;
+}
+
+export interface CapacidadRef {
+  capacidad_id: number;
+  actor_nombre: string;
+  tipo_servicio: string;
+}
+
+export interface InstrumentoRef {
+  instrumento_id: number;
+  nombre: string;
+  tipo: string;
+}
+
+export interface IniciativaList {
+  id: number;
+  tipo: string;
+  titulo: string;
+  estado: string;
+  vinculador_nombre: string | null;
+  total_actores: number;
+  total_hitos: number;
+  creado_en: string;
+  actualizado_en: string;
+}
+
+export interface IniciativaDetail {
+  id: number;
+  tipo: string;
+  titulo: string;
+  descripcion: string | null;
+  estado: string;
+  notas: string | null;
+  vinculador_id: number | null;
+  vinculador_nombre: string | null;
+  creado_en: string;
+  actualizado_en: string;
+  actores: IniciativaActorOut[];
+  necesidades: NecesidadRef[];
+  capacidades: CapacidadRef[];
+  instrumentos: InstrumentoRef[];
   hitos: HitoItem[];
 }
 

@@ -4,6 +4,21 @@ Ideas y funcionalidades identificadas para versiones futuras.
 
 ---
 
+## Informe IA
+
+### Informe semanal con actividad real de la semana
+Hoy el informe muestra el estado actual del ecosistema (snapshot al día de emisión). Para que refleje genuinamente "lo que pasó esta semana" hay que poder filtrar por fecha de creación en cada tabla.
+
+**Requiere:**
+- Agregar `created_at TIMESTAMPTZ DEFAULT now()` a las tablas: `actor`, `necesidad`, `iniciativa`, `capacidad`, `instrumento`
+- Migración de base de datos (004)
+- Actualizar queries en `api/routers/informe.py` para filtrar por `created_at >= NOW() - INTERVAL '7 days'`
+- Cambiar label del período de "Estado al [fecha]" a "Semana del X al Y"
+
+**Valor:** el informe pasa de foto estática a reporte de actividad real — útil para reuniones semanales del equipo.
+
+---
+
 ## v2 — Próxima versión
 
 ### Matching IA: necesidades ↔ financiamiento
