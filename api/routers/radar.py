@@ -3,7 +3,11 @@ Módulo de Inteligencia Externa — Radar del Sector
 Genera un informe de inteligencia sectorial sobre el ecosistema biotech,
 basado en el conocimiento actualizado del modelo IA.
 """
+import asyncio
+import json
 import logging
+import urllib.parse
+import urllib.request
 from datetime import datetime
 
 import asyncpg
@@ -17,6 +21,30 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/radar", tags=["radar"])
 
 _client = AsyncAnthropic()
+
+
+def _ddg_search_sync(query: str) -> str:
+    """Búsqueda via DuckDuckGo Instant Answer API (sincrónica)."""
+    url = "https://api.duckduckgo.com/?" + urllib.parse.urlencode({
+        "q": query, "format": "json", "no_html": "1", "skip_disambig": "1",
+    })
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "SINAP/1.0"})
+        with urllib.request.urlopen(req, timeout=8) as r:
+            data = json.loads(r.read().decode())
+        parts = []
+        if data.get("AbstractText"):
+            parts.append(data["AbstractText"])
+        for topic in (data.get("RelatedTopics") or [])[:5]:
+            if isinstance(topic, dict) and topic.get("Text"):
+                parts.append(topic["Text"])
+        return "\n".join(parts) if parts else f"Sin resultados para: {query}"
+    except Exception as e:
+        return f"Error de búsqueda: {e}"
+
+
+async def _web_search(query: str) -> str:
+    return await asyncio.to_thread(_ddg_search_sync, query)
 
 TEMAS_VALIDOS = {
     "biosensores": "biosensores para salud y diagnóstico point-of-care",
@@ -142,17 +170,58 @@ async def _generar(tema: str, db: asyncpg.Connection) -> RadarResponse:
         necesidades_ecosistema=necs_texto,
     )
 
+    _tools = [{
+        "name": "web_search",
+        "description": "Busca información actualizada en la web sobre eventos, noticias y convocatorias del sector.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string", "description": "Consulta de búsqueda en inglés o español"},
+            },
+            "required": ["query"],
+        },
+    }]
+
+    messages = [{"role": "user", "content": prompt_texto}]
+    texto = ""
+
     try:
-        respuesta = await _client.messages.create(
-            model="claude-opus-4-5",
-            max_tokens=3000,
-            messages=[{"role": "user", "content": prompt_texto}],
-        )
+        for _ in range(6):
+            respuesta = await _client.messages.create(
+                model="claude-opus-4-5",
+                max_tokens=3000,
+                tools=_tools,
+                messages=messages,
+            )
+
+            if respuesta.stop_reason == "end_turn":
+                texto = next(
+                    (b.text for b in respuesta.content if hasattr(b, "text")), ""
+                )
+                break
+
+            if respuesta.stop_reason == "tool_use":
+                messages.append({"role": "assistant", "content": respuesta.content})
+                tool_results = []
+                for block in respuesta.content:
+                    if getattr(block, "type", None) == "tool_use":
+                        query = (block.input or {}).get("query", "")
+                        resultado = await _web_search(query)
+                        tool_results.append({
+                            "type": "tool_result",
+                            "tool_use_id": block.id,
+                            "content": resultado,
+                        })
+                if tool_results:
+                    messages.append({"role": "user", "content": tool_results})
+
     except Exception as e:
-        logger.error("Error llamando a Claude: %s", e)
+        import traceback
+        logger.error("Error llamando a Claude: %s\n%s", e, traceback.format_exc())
         raise HTTPException(status_code=502, detail="Error al generar el radar")
 
-    texto = respuesta.content[0].text
+    if not texto:
+        raise HTTPException(status_code=502, detail="El modelo no devolvió texto")
 
     return RadarResponse(
         radar=texto,
