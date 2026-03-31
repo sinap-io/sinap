@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { fetchApi } from "@/lib/api";
 import type { NeedItem } from "@/lib/types";
 import NeedsClient from "@/components/needs/NeedsClient";

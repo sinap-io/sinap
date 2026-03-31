@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { fetchApi } from "@/lib/api";
 import type { GapItem, GapSummary } from "@/lib/types";
 import GapsClient from "@/components/gaps/GapsClient";

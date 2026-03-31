@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { fetchApi } from "@/lib/api";
 import type { InstrumentItem } from "@/lib/types";
 import InstrumentsClient from "@/components/instruments/InstrumentsClient";

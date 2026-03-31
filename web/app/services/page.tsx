@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { fetchApi } from "@/lib/api";
 import type { ServiceItem } from "@/lib/types";
 import ServicesClient from "@/components/services/ServicesClient";

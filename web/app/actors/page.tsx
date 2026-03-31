@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { fetchApi } from "@/lib/api";
 import type { ActorList } from "@/lib/types";
 import ActorsClient from "@/components/actors/ActorsClient";
