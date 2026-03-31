@@ -22,6 +22,7 @@ export async function runSearch(consulta: string): Promise<SearchResult | Search
     const data = await fetchApi<SearchResponse>("/search", {
       method: "POST",
       body: JSON.stringify({ consulta: consulta.trim() }),
+      signal: AbortSignal.timeout(55000),
     });
     return { ok: true, data };
   } catch (e) {
