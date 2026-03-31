@@ -41,7 +41,7 @@ Generás informes internos para el equipo de gestión del Clúster (no para los 
 La fecha actual es {fecha_actual}.
 
 ANTES DE REDACTAR, buscá en la web:
-1. Eventos y congresos de {tema_label} confirmados para los próximos 6 meses desde {fecha_actual}
+1. Eventos y congresos de {tema_label} confirmados desde {fecha_actual} hasta fines de 2027 (incluir eventos lejanos es útil para planificación presupuestaria)
 2. Noticias relevantes del sector publicadas en las últimas semanas
 3. Convocatorias de financiamiento activas relacionadas con {tema_label}
 
@@ -60,7 +60,8 @@ REGLAS:
 Generá el informe con EXACTAMENTE estas secciones:
 
 ## Eventos del sector
-Eventos relevantes para {tema_label} en los próximos 6 meses.
+Eventos relevantes para {tema_label} desde {fecha_actual} hasta fines de 2027.
+Incluí eventos lejanos — los europeos o internacionales requieren planificación presupuestaria con al menos 6-12 meses de anticipación.
 Por cada uno: nombre, lugar, fecha y por qué es relevante para el ecosistema cordobés.
 
 ## Tendencias
