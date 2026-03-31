@@ -100,7 +100,7 @@ async def search(body: SearchRequest, db: asyncpg.Connection = Depends(get_db)):
 
     try:
         respuesta_claude = await _client.messages.create(
-            model="claude-opus-4-5",
+            model="claude-sonnet-4-6",
             max_tokens=1500,
             messages=[{
                 "role": "user",

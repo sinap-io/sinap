@@ -231,7 +231,7 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
 
     try:
         respuesta = await _client.messages.create(
-            model="claude-opus-4-5",
+            model="claude-sonnet-4-6",
             max_tokens=2000,
             messages=[{
                 "role": "user",
