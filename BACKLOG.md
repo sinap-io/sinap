@@ -59,13 +59,36 @@ Detección automática de necesidades sin oferta disponible → oportunidades de
 - Migrar desde Streamlit cuando el prototipo esté validado con stakeholders
 - La BD en Neon PostgreSQL no cambia, toda la lógica es transferible
 - Prerequisito: reuniones de validación con CEPROCOR y LACE
-```
 
-Luego:
-```
-git add BACKLOG.md
-git commit -m "Add architecture decision: FastAPI + Next.js for production"
-git push
 ---
 
-*Actualizado: marzo 2026*
+## Módulo Iniciativas — mejoras pendientes
+
+### Búsqueda contextual dentro de una iniciativa
+Panel de búsqueda IA dentro de la pantalla de detalle de iniciativa. Botones rápidos para buscar actores, demandantes, investigadores e instrumentos relevantes. Resultados con botón directo para sumar a la iniciativa.
+
+**Requiere:** nuevo componente frontend (panel de búsqueda) + conectar con endpoint `/search` existente. No requiere cambios de backend.
+
+### Estados de participación de actores en iniciativas
+Hoy `iniciativa_actor` solo tiene `rol`. Agregar campo `estado` para reflejar el pipeline de vinculación:
+
+`potencial → contactado → confirmado`
+
+- **Potencial**: identificado, no contactado aún
+- **Contactado**: vínculo iniciado
+- **Confirmado**: efectivamente parte de la iniciativa
+
+**Requiere:** migración DB (campo `estado` en `iniciativa_actor`) + actualizar frontend para mostrar y editar el estado.
+
+### Simplificación de roles de actores en iniciativas
+Acordado con Pablo — revisar los roles actuales (lider, demandante, oferente, miembro, candidato, financiador) y simplificar a 3:
+
+- **Líder**: conduce la iniciativa
+- **Integrante**: participa activamente
+- **Colaborador**: participación esporádica
+
+**Requiere:** migración DB para actualizar CHECK constraint + actualizar labels en frontend.
+
+---
+
+*Actualizado: 31 marzo 2026*
