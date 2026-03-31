@@ -14,46 +14,47 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (31 marzo 2026 — tarde)
+## Estado actual (31 marzo 2026 — noche)
 
-**Lo que funciona en producción (main):**
+**Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
 - Frontend Next.js → Vercel: `https://sinap-psi.vercel.app` ✅
 - Prototipo Streamlit (`app/`) — conectado a `sinap-production` — NO TOCAR
-- Módulo Iniciativas completo en producción ✅
-- Rediseño visual (Open Sans + navy/teal) en producción ✅
-- Auth.js v5 en producción ✅
-- Informe IA en producción ✅
-- Roles en UI en producción ✅
-- Radar sectorial (`/radar`) — código en main, deploy en curso ⚠️
+- Módulo Iniciativas completo ✅
+- Rediseño visual (Open Sans + navy/teal) ✅
+- Auth.js v5 con tabla `usuario` en Neon ✅
+- Informe IA (`/informe`) ✅
+- Roles en UI ✅ — rol `manager` agregado para Pablo (pdiazazulay@gmail.com)
+- Radar sectorial (`/radar`) ✅ — sin web search por ahora
+- Buscador IA dentro del detalle de iniciativa ✅ — panel colapsable "Buscar en el ecosistema"
 
-**Branch activo:** `claude/distracted-lamarr` (en uso — tiene los mismos cambios que main)
+**Branch activo:** `claude/distracted-lamarr` — sincronizado con main + 1 commit extra (timeout search)
+
+**⚠️ Pendiente verificar mañana:**
+- Login en preview no funciona (las URLs preview de Vercel no tienen las env vars de auth configuradas — AUTH_SECRET, DATABASE_URL). Solo funciona en sinap-psi.vercel.app (producción).
+- Confirmar que el buscador en iniciativas funciona sin timeout en producción
 
 **Sistema de autenticación — estado:**
-- Auth.js v5 con email + contraseña ✅ (en main)
-- Tabla `usuario` en Neon.tech (migración 003) ✅
-- `proxy.ts` protege todas las rutas ✅
-- Página de login `/login` con diseño SINAP ✅
-- Nav muestra usuario + rol + botón logout ✅
-- Usuarios creados: `sebabizzi@gmail.com` (admin) + `pdiazazulay@gmail.com` (directivo) ✅
-- Pendiente: crear usuarios para el resto del equipo (vinculadores, oferentes)
+- Auth.js v5 con email + contraseña ✅
+- Tabla `usuario` en Neon.tech ✅ (migración 003 aplicada manualmente hoy)
+- Usuarios: `sebabizzi@gmail.com` (admin) + `pdiazazulay@gmail.com` (manager) — contraseña: sinap2026
+- Pendiente: crear usuarios para el resto del equipo
 
 **Informe IA — estado:**
 - Endpoint `GET /informe` en Railway ✅
-- Prompt v4: análisis cruzado entre módulos ✅
 - Sección "Oportunidades de negocios" con subsecciones corto/mediano plazo ✅
-- Frontend `/informe` con métricas, período "Estado al [fecha]" y botón PDF ✅
-- Acceso restringido a admin/directivo/vinculador ✅
+- Período: "Estado al [fecha]" ✅
 
 **Radar sectorial — estado:**
-- Endpoint `GET /radar?tema=X&force=true` implementado ✅
+- Endpoint `GET /radar?tema=X&force=true` ✅
 - 5 temas: biosensores, biofarma, agroindustria, diagnostico_molecular, nanobiotecnologia ✅
-- Cache 24h por tema, bypass con `?force=true` ✅
-- Frontend `/radar` con selector de temas y botón Regenerar ✅
-- Acceso restringido a admin/directivo/vinculador ✅
-- Web search (DuckDuckGo) removido temporalmente — generación sin tools ⚠️
-- Fix pusheado a main (eb521a8) — Railway deploying ⚠️
-- **PENDIENTE**: verificar que el deploy de Railway tomó efecto y el radar carga
+- Cache 24h + botón Regenerar ✅
+- Web search removido temporalmente (DuckDuckGo no funcionaba bien) ⚠️
+
+**Buscador en iniciativas — estado:**
+- Panel colapsable en detalle de iniciativa ✅
+- 3 botones rápidos: ¿Quién puede aportar? / ¿Quién demanda esto? / ¿Qué financiamiento aplica? ✅
+- Timeout extendido a 55s (search tarda ~30s) — en preview, pendiente probar en producción ⚠️
 
 **Roles en UI — estado:**
 - Nav filtra "Informe IA" y "Radar sectorial" según rol ✅

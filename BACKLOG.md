@@ -4,6 +4,31 @@ Ideas y funcionalidades identificadas para versiones futuras.
 
 ---
 
+## 🔴 Revisar mañana (issues del 31/03)
+
+### Login en preview no funciona
+Las URLs de preview de Vercel no tienen las variables de entorno de auth configuradas (AUTH_SECRET, DATABASE_URL, NEXTAUTH_URL). El login solo funciona en producción (sinap-psi.vercel.app).
+**Solución**: configurar env vars en Vercel para entornos preview, o aceptar que el testing de auth siempre se hace en producción.
+
+### Verificar buscador IA en iniciativas en producción
+El timeout se extendió a 55s en preview (`claude/distracted-lamarr`). Ese cambio todavía no está en `main`. Mergear y confirmar que funciona sin error 502.
+
+### Errores de build en Vercel por pre-rendering
+Problema raíz: Next.js intenta pre-renderizar páginas en build time y falla si Railway no responde. Fix aplicado: `export const dynamic = "force-dynamic"` en todas las páginas con fetch a la API. Confirmar que no hay más páginas afectadas.
+
+---
+
+## Tipos de actor — correcciones pendientes
+Acordado con Sebastián — revisar y corregir los tipos de actor:
+
+- **Eliminar** `laboratorio` como tipo separado — un laboratorio es una empresa (con laboratorio)
+- **Agregar** `gobierno` — organismos públicos del ecosistema
+- **Renombrar** `investigacion` → `investigador` — el actor es la persona/grupo, no la actividad
+
+**Requiere:** migración DB (UPDATE en tabla actor + CHECK constraint) + actualizar labels en frontend (`labels.ts`, formularios de alta de actor).
+
+---
+
 ## Informe IA
 
 ### Informe semanal con actividad real de la semana
