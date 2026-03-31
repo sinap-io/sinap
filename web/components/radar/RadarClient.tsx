@@ -54,7 +54,7 @@ export default function RadarClient({ radar, temaActivo, emitidoEn, trimestre }:
       {/* Acciones */}
       <div className="flex gap-3 mb-8 print:hidden">
         <button
-          onClick={() => router.refresh()}
+          onClick={() => router.push(`/radar?tema=${temaActivo}&force=true`)}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
         >
           ↻ Regenerar

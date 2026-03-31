@@ -35,12 +35,14 @@ export default async function RadarPage({
 
   const params = await searchParams;
   const temaActivo = params.tema ?? "biosensores";
+  const force = params.force === "true";
 
   let data: RadarData | null = null;
   let error: string | null = null;
 
   try {
-    data = await fetchApi<RadarData>(`/radar?tema=${temaActivo}`);
+    const url = force ? `/radar?tema=${temaActivo}&force=true` : `/radar?tema=${temaActivo}`;
+    data = await fetchApi<RadarData>(url);
   } catch {
     error = "No se pudo generar el radar. Intentá de nuevo en unos segundos.";
   }

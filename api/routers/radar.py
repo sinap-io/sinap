@@ -63,6 +63,11 @@ class RadarResponse(BaseModel):
     trimestre: str
 
 
+# Cache en memoria por tema — se limpia al reiniciar Railway
+_cache: dict[str, RadarResponse] = {}
+_CACHE_TTL_HORAS = 24
+
+
 _PROMPT = """\
 Sos analista de inteligencia sectorial del Clúster de Biotecnología de Córdoba, Argentina.
 Generás informes internos para el equipo de gestión del Clúster (no para los miembros).
@@ -103,12 +108,25 @@ Formato: "Señal → por qué importa al Clúster". Máximo 3 items.
 
 
 @router.get("", response_model=RadarResponse)
-async def generar_radar(tema: str = "biosensores", db: asyncpg.Connection = Depends(get_db)):
+async def generar_radar(
+    tema: str = "biosensores",
+    force: bool = False,
+    db: asyncpg.Connection = Depends(get_db),
+):
     if tema not in TEMAS_VALIDOS:
         raise HTTPException(status_code=400, detail=f"Tema no válido. Opciones: {list(TEMAS_VALIDOS.keys())}")
 
+    # Devolver cache si existe y no se fuerza regeneración
+    if not force and tema in _cache:
+        cached = _cache[tema]
+        horas_desde = (datetime.now() - datetime.fromisoformat(cached.generado_en)).total_seconds() / 3600
+        if horas_desde < _CACHE_TTL_HORAS:
+            return cached
+
     try:
-        return await _generar(tema, db)
+        result = await _generar(tema, db)
+        _cache[tema] = result
+        return result
     except HTTPException:
         raise
     except Exception as e:
