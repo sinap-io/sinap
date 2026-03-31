@@ -37,40 +37,40 @@ class RadarResponse(BaseModel):
 
 _PROMPT = """\
 Sos analista de inteligencia sectorial del Clúster de Biotecnología de Córdoba, Argentina.
-Tu tarea es generar un informe de inteligencia sobre el área de **{tema_label}** para el equipo directivo del Clúster.
+Generás informes internos para el equipo de gestión del Clúster (no para los miembros).
+La fecha actual es {fecha_actual}. Solo mencioná eventos que aún no ocurrieron.
 
-CONTEXTO:
-- El Clúster opera en Córdoba, Argentina.
-- Los actores son laboratorios, empresas, startups, centros de investigación y universidades.
-- El Clúster tiene capacidades en: {capacidades_ecosistema}
-- Las necesidades actuales más urgentes del ecosistema son: {necesidades_ecosistema}
+CONTEXTO DEL ECOSISTEMA:
+- Capacidades disponibles: {capacidades_ecosistema}
+- Necesidades urgentes de los miembros: {necesidades_ecosistema}
 
 REGLAS:
-- Basate en tu conocimiento actualizado del sector.
-- Sé específico: citá eventos, publicaciones, empresas, tendencias reales cuando puedas.
-- Aplicá cada dato a la realidad del ecosistema cordobés: ¿qué significa esto para el Clúster?
-- Tono: profesional, como un memo de inteligencia competitiva.
-- Sin adjetivos vacíos. Sin frases de relleno.
-- Idioma: español. Máximo 600 palabras.
+- Solo mencioná eventos futuros (posteriores a {fecha_actual}).
+- Sé específico pero realista: no propongas acciones que estén fuera del alcance de un clúster regional.
+- Tono: memo interno de gestión. Directo, sin adjetivos vacíos.
+- Si no tenés información confiable sobre algo, no lo inventes.
+- Idioma: español. Máximo 550 palabras.
 - NO uses tablas. Usá listas con guión (- ).
 
 Generá el informe con EXACTAMENTE estas secciones:
 
-## Eventos y ferias relevantes
-Los 3-4 eventos del sector más relevantes para {trimestre} y próximos meses.
-Por cada uno: nombre, lugar, fecha aproximada y por qué le interesa al Clúster.
+## Eventos del sector
+Eventos relevantes para {tema_label} que ocurren en los próximos 6 meses (desde {fecha_actual}).
+Solo eventos reales y futuros. Por cada uno: nombre, lugar, fecha y por qué es relevante para el ecosistema cordobés.
+Si no tenés certeza de que un evento sea posterior a {fecha_actual}, no lo incluyas.
 
-## Tendencias del sector
+## Tendencias
 Las 2-3 tendencias científicas o de mercado más importantes en {tema_label} en este momento.
-Para cada una: qué está pasando y qué oportunidad o riesgo representa para el ecosistema cordobés.
+Para cada una: qué está pasando y qué significa concretamente para los actores del Clúster.
 
-## Panorama de financiamiento
-Instrumentos de financiamiento internacionales o nacionales activos o próximos relevantes para {tema_label}.
-Mencioná fondos, convocatorias o programas que el Clúster debería estar monitoreando.
+## Financiamiento disponible
+Instrumentos activos o próximos a abrir que sean relevantes para {tema_label}.
+Priorizá los accesibles desde Argentina. Mencioná plazos si los conocés.
 
-## Recomendaciones para el Clúster
-3 acciones concretas que el Clúster debería considerar en los próximos 90 días, basadas en todo lo anterior.
-Sé específico: a quién involucrar, qué hacer, por qué ahora.
+## Oportunidades detectadas
+Señales del sector que podrían representar oportunidades concretas para los miembros del Clúster.
+NO es una lista de tareas para el equipo. Es inteligencia: qué está pasando afuera que abre una ventana para actores como los del ecosistema cordobés.
+Formato: "Señal → por qué es relevante para el Clúster". Máximo 3 items.
 """
 
 
@@ -126,6 +126,13 @@ async def _generar(tema: str, db: asyncpg.Connection) -> RadarResponse:
         trimestre = f"Q4 {hoy.year}"
 
     tema_label = TEMAS_VALIDOS[tema]
+    fecha_actual = hoy.strftime("%B %Y").replace(
+        "January", "enero").replace("February", "febrero").replace(
+        "March", "marzo").replace("April", "abril").replace(
+        "May", "mayo").replace("June", "junio").replace(
+        "July", "julio").replace("August", "agosto").replace(
+        "September", "septiembre").replace("October", "octubre").replace(
+        "November", "noviembre").replace("December", "diciembre")
 
     try:
         respuesta = await _client.messages.create(
@@ -136,6 +143,7 @@ async def _generar(tema: str, db: asyncpg.Connection) -> RadarResponse:
                 "content": _PROMPT.format(
                     tema_label=tema_label,
                     trimestre=trimestre,
+                    fecha_actual=fecha_actual,
                     capacidades_ecosistema=caps_texto,
                     necesidades_ecosistema=necs_texto,
                 ),
