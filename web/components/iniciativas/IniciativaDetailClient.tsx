@@ -36,7 +36,7 @@ export default function IniciativaDetailClient({
 }) {
   const { data: session } = useSession();
   const rol = (session?.user as { rol?: string })?.rol ?? "";
-  const puedeGestionar = ["admin", "directivo", "vinculador"].includes(rol);
+  const puedeGestionar = ["admin", "manager", "directivo", "vinculador"].includes(rol);
 
   const [isPending, startTransition] = useTransition();
   const [errorMsg, setErrorMsg]      = useState("");

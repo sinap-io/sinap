@@ -41,12 +41,13 @@ const links = [
   { href: "/instruments", label: "Financiamiento", icon: Banknote,   roles: null },
   { href: "/search",      label: "Buscar IA",      icon: Search,     roles: null },
   { href: "/iniciativas", label: "Iniciativas",    icon: Lightbulb,  roles: null },
-  { href: "/informe",     label: "Informe IA",     icon: BarChart2,  roles: ["admin", "directivo", "vinculador"] },
-  { href: "/radar",       label: "Radar sectorial",icon: Radar,      roles: ["admin", "directivo", "vinculador"] },
+  { href: "/informe",     label: "Informe IA",     icon: BarChart2,  roles: ["admin", "manager", "directivo", "vinculador"] },
+  { href: "/radar",       label: "Radar sectorial",icon: Radar,      roles: ["admin", "manager", "directivo", "vinculador"] },
 ];
 
 const ROL_LABEL: Record<string, string> = {
   admin:      "Administrador",
+  manager:    "Manager",
   directivo:  "Directivo",
   vinculador: "Vinculador",
   oferente:   "Miembro",

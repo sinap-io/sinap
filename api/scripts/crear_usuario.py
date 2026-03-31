@@ -27,7 +27,7 @@ if env_path.exists():
 import psycopg2
 import bcrypt
 
-ROLES_VALIDOS = {"admin", "directivo", "vinculador", "oferente", "demandante"}
+ROLES_VALIDOS = {"admin", "manager", "directivo", "vinculador", "oferente", "demandante"}
 
 def crear_usuario(email: str, password: str, nombre: str, rol: str):
     if rol not in ROLES_VALIDOS:

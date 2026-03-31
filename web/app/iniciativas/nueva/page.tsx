@@ -10,7 +10,7 @@ import NuevaIniciativaClient from "@/components/iniciativas/NuevaIniciativaClien
 export default async function NuevaIniciativaPage() {
   const session = await auth();
   const rol = (session?.user as { rol?: string })?.rol ?? "";
-  if (!["admin", "directivo", "vinculador"].includes(rol)) {
+  if (!["admin", "manager", "directivo", "vinculador"].includes(rol)) {
     redirect("/iniciativas");
   }
 

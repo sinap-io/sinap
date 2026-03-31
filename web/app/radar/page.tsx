@@ -29,7 +29,7 @@ export default async function RadarPage({
   const session = await auth();
   const rol = (session?.user as { rol?: string })?.rol ?? "";
 
-  if (!["admin", "directivo", "vinculador"].includes(rol)) {
+  if (!["admin", "manager", "directivo", "vinculador"].includes(rol)) {
     redirect("/");
   }
 
