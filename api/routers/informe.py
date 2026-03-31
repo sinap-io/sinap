@@ -251,7 +251,7 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
     except Exception as e:
         import traceback
         logger.error("Error llamando a Claude: %s\n%s", e, traceback.format_exc())
-        raise HTTPException(status_code=502, detail=f"Error Claude: {type(e).__name__}: {e}")
+        raise HTTPException(status_code=502, detail="Error al generar el informe")
 
     return InformeResponse(
         informe=respuesta.content[0].text,
