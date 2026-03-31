@@ -19,6 +19,7 @@ import {
   agregarHito,
   editarNotas,
 } from "@/app/iniciativas/actions";
+import BuscadorIniciativa from "./BuscadorIniciativa";
 
 const ESTADOS   = ["abierta", "en_curso", "concretada", "cerrada", "postergada"];
 const ROLES     = ["lider", "demandante", "oferente", "miembro", "candidato", "financiador"];
@@ -151,6 +152,11 @@ export default function IniciativaDetailClient({
         <div className="rounded-lg border border-[#ef444444] bg-[#ef444411] px-4 py-3">
           <p className="text-sm text-[#ef4444]">{errorMsg}</p>
         </div>
+      )}
+
+      {/* ── Buscador ─────────────────────────────────────────── */}
+      {puedeGestionar && (
+        <BuscadorIniciativa tituloIniciativa={iniciativa.titulo} />
       )}
 
       {/* ── Actores ──────────────────────────────────────────── */}
