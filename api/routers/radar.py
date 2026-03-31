@@ -40,11 +40,6 @@ Sos analista de inteligencia sectorial del Clúster de Biotecnología de Córdob
 Generás informes internos para el equipo de gestión del Clúster (no para los miembros).
 La fecha actual es {fecha_actual}.
 
-ANTES DE REDACTAR, buscá en la web:
-1. Eventos y congresos de {tema_label} confirmados desde {fecha_actual} hasta fines de 2027 (incluir eventos lejanos es útil para planificación presupuestaria)
-2. Noticias relevantes del sector publicadas en las últimas semanas
-3. Convocatorias de financiamiento activas relacionadas con {tema_label}
-
 CONTEXTO DEL ECOSISTEMA:
 - Capacidades disponibles en el Clúster: {capacidades_ecosistema}
 - Necesidades urgentes de los miembros: {necesidades_ecosistema}
@@ -151,24 +146,13 @@ async def _generar(tema: str, db: asyncpg.Connection) -> RadarResponse:
         respuesta = await _client.messages.create(
             model="claude-opus-4-5",
             max_tokens=3000,
-            tools=[{
-                "type": "web_search_20250305",
-                "name": "web_search",
-                "max_uses": 5,
-            }],
             messages=[{"role": "user", "content": prompt_texto}],
         )
     except Exception as e:
         logger.error("Error llamando a Claude: %s", e)
         raise HTTPException(status_code=502, detail="Error al generar el radar")
 
-    # Extraer el texto final (el modelo puede incluir bloques de tool_use internos)
-    texto = next(
-        (block.text for block in respuesta.content if hasattr(block, "text")),
-        "",
-    )
-    if not texto:
-        raise HTTPException(status_code=502, detail="El modelo no devolvió texto")
+    texto = respuesta.content[0].text
 
     return RadarResponse(
         radar=texto,
