@@ -200,39 +200,15 @@ async def _generar(tema: str, db: asyncpg.Connection) -> RadarResponse:
         },
     }]
 
-    messages = [{"role": "user", "content": prompt_texto}]
-    texto = ""
-
     try:
-        for _ in range(6):
-            respuesta = await _client.messages.create(
-                model="claude-opus-4-5",
-                max_tokens=3000,
-                tools=_tools,
-                messages=messages,
-            )
-
-            if respuesta.stop_reason == "end_turn":
-                texto = next(
-                    (b.text for b in respuesta.content if hasattr(b, "text")), ""
-                )
-                break
-
-            if respuesta.stop_reason == "tool_use":
-                messages.append({"role": "assistant", "content": respuesta.content})
-                tool_results = []
-                for block in respuesta.content:
-                    if getattr(block, "type", None) == "tool_use":
-                        query = (block.input or {}).get("query", "")
-                        resultado = await _web_search(query)
-                        tool_results.append({
-                            "type": "tool_result",
-                            "tool_use_id": block.id,
-                            "content": resultado,
-                        })
-                if tool_results:
-                    messages.append({"role": "user", "content": tool_results})
-
+        respuesta = await _client.messages.create(
+            model="claude-opus-4-5",
+            max_tokens=3000,
+            messages=[{"role": "user", "content": prompt_texto}],
+        )
+        texto = next(
+            (b.text for b in respuesta.content if hasattr(b, "text")), ""
+        )
     except Exception as e:
         import traceback
         logger.error("Error llamando a Claude: %s\n%s", e, traceback.format_exc())
