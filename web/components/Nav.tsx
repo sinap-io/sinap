@@ -14,6 +14,7 @@ import {
   Lightbulb,
   LogOut,
   BarChart2,
+  Radar,
 } from "lucide-react";
 
 function SinapLogo() {
@@ -41,6 +42,7 @@ const links = [
   { href: "/search",      label: "Buscar IA",      icon: Search,     roles: null },
   { href: "/iniciativas", label: "Iniciativas",    icon: Lightbulb,  roles: null },
   { href: "/informe",     label: "Informe IA",     icon: BarChart2,  roles: ["admin", "directivo", "vinculador"] },
+  { href: "/radar",       label: "Radar sectorial",icon: Radar,      roles: ["admin", "directivo", "vinculador"] },
 ];
 
 const ROL_LABEL: Record<string, string> = {
