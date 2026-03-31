@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (30 marzo 2026)
+## Estado actual (31 marzo 2026)
 
 **Lo que funciona en producción (main):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -22,11 +22,12 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Prototipo Streamlit (`app/`) — conectado a `sinap-production` — NO TOCAR
 - Módulo Iniciativas completo en producción ✅
 - Rediseño visual (Open Sans + navy/teal) en producción ✅
-- Auth.js v5 mergeado a main (PR #22) ✅
-- Informe IA mergeado a main ✅
-- Roles en UI mergeados a main ✅
+- Auth.js v5 en producción ✅
+- Informe IA en producción ✅
+- Roles en UI en producción ✅
+- Radar sectorial (`/radar`) — código en main, deploy en curso ⚠️
 
-**Branch activo:** `claude/distracted-lamarr` (continúa en uso — se mergeó PR #22 a main hoy)
+**Branch activo:** `claude/distracted-lamarr` (en uso — tiene los mismos cambios que main)
 
 **Sistema de autenticación — estado:**
 - Auth.js v5 con email + contraseña ✅ (en main)
@@ -43,19 +44,29 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Sección "Oportunidades de negocios" con subsecciones corto/mediano plazo ✅
 - Frontend `/informe` con métricas, período "Estado al [fecha]" y botón PDF ✅
 - Acceso restringido a admin/directivo/vinculador ✅
-- Pendiente: el deploy de Railway a veces tarda en reflejar cambios recientes
+
+**Radar sectorial — estado:**
+- Endpoint `GET /radar?tema=X&force=true` implementado ✅
+- 5 temas: biosensores, biofarma, agroindustria, diagnostico_molecular, nanobiotecnologia ✅
+- Cache 24h por tema, bypass con `?force=true` ✅
+- Frontend `/radar` con selector de temas y botón Regenerar ✅
+- Acceso restringido a admin/directivo/vinculador ✅
+- Web search (DuckDuckGo) removido temporalmente — generación sin tools ⚠️
+- Fix pusheado a main (eb521a8) — Railway deploying ⚠️
+- **PENDIENTE**: verificar que el deploy de Railway tomó efecto y el radar carga
 
 **Roles en UI — estado:**
-- Nav filtra "Informe IA" según rol ✅
+- Nav filtra "Informe IA" y "Radar sectorial" según rol ✅
 - Footer del nav muestra nombre legible del rol ✅
 - `/iniciativas/nueva` redirige a oferente/demandante ✅
-- Detalle de iniciativa: botones de gestión restringidos por rol ✅
 
 **Lo que está pendiente:**
+- Verificar que radar funciona después del deploy de Railway
 - Cargar datos reales (actores, necesidades, instrumentos del Clúster)
 - Vista marketplace diferenciada por rol
 - Crear usuarios para el resto del equipo
 - Registrar dominio sinap.io en Cloudflare
+- Web search para radar (Tavily o similar — reemplazar DuckDuckGo que no funciona bien)
 - Tabla `persona` vinculada a `actor` (ver BACKLOG.md)
 
 ---
