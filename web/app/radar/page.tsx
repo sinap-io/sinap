@@ -24,7 +24,7 @@ interface RadarData {
 export default async function RadarPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tema?: string }>;
+  searchParams: Promise<{ tema?: string; force?: string }>;
 }) {
   const session = await auth();
   const rol = (session?.user as { rol?: string })?.rol ?? "";
