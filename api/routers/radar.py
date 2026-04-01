@@ -26,38 +26,20 @@ _tavily = TavilyClient(api_key=_tavily_key) if _tavily_key else None
 
 TEMAS_VALIDOS = {
     "biosensores": "biosensores para salud y diagnóstico point-of-care",
-    "biofarma": "biotecnología farmacéutica y biológicos terapéuticos",
-    "agroindustria": "biotecnología agrícola y bioinsumos",
-    "diagnostico_molecular": "diagnóstico molecular y genómica clínica",
-    "nanobiotecnologia": "nanobiotecnología y nanomateriales para salud",
+    "biotech_general": "biotecnología — panorama general del sector en Argentina y Latinoamérica",
 }
 
 # Consultas de búsqueda por tema (en inglés para mejores resultados)
 TEMAS_BUSQUEDAS = {
     "biosensores": [
         "biosensors point-of-care diagnostics conferences events 2025 2026",
-        "biosensors wearable health monitoring funding grants 2025",
+        "biosensors wearable health monitoring funding grants Argentina 2025",
         "point-of-care diagnostics biotech market trends Latin America 2025",
     ],
-    "biofarma": [
-        "biopharmaceuticals biologics conferences events 2025 2026",
-        "biopharmaceuticals biosimilars funding Argentina 2025",
-        "biopharmaceuticals cell therapy gene therapy market trends 2025",
-    ],
-    "agroindustria": [
-        "agrobiotechnology bioinputs biostimulants conferences 2025 2026",
-        "agricultural biotech biopesticides funding grants Argentina 2025",
-        "bioinputs sustainable agriculture market trends Latin America 2025",
-    ],
-    "diagnostico_molecular": [
-        "molecular diagnostics genomics clinical conferences 2025 2026",
-        "molecular diagnostics NGS sequencing funding grants 2025",
-        "molecular diagnostics precision medicine market trends Argentina 2025",
-    ],
-    "nanobiotecnologia": [
-        "nanobiotechnology nanomedicine drug delivery conferences 2025 2026",
-        "nanomaterials biomedical applications funding grants 2025",
-        "nanobiotechnology health applications market trends Latin America 2025",
+    "biotech_general": [
+        "biotecnología argentina financiamiento FONARSEC MINCyT convocatorias 2025 2026",
+        "Latin America biotech industry investment funding conferences events 2025 2026",
+        "Argentina biotech startups innovation ecosystem trends 2025",
     ],
 }
 
@@ -93,28 +75,35 @@ REGLAS:
 - Solo citá eventos con fecha confirmada. Si encontraste algo sin fecha precisa, aclaralo.
 - Tono: memo interno de gestión. Directo, sin adjetivos vacíos.
 - Sin línea de cierre ni "próxima actualización".
-- Idioma: español. Máximo 600 palabras.
+- Idioma: español.
+- Extensión: completa y detallada. Desarrollá cada sección en profundidad. No hay límite de palabras.
 - NO uses tablas. Usá listas con guión (- ).
 
 Generá el informe con EXACTAMENTE estas secciones:
 
 ## Eventos del sector
-Eventos relevantes para {tema_label} desde {fecha_actual} hasta fines de 2026.
-Incluí eventos internacionales relevantes — requieren planificación presupuestaria con 6-12 meses de anticipación.
-Por cada uno: nombre, lugar, fecha y por qué es relevante para el ecosistema cordobés.
+Todos los eventos relevantes para {tema_label} desde {fecha_actual} hasta fines de 2026 que encuentres.
+Incluí tanto eventos regionales como internacionales. Los internacionales requieren planificación presupuestaria con 6-12 meses de anticipación — son igual de importantes.
+Por cada uno: nombre completo, lugar, fecha, link si está disponible, y un párrafo explicando por qué es relevante para el ecosistema cordobés y qué actores del Clúster deberían considerarlo.
 
 ## Tendencias
-Las 2-3 tendencias científicas o de mercado más importantes en {tema_label} ahora mismo.
-Para cada una: qué está pasando y qué significa concretamente para los actores del Clúster.
+Las tendencias científicas y de mercado más relevantes en {tema_label} ahora mismo.
+No te limites a 2 o 3. Incluí todas las que tengan impacto real para el sector.
+Para cada una: qué está pasando globalmente, qué está pasando en Argentina/Latam, y qué significa concretamente para los actores del Clúster de Biotecnología de Córdoba.
 
 ## Financiamiento disponible
-Instrumentos activos o próximos a abrir relevantes para {tema_label}.
-Priorizá los accesibles desde Argentina.
+Todos los instrumentos activos o próximos a abrir relevantes para {tema_label}.
+Priorizá los accesibles desde Argentina, pero incluí también internacionales relevantes.
+Por cada uno: nombre, organismo, monto si está disponible, plazos, y a qué tipo de actor del ecosistema cordobés le aplica.
 
 ## Oportunidades detectadas
 Señales del sector que abren ventanas concretas para los miembros del Clúster.
-NO es una lista de tareas. Es inteligencia: qué está pasando afuera que es relevante para actores como los del ecosistema cordobés.
-Formato: "Señal → por qué importa al Clúster". Máximo 3 items.
+Es inteligencia estratégica: qué está pasando afuera que es relevante para actores como los del ecosistema cordobés.
+Incluí todas las que detectes. Formato por cada una: "**Señal** → por qué importa al Clúster → qué acción podría considerarse".
+
+## Actores internacionales de referencia
+Organizaciones, empresas, centros de investigación o clusters internacionales líderes en {tema_label} que podrían ser referencia o potenciales socios para el ecosistema cordobés.
+Por cada uno: nombre, país, por qué es relevante y qué tipo de vinculación podría ser de interés.
 """
 
 
@@ -244,7 +233,7 @@ async def _generar(tema: str, db: asyncpg.Connection) -> RadarResponse:
     try:
         respuesta = await _client.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=3000,
+            max_tokens=8000,
             messages=[{"role": "user", "content": prompt_texto}],
         )
         texto = next(
