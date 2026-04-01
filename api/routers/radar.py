@@ -69,11 +69,13 @@ CONTEXTO DEL ECOSISTEMA:
 INFORMACIÓN ACTUALIZADA DE LA WEB:
 {resultados_web}
 
-REGLAS:
-- Priorizá la información de la web para hechos concretos (fechas, eventos, convocatorias).
-- Usá tu conocimiento para interpretar tendencias y su impacto en el ecosistema cordobés.
-- Solo citá eventos con fecha confirmada. Si encontraste algo sin fecha precisa, aclaralo.
-- Tono: memo interno de gestión. Directo, sin adjetivos vacíos.
+REGLAS CRÍTICAS:
+- Este informe es inteligencia externa. Reportá hechos del sector, NO recomendaciones al Clúster.
+- PROHIBIDO usar frases como "Para el Clúster:", "El Clúster debería", "Se recomienda", "podría considerarse".
+- No asumas nada sobre el estado interno del Clúster, sus vínculos, sus proyectos o sus capacidades.
+- Priorizá la información de la web para hechos concretos (fechas, eventos, convocatorias, datos de mercado).
+- Solo citá eventos con fecha confirmada. Si algo no tiene fecha precisa, aclaralo.
+- Tono: periodístico y técnico. Hechos, datos, fuentes. Sin valoraciones ni consejos.
 - Sin línea de cierre ni "próxima actualización".
 - Idioma: español.
 - Extensión: completa y detallada. Desarrollá cada sección en profundidad. No hay límite de palabras.
@@ -83,27 +85,27 @@ Generá el informe con EXACTAMENTE estas secciones:
 
 ## Eventos del sector
 Todos los eventos relevantes para {tema_label} desde {fecha_actual} hasta fines de 2026 que encuentres.
-Incluí tanto eventos regionales como internacionales. Los internacionales requieren planificación presupuestaria con 6-12 meses de anticipación — son igual de importantes.
-Por cada uno: nombre completo, lugar, fecha, link si está disponible, y un párrafo explicando por qué es relevante para el ecosistema cordobés y qué actores del Clúster deberían considerarlo.
+Incluí tanto eventos regionales como internacionales.
+Por cada uno: nombre completo, lugar, fecha, link si está disponible, y descripción del contenido del evento y perfil de asistentes.
 
 ## Tendencias
 Las tendencias científicas y de mercado más relevantes en {tema_label} ahora mismo.
-No te limites a 2 o 3. Incluí todas las que tengan impacto real para el sector.
-Para cada una: qué está pasando globalmente, qué está pasando en Argentina/Latam, y qué significa concretamente para los actores del Clúster de Biotecnología de Córdoba.
+No te limites a 2 o 3. Incluí todas las que tengan tracción en el sector.
+Por cada una: qué está pasando globalmente, qué está pasando en Argentina/Latam, datos de mercado si están disponibles.
 
 ## Financiamiento disponible
 Todos los instrumentos activos o próximos a abrir relevantes para {tema_label}.
 Priorizá los accesibles desde Argentina, pero incluí también internacionales relevantes.
-Por cada uno: nombre, organismo, monto si está disponible, plazos, y a qué tipo de actor del ecosistema cordobés le aplica.
+Por cada uno: nombre, organismo, monto si está disponible, plazos, tipo de entidad elegible.
 
 ## Oportunidades detectadas
-Señales del sector que abren ventanas concretas para los miembros del Clúster.
-Es inteligencia estratégica: qué está pasando afuera que es relevante para actores como los del ecosistema cordobés.
-Incluí todas las que detectes. Formato por cada una: "**Señal** → por qué importa al Clúster → qué acción podría considerarse".
+Señales del sector que configuran ventanas de tiempo específicas: convocatorias con fecha límite próxima, acuerdos internacionales recientes, cambios regulatorios que abren mercados, fondos que acaban de lanzarse.
+Solo hechos verificados con fuente. Sin proyecciones ni interpretaciones.
+Formato por cada una: "**Señal** → contexto y datos relevantes".
 
 ## Actores internacionales de referencia
-Organizaciones, empresas, centros de investigación o clusters internacionales líderes en {tema_label} que podrían ser referencia o potenciales socios para el ecosistema cordobés.
-Por cada uno: nombre, país, por qué es relevante y qué tipo de vinculación podría ser de interés.
+Organizaciones, empresas, centros de investigación o clusters internacionales líderes en {tema_label}.
+Por cada uno: nombre, país, especialización, logros recientes o posición en el sector.
 """
 
 
