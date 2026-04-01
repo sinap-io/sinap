@@ -6,10 +6,9 @@ import type { SearchResponse } from "@/lib/types";
 import { Search } from "lucide-react";
 
 const BUSQUEDAS_RAPIDAS = [
-  { label: "Actores que ofrecen servicios relacionados", prefijo: "Busco actores del ecosistema biotech que ofrezcan servicios de " },
-  { label: "Empresas con demanda similar", prefijo: "Qué empresas o actores tienen necesidad de " },
-  { label: "Investigadores o laboratorios en el área", prefijo: "Necesito investigadores o laboratorios especializados en " },
-  { label: "Instrumentos de financiamiento que aplican", prefijo: "Financiamiento disponible para un proyecto de " },
+  { label: "¿Quién puede aportar?", prefijo: "Busco actores del ecosistema biotech que ofrezcan servicios o capacidades para " },
+  { label: "¿Quién demanda esto?", prefijo: "Qué actores del ecosistema tienen necesidad o demanda de " },
+  { label: "¿Qué financiamiento aplica?", prefijo: "Instrumentos de financiamiento disponibles para un proyecto de " },
 ];
 
 type Status = "idle" | "loading" | "success" | "error";

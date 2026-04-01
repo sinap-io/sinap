@@ -19,7 +19,11 @@ interface InformeData {
   };
 }
 
-export default async function InformePage() {
+export default async function InformePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ force?: string }>;
+}) {
   const session = await auth();
   const rol = (session?.user as { rol?: string })?.rol ?? "";
 
@@ -27,11 +31,15 @@ export default async function InformePage() {
     redirect("/");
   }
 
+  const params = await searchParams;
+  const force = params.force === "true";
+
   let data: InformeData | null = null;
   let error: string | null = null;
 
   try {
-    data = await fetchApi<InformeData>("/informe");
+    const url = force ? "/informe?force=true" : "/informe";
+    data = await fetchApi<InformeData>(url);
   } catch {
     error = "No se pudo generar el informe. Intentá de nuevo en unos segundos.";
   }
