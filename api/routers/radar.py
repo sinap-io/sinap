@@ -65,7 +65,7 @@ class RadarResponse(BaseModel):
 
 # Cache en memoria por tema — se limpia al reiniciar Railway
 _cache: dict[str, RadarResponse] = {}
-_CACHE_TTL_HORAS = 24
+_CACHE_TTL_HORAS = 168  # 7 días
 
 
 _PROMPT = """\

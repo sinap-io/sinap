@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
 
@@ -50,10 +49,9 @@ interface Props {
 
 export default function InformeClient({ informe, periodo, emitidoEn }: Props) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
 
   function regenerar() {
-    startTransition(() => router.refresh());
+    router.push("/informe?force=true");
   }
 
   function descargarPDF() {
@@ -83,10 +81,9 @@ export default function InformeClient({ informe, periodo, emitidoEn }: Props) {
       <div className="mt-6 flex items-center gap-3 print:hidden">
         <button
           onClick={regenerar}
-          disabled={isPending}
-          className="px-4 py-2 rounded-lg text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-teal-50 transition disabled:opacity-50"
+          className="px-4 py-2 rounded-lg text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-teal-50 transition"
         >
-          {isPending ? "Generando..." : "↻ Regenerar"}
+          ↻ Actualizar
         </button>
         <button
           onClick={descargarPDF}
@@ -95,7 +92,7 @@ export default function InformeClient({ informe, periodo, emitidoEn }: Props) {
           ↓ Descargar PDF
         </button>
         <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-          Consulta el estado actual y genera un nuevo análisis con IA.
+          El informe se actualiza una vez por día. Usá Actualizar para forzar regeneración.
         </p>
       </div>
 

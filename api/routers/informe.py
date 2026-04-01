@@ -25,6 +25,12 @@ class InformeResponse(BaseModel):
     datos: dict
 
 
+# Cache en memoria — se limpia al reiniciar Railway
+_cache: InformeResponse | None = None
+_cache_ts: datetime | None = None
+_CACHE_TTL_HORAS = 24
+
+
 _PROMPT = """\
 Sos el analista del Clúster de Biotecnología de Córdoba, Argentina.
 Tu tarea es CRUZAR los datos de la plataforma SINAP para encontrar patrones que no son visibles mirando cada módulo por separado.
@@ -111,9 +117,23 @@ Qué actividad registró la plataforma en los últimos 7 días según los hitos.
 
 
 @router.get("", response_model=InformeResponse)
-async def generar_informe(db: asyncpg.Connection = Depends(get_db)):
+async def generar_informe(
+    force: bool = False,
+    db: asyncpg.Connection = Depends(get_db),
+):
+    global _cache, _cache_ts
+
+    # Devolver cache si existe y no se fuerza regeneración
+    if not force and _cache is not None and _cache_ts is not None:
+        horas_desde = (datetime.now() - _cache_ts).total_seconds() / 3600
+        if horas_desde < _CACHE_TTL_HORAS:
+            return _cache
+
     try:
-        return await _generar(db)
+        result = await _generar(db)
+        _cache = result
+        _cache_ts = datetime.now()
+        return result
     except HTTPException:
         raise
     except Exception as e:
