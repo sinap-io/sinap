@@ -20,7 +20,8 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/radar", tags=["radar"])
 
 _client = AsyncAnthropic()
-_tavily = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
+_tavily_key = os.environ.get("TAVILY_API_KEY", "")
+_tavily = TavilyClient(api_key=_tavily_key) if _tavily_key else None
 
 
 TEMAS_VALIDOS = {
@@ -119,6 +120,8 @@ Formato: "Señal → por qué importa al Clúster". Máximo 3 items.
 
 def _tavily_one(query: str) -> list[str]:
     """Ejecuta una búsqueda Tavily y devuelve lista de resultados formateados."""
+    if _tavily is None:
+        return []
     try:
         resp = _tavily.search(query=query, max_results=4, search_depth="basic")
         results = []
@@ -136,6 +139,9 @@ def _tavily_one(query: str) -> list[str]:
 
 async def _tavily_search(queries: list[str]) -> str:
     """Ejecuta todas las búsquedas en paralelo y combina los resultados."""
+    if _tavily is None:
+        logger.warning("TAVILY_API_KEY no configurada — generando radar sin búsqueda web")
+        return "Búsqueda web no disponible."
     tareas = [asyncio.to_thread(_tavily_one, q) for q in queries]
     resultados_por_query = await asyncio.gather(*tareas)
     todos = [item for lista in resultados_por_query for item in lista]
