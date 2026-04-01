@@ -36,6 +36,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     // authorized: usado por el proxy (proxy.ts) para proteger rutas
     authorized({ auth, request: { nextUrl } }) {
+      // DEBUG TEMPORAL — ver qué contiene auth en el proxy
+      console.log("[SINAP proxy] path:", nextUrl.pathname, "| auth:", JSON.stringify(auth));
       const isLoggedIn = !!auth?.user;
       const isLoginPage = nextUrl.pathname.startsWith("/login");
 
