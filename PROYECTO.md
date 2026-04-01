@@ -155,9 +155,15 @@ Analiza en simultáneo actores, capacidades, necesidades, gaps, instrumentos, in
 Se genera automáticamente una vez por día. El botón "Actualizar" fuerza una regeneración inmediata si se necesita.
 
 **Radar Sectorial (`/radar`)**
-Mira hacia afuera: qué está pasando en el sector biotech a nivel global que es relevante para el Clúster. Combina búsqueda web en tiempo real (Tavily) con análisis de Claude para producir inteligencia sobre eventos próximos, tendencias y oportunidades de financiamiento. Disponible para cinco áreas: biosensores, biofarma, agroindustria, diagnóstico molecular y nanobiotecnología.
+Mira hacia afuera: qué está pasando en el sector biotech a nivel global que es relevante para el Clúster. Combina búsqueda web en tiempo real (Tavily) con análisis de Claude para producir inteligencia sobre eventos próximos, tendencias, oportunidades de financiamiento y actores internacionales de referencia.
 
-Se genera automáticamente una vez por semana por tema. El botón "Regenerar" fuerza una actualización.
+Disponible en dos temas:
+- **Biosensores** — foco específico en diagnóstico point-of-care y wearables
+- **Biotech general** — panorama del sector en Argentina y Latinoamérica
+
+El radar se regenera automáticamente todos los **lunes a las 9:00 AM** (Argentina) mediante un proceso automatizado en GitHub. Durante la semana, todos los usuarios ven el mismo informe en caché — sin costo adicional. El botón "Regenerar" existe pero es visible únicamente para admin y manager, para evitar regeneraciones no planificadas que consumen créditos de la API.
+
+Si la búsqueda web (Tavily) no está disponible, el sistema devuelve un error explícito en lugar de generar contenido desactualizado.
 
 **Buscador IA contextual (dentro de cada iniciativa)**
 En el detalle de cualquier iniciativa, hay un panel de búsqueda inteligente que entiende el contexto de esa iniciativa. Tres botones rápidos: "¿Quién puede aportar?", "¿Quién demanda esto?" y "¿Qué financiamiento aplica?". Consulta el ecosistema completo desde el contexto de la iniciativa específica que se está gestionando.
