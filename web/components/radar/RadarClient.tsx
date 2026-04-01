@@ -9,6 +9,7 @@ interface Props {
   temaActivo: string;
   emitidoEn: string;
   trimestre: string;
+  rol: string;
 }
 
 const mdComponents = {
@@ -42,7 +43,9 @@ const mdComponents = {
   hr: () => <hr className="border-[var(--border)] my-6" />,
 };
 
-export default function RadarClient({ radar, temaActivo, emitidoEn, trimestre }: Props) {
+const PUEDE_REGENERAR = ["admin", "manager"];
+
+export default function RadarClient({ radar, temaActivo, emitidoEn, trimestre, rol }: Props) {
   const router = useRouter();
 
   const handlePrint = () => {
@@ -53,12 +56,14 @@ export default function RadarClient({ radar, temaActivo, emitidoEn, trimestre }:
     <>
       {/* Acciones */}
       <div className="flex gap-3 mb-8 print:hidden">
-        <button
-          onClick={() => router.push(`/radar?tema=${temaActivo}&force=true`)}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
-        >
-          ↻ Regenerar
-        </button>
+        {PUEDE_REGENERAR.includes(rol) && (
+          <button
+            onClick={() => router.push(`/radar?tema=${temaActivo}&force=true`)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+          >
+            ↻ Regenerar
+          </button>
+        )}
         <button
           onClick={handlePrint}
           className="flex items-center gap-2 px-4 py-2 text-sm font-medium border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"

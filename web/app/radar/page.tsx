@@ -7,10 +7,7 @@ import RadarClient from "@/components/radar/RadarClient";
 
 const TEMAS = [
   { id: "biosensores", label: "Biosensores" },
-  { id: "biofarma", label: "Biofarma" },
-  { id: "agroindustria", label: "Agroindustria" },
-  { id: "diagnostico_molecular", label: "Diagnóstico molecular" },
-  { id: "nanobiotecnologia", label: "Nanobiotecnología" },
+  { id: "biotech_general", label: "Biotech general" },
 ];
 
 interface RadarData {
@@ -110,6 +107,7 @@ export default async function RadarPage({
           temaActivo={temaActivo}
           emitidoEn={emitidoEn ?? ""}
           trimestre={data.trimestre}
+          rol={rol}
         />
       ) : null}
     </div>

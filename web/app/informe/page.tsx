@@ -119,6 +119,7 @@ export default async function InformePage({
           informe={data.informe}
           periodo={data.periodo}
           emitidoEn={emitidoEn ?? ""}
+          rol={rol}
         />
       ) : null}
     </div>

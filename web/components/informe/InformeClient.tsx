@@ -45,9 +45,12 @@ interface Props {
   informe: string;
   periodo: string;
   emitidoEn: string;
+  rol: string;
 }
 
-export default function InformeClient({ informe, periodo, emitidoEn }: Props) {
+const PUEDE_ACTUALIZAR = ["admin", "manager"];
+
+export default function InformeClient({ informe, periodo, emitidoEn, rol }: Props) {
   const router = useRouter();
 
   function regenerar() {
@@ -79,21 +82,25 @@ export default function InformeClient({ informe, periodo, emitidoEn }: Props) {
 
       {/* Controles (ocultos al imprimir) */}
       <div className="mt-6 flex items-center gap-3 print:hidden">
-        <button
-          onClick={regenerar}
-          className="px-4 py-2 rounded-lg text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-teal-50 transition"
-        >
-          ↻ Actualizar
-        </button>
+        {PUEDE_ACTUALIZAR.includes(rol) && (
+          <button
+            onClick={regenerar}
+            className="px-4 py-2 rounded-lg text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-teal-50 transition"
+          >
+            ↻ Actualizar
+          </button>
+        )}
         <button
           onClick={descargarPDF}
           className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--accent)] text-white hover:bg-teal-700 transition"
         >
           ↓ Descargar PDF
         </button>
-        <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-          El informe se actualiza una vez por día. Usá Actualizar para forzar regeneración.
-        </p>
+        {PUEDE_ACTUALIZAR.includes(rol) && (
+          <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+            El informe se actualiza una vez por día. Usá Actualizar para forzar regeneración.
+          </p>
+        )}
       </div>
 
       {/* Estilos de impresión */}

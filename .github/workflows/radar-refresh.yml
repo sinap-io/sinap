@@ -1,0 +1,24 @@
+name: Radar — refresh semanal automático
+
+on:
+  schedule:
+    # Lunes 9:00 AM Argentina (UTC-3) = 12:00 UTC
+    - cron: '0 12 * * 1'
+  workflow_dispatch:
+    # Permite ejecutar manualmente desde GitHub Actions si hace falta
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh radar — Biosensores
+        run: |
+          echo "Regenerando radar: biosensores..."
+          curl -sf "https://sinap-production.up.railway.app/radar?tema=biosensores&force=true" \
+            -o /dev/null -w "HTTP status: %{http_code}\n" || echo "Error al regenerar biosensores"
+
+      - name: Refresh radar — Biotech general
+        run: |
+          echo "Regenerando radar: biotech_general..."
+          curl -sf "https://sinap-production.up.railway.app/radar?tema=biotech_general&force=true" \
+            -o /dev/null -w "HTTP status: %{http_code}\n" || echo "Error al regenerar biotech_general"
