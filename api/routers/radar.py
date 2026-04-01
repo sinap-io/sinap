@@ -144,6 +144,17 @@ async def _tavily_search(queries: list[str]) -> str:
     return "\n\n".join(todos)
 
 
+@router.get("/status")
+async def radar_status():
+    """Diagnóstico temporal — verificar configuración de Tavily."""
+    key = os.environ.get("TAVILY_API_KEY", "")
+    return {
+        "tavily_key_present": bool(key),
+        "tavily_key_prefix": key[:8] + "..." if key else "NO ESTÁ",
+        "tavily_client_ready": _tavily is not None,
+    }
+
+
 @router.get("", response_model=RadarResponse)
 async def generar_radar(
     tema: str = "biosensores",
