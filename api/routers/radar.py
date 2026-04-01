@@ -140,12 +140,19 @@ def _tavily_one(query: str) -> list[str]:
 async def _tavily_search(queries: list[str]) -> str:
     """Ejecuta todas las búsquedas en paralelo y combina los resultados."""
     if _tavily is None:
-        logger.warning("TAVILY_API_KEY no configurada — generando radar sin búsqueda web")
-        return "Búsqueda web no disponible."
+        raise HTTPException(
+            status_code=503,
+            detail="El servicio de búsqueda web no está configurado. Contactá al administrador."
+        )
     tareas = [asyncio.to_thread(_tavily_one, q) for q in queries]
     resultados_por_query = await asyncio.gather(*tareas)
     todos = [item for lista in resultados_por_query for item in lista]
-    return "\n\n".join(todos) if todos else "Sin resultados de búsqueda web."
+    if not todos:
+        raise HTTPException(
+            status_code=503,
+            detail="No se pudo conectar con el servicio de búsqueda web. Intentá de nuevo en unos minutos."
+        )
+    return "\n\n".join(todos)
 
 
 @router.get("", response_model=RadarResponse)
