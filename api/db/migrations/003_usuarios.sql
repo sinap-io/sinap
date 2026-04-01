@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS usuario (
     password    TEXT,                          -- hash bcrypt, nullable si usa OAuth futuro
     nombre      TEXT NOT NULL,
     rol         TEXT NOT NULL DEFAULT 'demandante'
-                CHECK (rol IN ('admin', 'directivo', 'vinculador', 'oferente', 'demandante')),
+                CHECK (rol IN ('admin', 'manager', 'directivo', 'vinculador', 'oferente', 'demandante')),
     actor_id    INTEGER REFERENCES actor(id),  -- actor vinculado (opcional)
     activo      BOOLEAN NOT NULL DEFAULT TRUE,
     creado_en   TIMESTAMPTZ NOT NULL DEFAULT NOW()
