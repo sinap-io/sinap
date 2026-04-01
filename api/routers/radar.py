@@ -117,30 +117,29 @@ Formato: "Señal → por qué importa al Clúster". Máximo 3 items.
 """
 
 
-def _tavily_search_sync(queries: list[str]) -> str:
-    """Ejecuta múltiples búsquedas con Tavily y formatea los resultados."""
-    resultados = []
-    for query in queries:
-        try:
-            resp = _tavily.search(
-                query=query,
-                max_results=4,
-                search_depth="basic",
-            )
-            for r in resp.get("results", []):
-                title = r.get("title", "")
-                content = r.get("content", "")[:300]
-                url = r.get("url", "")
-                if title and content:
-                    resultados.append(f"- **{title}** ({url})\n  {content}")
-        except Exception as e:
-            logger.warning("Error en búsqueda Tavily '%s': %s", query, e)
-
-    return "\n\n".join(resultados) if resultados else "Sin resultados de búsqueda web."
+def _tavily_one(query: str) -> list[str]:
+    """Ejecuta una búsqueda Tavily y devuelve lista de resultados formateados."""
+    try:
+        resp = _tavily.search(query=query, max_results=4, search_depth="basic")
+        results = []
+        for r in resp.get("results", []):
+            title = r.get("title", "")
+            content = r.get("content", "")[:300]
+            url = r.get("url", "")
+            if title and content:
+                results.append(f"- **{title}** ({url})\n  {content}")
+        return results
+    except Exception as e:
+        logger.warning("Error en búsqueda Tavily '%s': %s", query, e)
+        return []
 
 
 async def _tavily_search(queries: list[str]) -> str:
-    return await asyncio.to_thread(_tavily_search_sync, queries)
+    """Ejecuta todas las búsquedas en paralelo y combina los resultados."""
+    tareas = [asyncio.to_thread(_tavily_one, q) for q in queries]
+    resultados_por_query = await asyncio.gather(*tareas)
+    todos = [item for lista in resultados_por_query for item in lista]
+    return "\n\n".join(todos) if todos else "Sin resultados de búsqueda web."
 
 
 @router.get("", response_model=RadarResponse)
