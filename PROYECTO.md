@@ -3,7 +3,7 @@
 > Este documento está escrito para Sebastián. No asume conocimientos de programación.
 > Explica qué es cada parte del sistema, por qué existe, y cómo se conecta todo.
 >
-> Última actualización: 30 marzo 2026
+> Última actualización: 1 abril 2026
 
 ---
 
@@ -95,10 +95,11 @@ Está construido con **FastAPI**, un framework de Python. Corre en un servidor y
 
 Es la interfaz visual: lo que ve y usa el usuario en el navegador. Construido con **Next.js**, el framework de React más usado del mundo.
 
-Las 11 pantallas actuales:
+Las pantallas actuales:
 
 | Pantalla | Qué muestra |
 |---|---|
+| `/login` | Ingreso con email y contraseña (toda la plataforma requiere login) |
 | `/` (inicio) | Dashboard con métricas del ecosistema y acceso a todo |
 | `/actors` | Red de actores con filtros por tipo |
 | `/actors/[id]` | Ficha completa de un actor |
@@ -109,7 +110,57 @@ Las 11 pantallas actuales:
 | `/search` | Búsqueda IA: escribís en lenguaje natural, Claude analiza |
 | `/iniciativas` | Panel de iniciativas con métricas y filtros |
 | `/iniciativas/nueva` | Formulario para registrar una nueva iniciativa |
-| `/iniciativas/[id]` | Detalle: actores participantes, vínculos y timeline de hitos |
+| `/iniciativas/[id]` | Detalle: actores participantes, vínculos y buscador IA contextual |
+| `/informe` | Informe IA semanal: análisis cruzado de todos los módulos |
+| `/radar` | Radar sectorial: inteligencia externa por área temática |
+
+---
+
+### El sistema de acceso (Auth.js)
+
+Toda la plataforma requiere iniciar sesión. No hay acceso anónimo — esto garantiza que los datos del ecosistema son visibles solo para sus actores.
+
+El login funciona con **email y contraseña**. Las contraseñas nunca se guardan en texto plano: se convierten en una secuencia irreversible (hash bcrypt) antes de almacenarse. Cuando alguien ingresa su contraseña, el sistema compara hashes, no contraseñas reales.
+
+Los usuarios se crean manualmente desde el servidor — no hay registro público. Solo el Clúster puede invitar a alguien a la plataforma.
+
+**En desarrollo:** login con Google (OAuth), para facilitar el acceso sin tener que recordar otra contraseña.
+
+---
+
+### Los roles del sistema
+
+No todos los usuarios ven y pueden hacer lo mismo. Hay cinco niveles:
+
+| Rol | Quiénes | Qué pueden hacer |
+|---|---|---|
+| **Admin** | Sebastián + Cluster Manager | Todo: usuarios, configuración, datos |
+| **Manager** | Pablo Díaz Azulay (Cluster Manager) | Gestionar iniciativas, ver todos los módulos de inteligencia |
+| **Directivo** | Miembros de la Comisión Directiva | Crear y gestionar iniciativas, ver informes |
+| **Vinculador** | Operadores del Clúster | Gestionar iniciativas asignadas, ver informes |
+| **Oferente** | Actores con membresía | Ver todo, editar su perfil |
+| **Demandante** | Actores sin membresía | Ver catálogo y buscar con IA |
+
+Los módulos de **Informe IA** y **Radar Sectorial** son visibles únicamente para admin, manager, directivo y vinculador — son herramientas de gestión interna, no para todos los actores.
+
+---
+
+### Los módulos de inteligencia
+
+Son las dos herramientas de análisis más potentes de SINAP. Usan IA para generar informes que ningún humano podría producir a mano cruzando todos los datos del ecosistema.
+
+**Informe IA (`/informe`)**
+Analiza en simultáneo actores, capacidades, necesidades, gaps, instrumentos, iniciativas e hitos. Detecta conexiones no evidentes: qué actor necesita algo que otro actor ya ofrece sin que haya una iniciativa que los conecte, qué necesidades urgentes no tienen cobertura, qué iniciativas están estancadas, qué financiamiento podría aplicar pero nadie está persiguiendo.
+
+Se genera automáticamente una vez por día. El botón "Actualizar" fuerza una regeneración inmediata si se necesita.
+
+**Radar Sectorial (`/radar`)**
+Mira hacia afuera: qué está pasando en el sector biotech a nivel global que es relevante para el Clúster. Combina búsqueda web en tiempo real (Tavily) con análisis de Claude para producir inteligencia sobre eventos próximos, tendencias y oportunidades de financiamiento. Disponible para cinco áreas: biosensores, biofarma, agroindustria, diagnóstico molecular y nanobiotecnología.
+
+Se genera automáticamente una vez por semana por tema. El botón "Regenerar" fuerza una actualización.
+
+**Buscador IA contextual (dentro de cada iniciativa)**
+En el detalle de cualquier iniciativa, hay un panel de búsqueda inteligente que entiende el contexto de esa iniciativa. Tres botones rápidos: "¿Quién puede aportar?", "¿Quién demanda esto?" y "¿Qué financiamiento aplica?". Consulta el ecosistema completo desde el contexto de la iniciativa específica que se está gestionando.
 
 ---
 
@@ -125,6 +176,20 @@ Cuando un usuario escribe "necesito laboratorio que haga análisis de agua", Cla
 5. Devuelve una respuesta en lenguaje natural + datos estructurados
 
 El registro de cada búsqueda queda guardado en la tabla `busqueda` — eso es inteligencia acumulada sobre qué demanda el ecosistema aunque nadie lo haya declarado formalmente.
+
+**Costo:** Anthropic cobra por uso (por cantidad de texto procesado). Para controlar el gasto, el sistema usa caché: el Informe IA se regenera como máximo una vez por día, y el Radar Sectorial una vez por semana. Si no hubo regeneración, la respuesta se sirve del caché sin costo adicional.
+
+---
+
+### Búsqueda web en tiempo real (Tavily)
+
+El **Radar Sectorial** necesita información actualizada: eventos próximos, convocatorias de financiamiento abiertas, tendencias recientes. Claude solo conoce información hasta su fecha de entrenamiento (mediados de 2025), por lo que sin búsqueda web el radar daría información desactualizada.
+
+**Tavily** es un servicio de búsqueda web diseñado específicamente para IA. Antes de que Claude escriba el radar, el sistema hace 3 búsquedas automáticas (eventos, financiamiento, tendencias) y le pasa los resultados a Claude para que los incorpore.
+
+**Costo:** Tavily tiene un plan gratuito de 1.000 búsquedas por mes. Dado que el radar se regenera como máximo una vez por semana por tema, y hay 5 temas, el consumo mensual máximo es 15 búsquedas automáticas (3 búsquedas × 5 temas × ~1 vez por semana). El plan gratuito cubre holgadamente el uso actual. Si en el futuro se agregan más temas o se regenera más frecuentemente, hay planes de pago desde USD 20/mes.
+
+**La clave de acceso** (API key) está configurada como variable de entorno privada en Railway. No está en el código fuente.
 
 ---
 
@@ -151,14 +216,15 @@ El usuario abre el navegador
 
 ## La infraestructura (dónde vive cada parte)
 
-| Parte | Dónde vive | Servicio |
-|---|---|---|
-| Frontend (Next.js) | En la nube, servidor de Vercel | Vercel |
-| Backend (FastAPI) | En la nube, servidor de Railway | Railway |
-| Base de datos | En la nube, servidor de Neon | Neon.tech |
-| IA | API de Anthropic | Anthropic |
-| Dominio sinap.io | DNS de Cloudflare | Cloudflare |
-| Código fuente | GitHub | GitHub (org sinap-io) |
+| Parte | Dónde vive | Servicio | Costo aproximado |
+|---|---|---|---|
+| Frontend (Next.js) | En la nube, servidor de Vercel | Vercel | Gratis (plan hobby) |
+| Backend (FastAPI) | En la nube, servidor de Railway | Railway | ~USD 5/mes |
+| Base de datos | En la nube, servidor de Neon | Neon.tech | Gratis (plan free) |
+| IA generativa | API de Anthropic | Anthropic | Por uso (~USD 3-15/mes según volumen) |
+| Búsqueda web (radar) | API de Tavily | Tavily | Gratis hasta 1.000 búsquedas/mes |
+| Dominio sinap.io | DNS de Cloudflare | Cloudflare | ~USD 10/año (pendiente) |
+| Código fuente | GitHub | GitHub (org sinap-io) | Gratis |
 
 **Por qué servicios separados y no un solo servidor:** Cada parte puede escalar, actualizarse o reemplazarse de forma independiente. Si el backend tiene un problema, el frontend sigue funcionando. Si queremos migrar la base de datos, no tocamos el código.
 

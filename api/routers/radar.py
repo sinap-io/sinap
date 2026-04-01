@@ -1,19 +1,18 @@
 """
 Módulo de Inteligencia Externa — Radar del Sector
 Genera un informe de inteligencia sectorial sobre el ecosistema biotech,
-basado en el conocimiento actualizado del modelo IA.
+combinando búsqueda web real (Tavily) con análisis de Claude.
 """
 import asyncio
-import json
 import logging
-import urllib.parse
-import urllib.request
+import os
 from datetime import datetime
 
 import asyncpg
 from anthropic import AsyncAnthropic
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from tavily import TavilyClient
 
 from db.connection import get_db
 
@@ -21,30 +20,8 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/radar", tags=["radar"])
 
 _client = AsyncAnthropic()
+_tavily = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
 
-
-def _ddg_search_sync(query: str) -> str:
-    """Búsqueda via DuckDuckGo Instant Answer API (sincrónica)."""
-    url = "https://api.duckduckgo.com/?" + urllib.parse.urlencode({
-        "q": query, "format": "json", "no_html": "1", "skip_disambig": "1",
-    })
-    try:
-        req = urllib.request.Request(url, headers={"User-Agent": "SINAP/1.0"})
-        with urllib.request.urlopen(req, timeout=8) as r:
-            data = json.loads(r.read().decode())
-        parts = []
-        if data.get("AbstractText"):
-            parts.append(data["AbstractText"])
-        for topic in (data.get("RelatedTopics") or [])[:5]:
-            if isinstance(topic, dict) and topic.get("Text"):
-                parts.append(topic["Text"])
-        return "\n".join(parts) if parts else f"Sin resultados para: {query}"
-    except Exception as e:
-        return f"Error de búsqueda: {e}"
-
-
-async def _web_search(query: str) -> str:
-    return await asyncio.to_thread(_ddg_search_sync, query)
 
 TEMAS_VALIDOS = {
     "biosensores": "biosensores para salud y diagnóstico point-of-care",
@@ -52,6 +29,35 @@ TEMAS_VALIDOS = {
     "agroindustria": "biotecnología agrícola y bioinsumos",
     "diagnostico_molecular": "diagnóstico molecular y genómica clínica",
     "nanobiotecnologia": "nanobiotecnología y nanomateriales para salud",
+}
+
+# Consultas de búsqueda por tema (en inglés para mejores resultados)
+TEMAS_BUSQUEDAS = {
+    "biosensores": [
+        "biosensors point-of-care diagnostics conferences events 2025 2026",
+        "biosensors wearable health monitoring funding grants 2025",
+        "point-of-care diagnostics biotech market trends Latin America 2025",
+    ],
+    "biofarma": [
+        "biopharmaceuticals biologics conferences events 2025 2026",
+        "biopharmaceuticals biosimilars funding Argentina 2025",
+        "biopharmaceuticals cell therapy gene therapy market trends 2025",
+    ],
+    "agroindustria": [
+        "agrobiotechnology bioinputs biostimulants conferences 2025 2026",
+        "agricultural biotech biopesticides funding grants Argentina 2025",
+        "bioinputs sustainable agriculture market trends Latin America 2025",
+    ],
+    "diagnostico_molecular": [
+        "molecular diagnostics genomics clinical conferences 2025 2026",
+        "molecular diagnostics NGS sequencing funding grants 2025",
+        "molecular diagnostics precision medicine market trends Argentina 2025",
+    ],
+    "nanobiotecnologia": [
+        "nanobiotechnology nanomedicine drug delivery conferences 2025 2026",
+        "nanomaterials biomedical applications funding grants 2025",
+        "nanobiotechnology health applications market trends Latin America 2025",
+    ],
 }
 
 
@@ -77,9 +83,13 @@ CONTEXTO DEL ECOSISTEMA:
 - Capacidades disponibles en el Clúster: {capacidades_ecosistema}
 - Necesidades urgentes de los miembros: {necesidades_ecosistema}
 
+INFORMACIÓN ACTUALIZADA DE LA WEB:
+{resultados_web}
+
 REGLAS:
-- Usá solo información verificada. Si buscaste y no encontraste algo concreto, decilo.
-- Solo eventos confirmados y futuros (posteriores a {fecha_actual}).
+- Priorizá la información de la web para hechos concretos (fechas, eventos, convocatorias).
+- Usá tu conocimiento para interpretar tendencias y su impacto en el ecosistema cordobés.
+- Solo citá eventos con fecha confirmada. Si encontraste algo sin fecha precisa, aclaralo.
 - Tono: memo interno de gestión. Directo, sin adjetivos vacíos.
 - Sin línea de cierre ni "próxima actualización".
 - Idioma: español. Máximo 600 palabras.
@@ -88,8 +98,8 @@ REGLAS:
 Generá el informe con EXACTAMENTE estas secciones:
 
 ## Eventos del sector
-Eventos relevantes para {tema_label} desde {fecha_actual} hasta fines de 2027.
-Incluí eventos lejanos — los europeos o internacionales requieren planificación presupuestaria con al menos 6-12 meses de anticipación.
+Eventos relevantes para {tema_label} desde {fecha_actual} hasta fines de 2026.
+Incluí eventos internacionales relevantes — requieren planificación presupuestaria con 6-12 meses de anticipación.
 Por cada uno: nombre, lugar, fecha y por qué es relevante para el ecosistema cordobés.
 
 ## Tendencias
@@ -105,6 +115,32 @@ Señales del sector que abren ventanas concretas para los miembros del Clúster.
 NO es una lista de tareas. Es inteligencia: qué está pasando afuera que es relevante para actores como los del ecosistema cordobés.
 Formato: "Señal → por qué importa al Clúster". Máximo 3 items.
 """
+
+
+def _tavily_search_sync(queries: list[str]) -> str:
+    """Ejecuta múltiples búsquedas con Tavily y formatea los resultados."""
+    resultados = []
+    for query in queries:
+        try:
+            resp = _tavily.search(
+                query=query,
+                max_results=4,
+                search_depth="basic",
+            )
+            for r in resp.get("results", []):
+                title = r.get("title", "")
+                content = r.get("content", "")[:300]
+                url = r.get("url", "")
+                if title and content:
+                    resultados.append(f"- **{title}** ({url})\n  {content}")
+        except Exception as e:
+            logger.warning("Error en búsqueda Tavily '%s': %s", query, e)
+
+    return "\n\n".join(resultados) if resultados else "Sin resultados de búsqueda web."
+
+
+async def _tavily_search(queries: list[str]) -> str:
+    return await asyncio.to_thread(_tavily_search_sync, queries)
 
 
 @router.get("", response_model=RadarResponse)
@@ -180,25 +216,18 @@ async def _generar(tema: str, db: asyncpg.Connection) -> RadarResponse:
         "September", "septiembre").replace("October", "octubre").replace(
         "November", "noviembre").replace("December", "diciembre")
 
+    # Búsqueda web antes de llamar a Claude
+    queries = TEMAS_BUSQUEDAS.get(tema, [f"{tema_label} biotech conference 2025"])
+    resultados_web = await _tavily_search(queries)
+
     prompt_texto = _PROMPT.format(
         tema_label=tema_label,
         trimestre=trimestre,
         fecha_actual=fecha_actual,
         capacidades_ecosistema=caps_texto,
         necesidades_ecosistema=necs_texto,
+        resultados_web=resultados_web,
     )
-
-    _tools = [{
-        "name": "web_search",
-        "description": "Busca información actualizada en la web sobre eventos, noticias y convocatorias del sector.",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "query": {"type": "string", "description": "Consulta de búsqueda en inglés o español"},
-            },
-            "required": ["query"],
-        },
-    }]
 
     try:
         respuesta = await _client.messages.create(
