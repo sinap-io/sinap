@@ -24,7 +24,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         );
 
         const user = rows[0];
-        console.log("[SINAP auth] authorize:", credentials.email, "| rows:", rows.length, "| rol:", user?.rol ?? "no-user");
         if (!user || !user.password) return null;
 
         const valid = await compare(credentials.password as string, user.password);

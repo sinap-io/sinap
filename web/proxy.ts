@@ -31,22 +31,6 @@ export async function proxy(request: NextRequest) {
     });
   }
 
-  // DEBUG — eliminar una vez confirmado que funciona
-  const authCookies = [...request.cookies.getAll()]
-    .filter((c) => c.name.includes("auth"))
-    .map((c) => `${c.name}[${c.value.length}b]`)
-    .join(",");
-  console.log(
-    "[SINAP proxy]",
-    nextUrl.pathname,
-    "| token:",
-    token ? `{email:${token.email},rol:${token.rol}}` : "null",
-    "| proto:",
-    proto,
-    "| authCookies:",
-    authCookies || "none"
-  );
-
   const isLoggedIn = !!token;
 
   if (isLoginPage) {
