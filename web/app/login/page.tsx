@@ -2,10 +2,8 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -26,7 +24,10 @@ export default function LoginPage() {
     if (res?.error) {
       setError("Email o contraseña incorrectos.");
     } else {
-      router.push("/");
+      // window.location fuerza una navegación HTTP completa (no SPA),
+      // garantizando que la cookie nueva esté en el request al proxy.
+      // router.push() tiene race condition con el cookie store en Next.js 16.
+      window.location.href = "/";
     }
   }
 
