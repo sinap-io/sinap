@@ -53,9 +53,16 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Pendiente: crear usuarios para el resto del equipo
 
 **Informe IA — estado:**
-- Endpoint `GET /informe` en Railway ✅
-- Sección "Oportunidades de negocios" con subsecciones corto/mediano plazo ✅
+- Endpoint `GET /informe` en Railway ✅ (`?force=true` para forzar regeneración)
+- Cache 24h en memoria (se pierde si Railway reinicia) ✅
+- 5 secciones de análisis cruzado entre todos los módulos:
+  1. Resumen (2 oraciones, lo más urgente)
+  2. Oportunidades de negocios → corto plazo (matches actores no conectados) + mediano plazo (brechas sin cobertura)
+  3. Estado de iniciativas (detecta iniciativas en_curso sin hitos en +30 días)
+  4. Financiamiento (cruza necesidades activas con instrumentos disponibles)
+  5. Esta semana (hitos de los últimos 7 días)
 - Período: "Estado al [fecha]" ✅
+- Solo visible para `admin`, `manager`, `directivo`, `vinculador` ✅
 
 **Radar sectorial — estado:**
 - Endpoint `GET /radar?tema=X&force=true` ✅
