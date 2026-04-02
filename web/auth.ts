@@ -34,22 +34,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    // authorized: usado por el proxy (proxy.ts) para proteger rutas
-    authorized({ auth, request: { nextUrl } }) {
-      // DEBUG TEMPORAL — ver qué contiene auth en el proxy
-      console.log("[SINAP proxy] path:", nextUrl.pathname, "| auth:", JSON.stringify(auth));
-      const isLoggedIn = !!auth?.user;
-      const isLoginPage = nextUrl.pathname.startsWith("/login");
-
-      if (isLoginPage) {
-        // Si ya está logueado, redirigir al inicio
-        if (isLoggedIn) return Response.redirect(new URL("/", nextUrl));
-        return true;
-      }
-
-      // Cualquier otra ruta requiere login
-      return isLoggedIn;
-    },
     jwt({ token, user }) {
       if (user) token.rol = (user as { rol?: string }).rol;
       return token;
