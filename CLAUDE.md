@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (2 abril 2026 — cierre de sesión)
+## Estado actual (2 abril 2026 — cierre de sesión nocturno)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -94,8 +94,8 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Script `api/scripts/crear_usuario.py` para crear usuarios desde CLI ✅
 
 **Lo que está pendiente:**
-- Remover debug logs de `proxy.ts` y `auth.ts` (console.log temporales de diagnóstico)
-- Cargar datos reales (actores, necesidades, instrumentos del Clúster)
+- **Datos ficticios verosímiles** — cargar ~25-30 actores basados en empresas reales del ecosistema biotech cordobés, con capacidades, necesidades e instrumentos. Los datos reales del Clúster llegan en unas semanas; mientras tanto se usan ficticios para que la plataforma funcione con sentido. Hoy hay 15 actores en DB.
+- **Login con Google (OAuth)** — permitir que usuarios entren con su cuenta de Google además de email/contraseña. Acordado para implementar en la próxima sesión.
 - Crear usuarios para el resto del equipo
 - Vista marketplace diferenciada por rol
 - Registrar dominio sinap.io en Cloudflare
@@ -129,8 +129,8 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Remover debug logs** — `proxy.ts` y `auth.ts` tienen `console.log` temporales de diagnóstico que hay que limpiar
-2. **Cargar datos reales** — actores, necesidades, instrumentos del Clúster real
+1. **Datos ficticios verosímiles** — script Python que carga ~25-30 actores del ecosistema biotech cordobés con capacidades, necesidades e instrumentos reales de Argentina (FONARSEC, ANR, PICT). Los datos reales del Clúster llegan en semanas — esto permite avanzar con la plataforma con sentido.
+2. **Login con Google (OAuth)** — agregar Google como proveedor en Auth.js v5. El usuario podrá elegir entre email/contraseña o "Continuar con Google". El rol se asigna igual que hoy (admin lo configura internamente).
 3. **Crear usuarios** para el resto del equipo (vinculadores, oferentes)
 4. **Vista marketplace** — catálogo diferenciado por rol
 5. **Registrar dominio** sinap.io en Cloudflare
