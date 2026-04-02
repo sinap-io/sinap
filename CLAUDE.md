@@ -62,7 +62,9 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
   4. Financiamiento (cruza necesidades activas con instrumentos disponibles)
   5. Esta semana (hitos de los últimos 7 días)
 - Período: "Estado al [fecha]" ✅
-- Solo visible para `admin`, `manager`, `directivo`, `vinculador` ✅
+- Visible para `admin`, `manager`, `directivo`, `vinculador` ✅
+- Botón "↻ Actualizar" solo para `admin` y `manager` — el resto solo lee el caché ✅
+- Botón "↓ Descargar PDF" disponible para todos los roles con acceso ✅
 
 **Radar sectorial — estado:**
 - Endpoint `GET /radar?tema=X&force=true` ✅
