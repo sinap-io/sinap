@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (2 abril 2026 — tarde)
+## Estado actual (2 abril 2026 — cierre de sesión)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -25,7 +25,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Auth.js v5 con tabla `usuario` en Neon ✅
 - Informe IA (`/informe`) ✅
 - Roles en UI ✅ — rol `manager` en Nav y permisos
-- Radar sectorial (`/radar`) ✅ — sin web search por ahora
+- Radar sectorial (`/radar`) ✅ — con Tavily + cron semanal automático
 - Buscador IA dentro del detalle de iniciativa ✅ — panel colapsable "Buscar en el ecosistema"
 - **Login de Pablo resuelto** ✅ — fix definitivo en producción
 - **Rol de Pablo resuelto** ✅ — figura como "Manager" correctamente
@@ -40,7 +40,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - `sinap/.env` actualizado para apuntar a esta DB ✅
 - `web/.env.local` creado apuntando a esta DB ✅
 - `api/scripts/crear_usuario.py` corregido para leer `sinap/.env` correctamente ✅
-- ⚠️ **Railway (FastAPI)** — pendiente verificar que su DATABASE_URL también apunte a `ep-tiny-cell-acjfdkps`. Ver ARCHITECTURE.md para detalles.
+- Railway (FastAPI) también apunta a `ep-tiny-cell-acjfdkps` ✅ — confirmado en screenshot del dashboard
 - Ver ARCHITECTURE.md → sección "Decisión técnica — 2 abril 2026" para el análisis completo.
 
 **Sistema de autenticación — estado:**
@@ -94,14 +94,12 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Script `api/scripts/crear_usuario.py` para crear usuarios desde CLI ✅
 
 **Lo que está pendiente:**
-- **Verificar DATABASE_URL en Railway** — confirmar que apunta a `ep-tiny-cell-acjfdkps`
-- Cargar datos reales (actores, necesidades, instrumentos del Clúster)
-- Vista marketplace diferenciada por rol
-- Crear usuarios para el resto del equipo
-- Registrar dominio sinap.io en Cloudflare
-- Web search para radar (Tavily o similar)
-- Tabla `persona` vinculada a `actor` (ver BACKLOG.md)
 - Remover debug logs de `proxy.ts` y `auth.ts` (console.log temporales de diagnóstico)
+- Cargar datos reales (actores, necesidades, instrumentos del Clúster)
+- Crear usuarios para el resto del equipo
+- Vista marketplace diferenciada por rol
+- Registrar dominio sinap.io en Cloudflare
+- Tabla `persona` vinculada a `actor` (ver BACKLOG.md)
 
 ---
 
@@ -131,11 +129,12 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Cargar datos reales** — actores, necesidades, instrumentos del Clúster real
-2. **Crear usuarios** para el resto del equipo (vinculadores, oferentes)
-3. **Vista marketplace** — catálogo diferenciado por rol
-4. **Registrar dominio** sinap.io en Cloudflare
-5. **Tabla `persona`** — implementar cuando haya más usuarios activos (ver BACKLOG.md)
+1. **Remover debug logs** — `proxy.ts` y `auth.ts` tienen `console.log` temporales de diagnóstico que hay que limpiar
+2. **Cargar datos reales** — actores, necesidades, instrumentos del Clúster real
+3. **Crear usuarios** para el resto del equipo (vinculadores, oferentes)
+4. **Vista marketplace** — catálogo diferenciado por rol
+5. **Registrar dominio** sinap.io en Cloudflare
+6. **Tabla `persona`** — implementar cuando haya más usuarios activos (ver BACKLOG.md)
 
 ---
 
@@ -179,7 +178,7 @@ En orden de prioridad:
 |---|---|---|
 | Gmail | sinap.io.dev@gmail.com | ✅ Creado |
 | GitHub | sinap-io/sinap | ✅ Organización creada, repo transferido y renombrado |
-| Neon.tech | sinap-production (14 tablas + migración 003) | ✅ Operativo |
+| Neon.tech | sinap-production `ep-tiny-cell-acjfdkps` (14 tablas + migraciones 001–004) | ✅ Operativo |
 | Railway | sinap-production.up.railway.app | ✅ Operativo (FastAPI) |
 | Vercel | sinap-psi.vercel.app | ✅ Operativo (Next.js) |
 | Cloudflare / sinap.io | — | ⏳ Registrar dominio |

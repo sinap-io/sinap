@@ -3,7 +3,7 @@
 > Este documento está escrito para Sebastián. No asume conocimientos de programación.
 > Explica qué es cada parte del sistema, por qué existe, y cómo se conecta todo.
 >
-> Última actualización: 1 abril 2026
+> Última actualización: 2 abril 2026
 
 ---
 
@@ -41,7 +41,7 @@ Tenemos dos bases separadas:
 | Base | Para qué | Estado |
 |---|---|---|
 | `sinap-prototype` | El prototipo Streamlit | Funciona, no tocar |
-| `sinap-production` | La versión productiva | Activa, 13 tablas, datos de prueba cargados |
+| `sinap-production` | La versión productiva | Activa, 14 tablas, datos de prueba cargados — endpoint `ep-tiny-cell-acjfdkps` |
 
 **Por qué dos bases separadas:** Para que cualquier error en el desarrollo no afecte la versión que se muestra a stakeholders.
 
@@ -152,7 +152,7 @@ Son las dos herramientas de análisis más potentes de SINAP. Usan IA para gener
 **Informe IA (`/informe`)**
 Analiza en simultáneo actores, capacidades, necesidades, gaps, instrumentos, iniciativas e hitos. Detecta conexiones no evidentes: qué actor necesita algo que otro actor ya ofrece sin que haya una iniciativa que los conecte, qué necesidades urgentes no tienen cobertura, qué iniciativas están estancadas, qué financiamiento podría aplicar pero nadie está persiguiendo.
 
-Se genera automáticamente una vez por día. El botón "Actualizar" fuerza una regeneración inmediata si se necesita.
+Se genera al primer acceso del día (cache 24h). El botón "↻ Actualizar" fuerza una regeneración inmediata — visible solo para admin y manager. Todos los demás roles solo leen el caché. El botón "↓ Descargar PDF" está disponible para todos los roles con acceso.
 
 **Radar Sectorial (`/radar`)**
 Mira hacia afuera: qué está pasando en el sector biotech a nivel global que es relevante para el Clúster. Combina búsqueda web en tiempo real (Tavily) con análisis de Claude para producir inteligencia sobre eventos próximos, tendencias, oportunidades de financiamiento y actores internacionales de referencia.
@@ -161,7 +161,7 @@ Disponible en dos temas:
 - **Biosensores** — foco específico en diagnóstico point-of-care y wearables
 - **Biotech general** — panorama del sector en Argentina y Latinoamérica
 
-El radar se regenera automáticamente todos los **lunes a las 9:00 AM** (Argentina) mediante un proceso automatizado en GitHub. Durante la semana, todos los usuarios ven el mismo informe en caché — sin costo adicional. El botón "Regenerar" existe pero es visible únicamente para admin y manager, para evitar regeneraciones no planificadas que consumen créditos de la API.
+El radar se regenera automáticamente todos los **lunes a las 9:00 AM** (Argentina) mediante un proceso automatizado en GitHub (`.github/workflows/radar-refresh.yml`). Durante la semana, todos los usuarios ven el mismo informe en caché — sin costo adicional. El botón "↻ Regenerar" es visible únicamente para admin y manager, para evitar regeneraciones no planificadas. El botón "↓ Descargar PDF" está disponible para todos los roles con acceso. Si Railway está caído cuando corre el cron, el radar queda vacío hasta el próximo lunes o hasta que un admin/manager haga clic en "Regenerar".
 
 Si la búsqueda web (Tavily) no está disponible, el sistema devuelve un error explícito en lugar de generar contenido desactualizado.
 
@@ -193,7 +193,7 @@ El **Radar Sectorial** necesita información actualizada: eventos próximos, con
 
 **Tavily** es un servicio de búsqueda web diseñado específicamente para IA. Antes de que Claude escriba el radar, el sistema hace 3 búsquedas automáticas (eventos, financiamiento, tendencias) y le pasa los resultados a Claude para que los incorpore.
 
-**Costo:** Tavily tiene un plan gratuito de 1.000 búsquedas por mes. Dado que el radar se regenera como máximo una vez por semana por tema, y hay 5 temas, el consumo mensual máximo es 15 búsquedas automáticas (3 búsquedas × 5 temas × ~1 vez por semana). El plan gratuito cubre holgadamente el uso actual. Si en el futuro se agregan más temas o se regenera más frecuentemente, hay planes de pago desde USD 20/mes.
+**Costo:** Tavily tiene un plan gratuito de 1.000 búsquedas por mes. Dado que el radar se regenera como máximo una vez por semana por tema, y hay 2 temas, el consumo mensual máximo es 24 búsquedas automáticas (3 búsquedas × 2 temas × 4 semanas/mes). El plan gratuito cubre holgadamente el uso actual. Si en el futuro se agregan más temas o se regenera más frecuentemente, hay planes de pago desde USD 20/mes.
 
 **La clave de acceso** (API key) está configurada como variable de entorno privada en Railway. No está en el código fuente.
 
@@ -269,9 +269,12 @@ Toda la plataforma requiere crear una cuenta. No hay acceso como "visitante" sin
 
 1. ~~**Merge auth a producción**~~ ✅ Mergeado a main el 30/03/2026 (PR #22)
 2. ~~**Roles en UI**~~ ✅ Nav filtra por rol, rutas protegidas, rol visible en sidebar
-3. **Cargar datos reales** — actores, necesidades, instrumentos del Clúster
-4. **Crear usuarios** del resto del equipo (vinculadores, oferentes)
-5. **Vista marketplace** — el catálogo diferenciado según si sos oferente o demandante
+3. ~~**Login de Pablo**~~ ✅ Resuelto — fix en proxy.ts + window.location.href
+4. ~~**Rol manager de Pablo**~~ ✅ Resuelto — unificación de DB (ver ARCHITECTURE.md)
+5. **Remover debug logs** — console.log temporales en proxy.ts y auth.ts
+6. **Cargar datos reales** — actores, necesidades, instrumentos del Clúster
+7. **Crear usuarios** del resto del equipo (vinculadores, oferentes)
+8. **Vista marketplace** — el catálogo diferenciado según si sos oferente o demandante
 
 ---
 
