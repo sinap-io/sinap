@@ -2,7 +2,7 @@
 
 > Documento vivo. Captura el estado del proyecto, las decisiones de diseño y el razonamiento detrás de cada una. Actualizar al cerrar cada sprint.
 >
-> Última actualización: 30 marzo 2026
+> Última actualización: 2 abril 2026
 
 ---
 
@@ -36,12 +36,40 @@ sinap/
 
 ### Bases de datos en Neon.tech
 
-| Base | Uso | Conexión |
-|---|---|---|
-| `sinap-prototype` | Prototipo Streamlit | Variable `DATABASE_URL` en `app/` |
-| `sinap-production` | Backend + Frontend | Variable `DATABASE_URL` en `api/.env` |
+| Base | Endpoint | Uso | Quién la usa |
+|---|---|---|---|
+| `sinap-prototype` | `ep-wandering-violet-ac450yzt` | Prototipo Streamlit | `app/` — NO TOCAR |
+| `sinap-production` | `ep-tiny-cell-acjfdkps` | Backend + Frontend | Railway, Vercel, scripts locales |
 
-**Importante:** Las dos bases son independientes. Tocar `sinap-prototype` rompe el prototipo que se usa para validación.
+**Importante:** Las dos bases son completamente independientes. Tocar `sinap-prototype` rompe el prototipo que se usa para validación con stakeholders.
+
+---
+
+### ⚠️ Decisión técnica — 2 abril 2026: unificación de fuente de verdad de la DB
+
+**Problema detectado:** Durante semanas coexistieron DOS bases de datos distintas para `sinap-production`:
+
+- `ep-tiny-cell-acjfdkps` → configurada en Vercel (creada automáticamente por la integración Neon+Vercel al momento de conectar el proyecto)
+- `ep-wandering-violet-ac450yzt` → configurada en el `.env` local (creada manualmente en una sesión de setup temprana)
+
+**Consecuencia:** Todo lo que se corría localmente (migraciones, scripts de usuarios, seeds de datos) afectaba a una base que Vercel y Railway ignoraban completamente. El síntoma visible fue que el rol de Pablo Díaz Azulay (`pdiazazulay@gmail.com`) no se actualizaba a `manager` en la plataforma, aunque los scripts locales confirmaban el cambio correctamente.
+
+**Diagnóstico:** Se compararon las dos bases y se confirmó que `ep-tiny-cell-acjfdkps` (Vercel) era la correcta y completa — con 14 tablas, incluyendo todo el módulo de iniciativas. La base local tenía solo 10 tablas y era una versión desactualizada.
+
+**Solución aplicada:**
+1. Se actualizó `sinap/.env` para que `DATABASE_URL` apunte a `ep-tiny-cell-acjfdkps`
+2. Se creó `web/.env.local` apuntando a la misma base (para que auth funcione en desarrollo local)
+3. Se corrigió `api/scripts/crear_usuario.py`: buscaba el `.env` en `api/.env` (que no existe), ahora lo busca correctamente en `sinap/.env`
+4. Se aplicó la migración 004 (`rol_manager`) directamente en `ep-tiny-cell-acjfdkps`
+5. Se actualizó el rol de Pablo a `manager` en `ep-tiny-cell-acjfdkps`
+
+**Regla a seguir de ahora en adelante:**
+- La única base de datos de producción es `ep-tiny-cell-acjfdkps`
+- Todo script, migración o seed debe correr con el `DATABASE_URL` de esa base
+- Para verificar a qué base apunta el entorno local: `grep DATABASE_URL sinap/.env` → debe mostrar `ep-tiny-cell`
+- Railway también debe apuntar a `ep-tiny-cell`. **Verificar en Railway dashboard → Variables** si hay dudas.
+
+**Pendiente verificar:** Railway (FastAPI backend) — confirmar que su `DATABASE_URL` también apunta a `ep-tiny-cell-acjfdkps`. Si apuntara a una tercera base, el backend estaría leyendo datos distintos al frontend.
 
 ---
 
@@ -215,21 +243,34 @@ Las rutas `/vinculador/*` redirigen a `/iniciativas/*` (código legacy, no elimi
 ### Requisitos
 - Python 3.11+
 - Node.js 20+
-- Variables de entorno configuradas
+- Variables de entorno configuradas (ver abajo)
+
+### Variables de entorno — estructura correcta
+
+```
+sinap/
+├── .env                  ← DATABASE_URL + ANTHROPIC_API_KEY (usado por scripts Python)
+├── api/
+│   └── .env              ← DATABASE_URL (asyncpg) + ANTHROPIC_API_KEY + ALLOWED_ORIGINS
+└── web/
+    └── .env.local        ← DATABASE_URL + AUTH_SECRET + NEXT_PUBLIC_API_URL
+```
+
+**⚠️ Todos los `DATABASE_URL` deben apuntar a `ep-tiny-cell-acjfdkps` (sinap-production).**
+Para regenerar `web/.env.local` desde Vercel: `cd web && npx vercel env pull .env.local --environment development`
 
 ### Backend (FastAPI)
 ```bash
 # Desde el root del repo
-cd sinap
 python -m uvicorn api.main:app --port 8000 --reload
 # Docs disponibles en http://localhost:8000/docs
 ```
 
-Variables requeridas en `api/.env`:
+Variables requeridas en `api/.env` (Railway las inyecta automáticamente en producción):
 ```
-DATABASE_URL=postgresql+asyncpg://...  # sinap-production en Neon
+DATABASE_URL=postgresql+asyncpg://neondb_owner:...@ep-tiny-cell-acjfdkps.sa-east-1.aws.neon.tech/neondb
 ANTHROPIC_API_KEY=sk-ant-...
-ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001
+ALLOWED_ORIGINS=http://localhost:3000,https://sinap-psi.vercel.app
 ```
 
 ### Frontend (Next.js)
@@ -239,9 +280,15 @@ npm run dev
 # Disponible en http://localhost:3001 (si 3000 está ocupado)
 ```
 
-Variables requeridas en `web/.env.local`:
-```
-NEXT_PUBLIC_API_URL=http://localhost:8000
+`web/.env.local` ya existe con las variables correctas (Vercel las inyecta en producción).
+Contiene: `DATABASE_URL`, `AUTH_SECRET`, `NEXT_PUBLIC_API_URL`.
+
+### Scripts de gestión de usuarios
+```bash
+# Desde la raíz del repo — crea o actualiza usuarios en la DB de producción
+python api/scripts/crear_usuario.py email@ejemplo.com contraseña "Nombre Apellido" rol
+# Roles: admin | manager | directivo | vinculador | oferente | demandante
+# Lee DATABASE_URL desde sinap/.env automáticamente
 ```
 
 ### Prototipo Streamlit (solo lectura, no modificar)

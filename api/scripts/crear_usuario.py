@@ -4,11 +4,14 @@ Script para crear o actualizar usuarios en SINAP.
 Uso:
   python scripts/crear_usuario.py <email> <contraseña> <nombre> <rol>
 
-Roles válidos: admin | directivo | vinculador | oferente | demandante
+Roles válidos: admin | manager | directivo | vinculador | oferente | demandante
 
 Ejemplos:
   python scripts/crear_usuario.py juan@empresa.com sinap2026 "Juan García" vinculador
   python scripts/crear_usuario.py maria@bio.com pass123 "María López" oferente
+
+Base de datos: lee DATABASE_URL desde el .env en la raíz del proyecto (sinap/.env).
+La raíz del proyecto es dos niveles arriba de este script (api/scripts/ → api/ → sinap/).
 """
 
 import sys
@@ -16,13 +19,18 @@ import os
 from pathlib import Path
 
 # Cargar variables del .env
-env_path = Path(__file__).parent.parent / ".env"
+# El .env está en la raíz del repo (sinap/.env), no en api/.env
+# Ruta: api/scripts/crear_usuario.py → .parent = api/scripts/ → .parent = api/ → .parent = sinap/
+env_path = Path(__file__).parent.parent.parent / ".env"
 if env_path.exists():
     for line in env_path.read_text().splitlines():
         line = line.strip()
         if line and not line.startswith("#") and "=" in line:
             k, v = line.split("=", 1)
             os.environ.setdefault(k.strip(), v.strip())
+else:
+    print(f"Advertencia: no se encontró .env en {env_path}")
+    print("Asegurate de tener el archivo sinap/.env con DATABASE_URL configurado.")
 
 import psycopg2
 import bcrypt

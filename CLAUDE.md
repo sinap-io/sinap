@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (2 abril 2026 — mañana)
+## Estado actual (2 abril 2026 — tarde)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -28,20 +28,28 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Radar sectorial (`/radar`) ✅ — sin web search por ahora
 - Buscador IA dentro del detalle de iniciativa ✅ — panel colapsable "Buscar en el ecosistema"
 - **Login de Pablo resuelto** ✅ — fix definitivo en producción
+- **Rol de Pablo resuelto** ✅ — figura como "Manager" correctamente
 
 **Branch activo:** `main` — todo mergeado. `claude/distracted-lamarr` sincronizado.
 
 **⚠️ Nota de auth en preview:**
 - Login en preview NO funciona (URLs preview de Vercel no tienen las env vars de auth — AUTH_SECRET, DATABASE_URL). Solo funciona en sinap-psi.vercel.app (producción).
 
+**Base de datos — fuente de verdad unificada (fix 2 abril 2026):**
+- DB de producción: `ep-tiny-cell-acjfdkps` en Neon.tech ← **ESTA ES LA ÚNICA**
+- `sinap/.env` actualizado para apuntar a esta DB ✅
+- `web/.env.local` creado apuntando a esta DB ✅
+- `api/scripts/crear_usuario.py` corregido para leer `sinap/.env` correctamente ✅
+- ⚠️ **Railway (FastAPI)** — pendiente verificar que su DATABASE_URL también apunte a `ep-tiny-cell-acjfdkps`. Ver ARCHITECTURE.md para detalles.
+- Ver ARCHITECTURE.md → sección "Decisión técnica — 2 abril 2026" para el análisis completo.
+
 **Sistema de autenticación — estado:**
 - Auth.js v5 con email + contraseña ✅
 - `proxy.ts` como middleware (Next.js 16) — usa `getToken` de `next-auth/jwt` directamente ✅
 - `middleware.ts` eliminado (causaba conflicto con `proxy.ts` en Next.js 16) ✅
 - Login usa `window.location.href = "/"` (no `router.push`) para evitar race condition con cookie store ✅
-- Tabla `usuario` en Neon.tech ✅
-- Usuarios: `sebabizzi@gmail.com` (admin) + `pdiazazulay@gmail.com` (manager) — contraseña: sinap2026
-- ⚠️ Pablo debe hacer logout + login para que su sesión refleje `rol: manager` (el JWT viejo tiene `directivo`)
+- Tabla `usuario` en Neon.tech (`ep-tiny-cell-acjfdkps`) ✅
+- Usuarios: `sebabizzi@gmail.com` (admin) + `pdiazazulay@gmail.com` (manager) — contraseña: sinap2026 ✅
 - Pendiente: crear usuarios para el resto del equipo
 
 **Informe IA — estado:**
@@ -71,12 +79,14 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Script `api/scripts/crear_usuario.py` para crear usuarios desde CLI ✅
 
 **Lo que está pendiente:**
+- **Verificar DATABASE_URL en Railway** — confirmar que apunta a `ep-tiny-cell-acjfdkps`
 - Cargar datos reales (actores, necesidades, instrumentos del Clúster)
 - Vista marketplace diferenciada por rol
 - Crear usuarios para el resto del equipo
 - Registrar dominio sinap.io en Cloudflare
 - Web search para radar (Tavily o similar)
 - Tabla `persona` vinculada a `actor` (ver BACKLOG.md)
+- Remover debug logs de `proxy.ts` y `auth.ts` (console.log temporales de diagnóstico)
 
 ---
 
