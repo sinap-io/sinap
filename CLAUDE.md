@@ -71,7 +71,8 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - 2 temas: `biosensores` + `biotech_general` (los 5 anteriores eliminados — enfoque más rico) ✅
 - Cache 7 días en memoria (se limpia si Railway reinicia) ✅
 - Búsqueda web real con **Tavily** integrado ✅ — TAVILY_API_KEY en Railway
-- Botón "Regenerar" visible solo para `admin` y `manager` ✅
+- Botón "↻ Regenerar" visible solo para `admin` y `manager` ✅
+- Botón "↓ Descargar PDF" disponible para todos los roles con acceso (`window.print()`) ✅
 - **Cron automático:** GitHub Actions llama al backend todos los lunes a las 9:00 AM Argentina (12:00 UTC) ✅
   - Workflow: `.github/workflows/radar-refresh.yml`
   - Se puede ejecutar manualmente desde GitHub → Actions → "Radar — refresh semanal automático"
