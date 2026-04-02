@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (31 marzo 2026 — noche)
+## Estado actual (2 abril 2026 — mañana)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -24,20 +24,24 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Rediseño visual (Open Sans + navy/teal) ✅
 - Auth.js v5 con tabla `usuario` en Neon ✅
 - Informe IA (`/informe`) ✅
-- Roles en UI ✅ — rol `manager` agregado para Pablo (pdiazazulay@gmail.com)
+- Roles en UI ✅ — rol `manager` en Nav y permisos
 - Radar sectorial (`/radar`) ✅ — sin web search por ahora
 - Buscador IA dentro del detalle de iniciativa ✅ — panel colapsable "Buscar en el ecosistema"
+- **Login de Pablo resuelto** ✅ — fix definitivo en producción
 
-**Branch activo:** `claude/distracted-lamarr` — sincronizado con main + 1 commit extra (timeout search)
+**Branch activo:** `main` — todo mergeado. `claude/distracted-lamarr` sincronizado.
 
-**⚠️ Pendiente verificar mañana:**
-- Login en preview no funciona (las URLs preview de Vercel no tienen las env vars de auth configuradas — AUTH_SECRET, DATABASE_URL). Solo funciona en sinap-psi.vercel.app (producción).
-- Confirmar que el buscador en iniciativas funciona sin timeout en producción
+**⚠️ Nota de auth en preview:**
+- Login en preview NO funciona (URLs preview de Vercel no tienen las env vars de auth — AUTH_SECRET, DATABASE_URL). Solo funciona en sinap-psi.vercel.app (producción).
 
 **Sistema de autenticación — estado:**
 - Auth.js v5 con email + contraseña ✅
-- Tabla `usuario` en Neon.tech ✅ (migración 003 aplicada manualmente hoy)
+- `proxy.ts` como middleware (Next.js 16) — usa `getToken` de `next-auth/jwt` directamente ✅
+- `middleware.ts` eliminado (causaba conflicto con `proxy.ts` en Next.js 16) ✅
+- Login usa `window.location.href = "/"` (no `router.push`) para evitar race condition con cookie store ✅
+- Tabla `usuario` en Neon.tech ✅
 - Usuarios: `sebabizzi@gmail.com` (admin) + `pdiazazulay@gmail.com` (manager) — contraseña: sinap2026
+- ⚠️ Pablo debe hacer logout + login para que su sesión refleje `rol: manager` (el JWT viejo tiene `directivo`)
 - Pendiente: crear usuarios para el resto del equipo
 
 **Informe IA — estado:**
@@ -54,26 +58,24 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 **Buscador en iniciativas — estado:**
 - Panel colapsable en detalle de iniciativa ✅
 - 3 botones rápidos: ¿Quién puede aportar? / ¿Quién demanda esto? / ¿Qué financiamiento aplica? ✅
-- Timeout extendido a 55s (search tarda ~30s) — en preview, pendiente probar en producción ⚠️
+- Timeout extendido a 55s ✅
 
 **Roles en UI — estado:**
 - Nav filtra "Informe IA" y "Radar sectorial" según rol ✅
-- Footer del nav muestra nombre legible del rol ✅
+- Footer del nav muestra nombre legible del rol ✅ (`manager` → "Manager")
 - `/iniciativas/nueva` redirige a oferente/demandante ✅
 
 **Usuarios — estado:**
-- Tabla `usuario` creada en Neon.tech ✅ (migración 003 aplicada manualmente)
 - `sebabizzi@gmail.com` (admin) / `sinap2026` ✅
-- `pdiazazulay@gmail.com` (directivo) / `sinap2026` ✅
+- `pdiazazulay@gmail.com` (manager) / `sinap2026` ✅
 - Script `api/scripts/crear_usuario.py` para crear usuarios desde CLI ✅
 
 **Lo que está pendiente:**
-- Verificar que radar funciona después del deploy de Railway (fix pusheado a main eb521a8)
 - Cargar datos reales (actores, necesidades, instrumentos del Clúster)
 - Vista marketplace diferenciada por rol
 - Crear usuarios para el resto del equipo
 - Registrar dominio sinap.io en Cloudflare
-- Web search para radar (Tavily o similar — reemplazar DuckDuckGo que no funciona bien)
+- Web search para radar (Tavily o similar)
 - Tabla `persona` vinculada a `actor` (ver BACKLOG.md)
 
 ---
