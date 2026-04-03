@@ -18,6 +18,7 @@ import {
   quitarActor,
   agregarHito,
   editarNotas,
+  editarTituloDescripcion,
 } from "@/app/iniciativas/actions";
 import BuscadorIniciativa from "./BuscadorIniciativa";
 
@@ -41,6 +42,11 @@ export default function IniciativaDetailClient({
 
   const [isPending, startTransition] = useTransition();
   const [errorMsg, setErrorMsg]      = useState("");
+
+  // ── Editar título/descripción ────────────────────────────────
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [tituloEdit, setTituloEdit]     = useState(iniciativa.titulo);
+  const [descEdit,   setDescEdit]       = useState(iniciativa.descripcion ?? "");
 
   // ── Notas form ──────────────────────────────────────────────
   const [showNotasForm, setShowNotasForm] = useState(false);
@@ -70,6 +76,16 @@ export default function IniciativaDetailClient({
   function handleEstado(e: string) {
     if (e === iniciativa.estado) return;
     run(() => cambiarEstado(iniciativa.id, e));
+  }
+
+  function handleEditSubmit(ev: React.FormEvent) {
+    ev.preventDefault();
+    if (!tituloEdit.trim()) return;
+    run(async () => {
+      const res = await editarTituloDescripcion(iniciativa.id, tituloEdit.trim(), descEdit || null);
+      if (res.ok) setShowEditForm(false);
+      return res;
+    });
   }
 
   function handleNotasSubmit(ev: React.FormEvent) {
@@ -121,6 +137,55 @@ export default function IniciativaDetailClient({
 
   return (
     <div className="space-y-6">
+
+      {/* ── Editar título y descripción ──────────────────────── */}
+      {puedeGestionar && (
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
+          <div className="flex items-center justify-between mb-0">
+            <p className={sectionTitle + " mb-0"}>Título y descripción</p>
+            <button
+              onClick={() => { setShowEditForm((v) => !v); setTituloEdit(iniciativa.titulo); setDescEdit(iniciativa.descripcion ?? ""); }}
+              className="text-xs text-[var(--accent)] hover:underline"
+            >
+              {showEditForm ? "Cancelar" : "Editar"}
+            </button>
+          </div>
+          {showEditForm && (
+            <form onSubmit={handleEditSubmit} className="mt-4 space-y-3">
+              <div>
+                <label className="block text-xs text-[var(--text-muted)] mb-1">Título *</label>
+                <input
+                  type="text"
+                  required
+                  value={tituloEdit}
+                  onChange={(e) => setTituloEdit(e.target.value)}
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-[var(--text-muted)] mb-1">Descripción</label>
+                <textarea
+                  value={descEdit}
+                  onChange={(e) => setDescEdit(e.target.value)}
+                  rows={3}
+                  placeholder="Descripción de la iniciativa..."
+                  className={`${inputCls} resize-none`}
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  disabled={isPending || !tituloEdit.trim()}
+                  className="px-5 py-2 rounded-lg text-sm font-medium text-white bg-[var(--accent)]
+                             hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+                >
+                  {isPending ? "Guardando…" : "Guardar"}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      )}
 
       {/* ── Cambiar estado ──────────────────────────────────── */}
       <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5">

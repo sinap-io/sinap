@@ -40,6 +40,27 @@ export async function crearIniciativa(data: {
   }
 }
 
+// ── Editar título y descripción ───────────────────────────────
+
+export async function editarTituloDescripcion(
+  id: number,
+  titulo: string,
+  descripcion: string | null,
+): Promise<Result> {
+  try {
+    await fetchApi(`/iniciativas/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ titulo, descripcion: descripcion || null }),
+    });
+    revalidatePath(`/iniciativas/${id}`);
+    revalidatePath("/iniciativas");
+    return { ok: true };
+  } catch (e) {
+    if (e instanceof ApiError) return { ok: false, message: `Error al guardar (${e.status}).` };
+    return { ok: false, message: "No se pudo conectar con el servidor." };
+  }
+}
+
 // ── Cambiar estado ────────────────────────────────────────────
 
 export async function cambiarEstado(
