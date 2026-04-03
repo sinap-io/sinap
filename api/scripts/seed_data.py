@@ -42,6 +42,8 @@ print("Conectado a la base de datos.")
 
 # ── TRUNCATE (respetando FK) ──────────────────────────────────────────────────
 print("Limpiando tablas...")
+# Limpiamos en orden para respetar FKs sin usar CASCADE en actor
+# (actor CASCADE borra usuario por el FK actor_id — no queremos eso)
 cur.execute("""
     TRUNCATE TABLE
         hito,
@@ -50,14 +52,22 @@ cur.execute("""
         iniciativa_capacidad,
         iniciativa_instrumento,
         iniciativa,
-        capacidad,
-        necesidad,
         gap,
-        busqueda,
-        instrumento,
-        actor
+        busqueda
     RESTART IDENTITY CASCADE;
 """)
+# Necesidad y capacidad referencian actor → primero las borramos
+cur.execute("DELETE FROM necesidad")
+cur.execute("DELETE FROM capacidad")
+# Instrumento es independiente
+cur.execute("DELETE FROM instrumento")
+# Ahora sí podemos borrar actores (usuario.actor_id permite NULL, ponemos en NULL primero)
+cur.execute("UPDATE usuario SET actor_id = NULL WHERE actor_id IS NOT NULL")
+cur.execute("DELETE FROM actor")
+cur.execute("ALTER SEQUENCE actor_id_seq RESTART WITH 1")
+cur.execute("ALTER SEQUENCE capacidad_id_seq RESTART WITH 1")
+cur.execute("ALTER SEQUENCE necesidad_id_seq RESTART WITH 1")
+cur.execute("ALTER SEQUENCE instrumento_id_seq RESTART WITH 1")
 
 # ── ACTORES ───────────────────────────────────────────────────────────────────
 print("Insertando actores...")
