@@ -157,11 +157,6 @@ export default function IniciativaDetailClient({
               >
                 {ESTADO_INICIATIVA_LABEL[iniciativa.estado] ?? iniciativa.estado}
               </span>
-              {iniciativa.vinculador_nombre && (
-                <span className="text-xs text-[var(--text-muted)] bg-[var(--border)] px-2.5 py-1 rounded-full">
-                  Vinculador: {iniciativa.vinculador_nombre}
-                </span>
-              )}
               {puedeGestionar && (
                 <button
                   onClick={() => { setShowEditForm(true); setTituloEdit(iniciativa.titulo); setDescEdit(iniciativa.descripcion ?? ""); }}

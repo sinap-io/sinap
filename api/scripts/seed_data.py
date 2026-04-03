@@ -597,11 +597,11 @@ print(f"  {len(ins_rows)} instrumentos insertados.")
 print("Insertando vinculador base...")
 cur.execute("""
     INSERT INTO vinculador (nombre, email, activo)
-    VALUES ('Pablo Díaz Azulay', 'pdiazazulay@gmail.com', true)
+    VALUES ('Sebastián Bizzi', 'sebabizzi@gmail.com', true)
     ON CONFLICT (email) DO NOTHING
 """)
 
-cur.execute("SELECT id FROM vinculador WHERE email = 'pdiazazulay@gmail.com'")
+cur.execute("SELECT id FROM vinculador WHERE email = 'sebabizzi@gmail.com'")
 row = cur.fetchone()
 vinculador_id = row[0] if row else None
 
