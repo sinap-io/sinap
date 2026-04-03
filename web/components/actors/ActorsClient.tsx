@@ -6,7 +6,7 @@ import Badge from "@/components/Badge";
 import type { ActorList } from "@/lib/types";
 import { TIPO_ACTOR_LABEL, TIPO_ACTOR_COLOR } from "@/lib/labels";
 
-const TIPOS = ["laboratorio", "empresa", "startup", "universidad", "investigacion"];
+const TIPOS = ["empresa", "startup", "universidad", "investigador", "gobierno"];
 
 export default function ActorsClient({ actors }: { actors: ActorList[] }) {
   const [search, setSearch] = useState("");

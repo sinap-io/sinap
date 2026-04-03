@@ -8,11 +8,11 @@ export default async function ActorsPage() {
   const actors = await fetchApi<ActorList[]>("/actors");
 
   const totales = {
-    laboratorio:   actors.filter((a) => a.tipo === "laboratorio").length,
-    empresa:       actors.filter((a) => a.tipo === "empresa").length,
-    startup:       actors.filter((a) => a.tipo === "startup").length,
-    universidad:   actors.filter((a) => a.tipo === "universidad").length,
-    investigacion: actors.filter((a) => a.tipo === "investigacion").length,
+    empresa:      actors.filter((a) => a.tipo === "empresa").length,
+    startup:      actors.filter((a) => a.tipo === "startup").length,
+    universidad:  actors.filter((a) => a.tipo === "universidad").length,
+    investigador: actors.filter((a) => a.tipo === "investigador").length,
+    gobierno:     actors.filter((a) => a.tipo === "gobierno").length,
   };
 
   return (
@@ -28,11 +28,11 @@ export default async function ActorsPage() {
       {/* Breakdown por tipo */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         {[
-          { tipo: "laboratorio",   label: "Laboratorios",   color: "#22c55e" },
-          { tipo: "empresa",       label: "Empresas",       color: "#64748b" },
-          { tipo: "startup",       label: "Startups",       color: "#a855f7" },
-          { tipo: "universidad",   label: "Universidades",  color: "#eab308" },
-          { tipo: "investigacion", label: "Investigación",  color: "#f97316" },
+          { tipo: "empresa",      label: "Empresas",       color: "#3b82f6" },
+          { tipo: "startup",      label: "Startups",       color: "#64748b" },
+          { tipo: "universidad",  label: "Universidades",  color: "#eab308" },
+          { tipo: "investigador", label: "Investigación",  color: "#f97316" },
+          { tipo: "gobierno",     label: "Gobierno",       color: "#0d9488" },
         ].map(({ tipo, label, color }) => (
           <div
             key={tipo}

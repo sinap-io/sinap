@@ -76,7 +76,7 @@ actores = [
     # (nombre, tipo, etapa, sitio_web, descripcion, certificaciones)
     (
         "CEPROCOR",
-        "investigacion",
+        "gobierno",
         "publica",
         "https://ceprocor.cba.gov.ar",
         "Centro de Excelencia en Productos y Procesos de Córdoba. Laboratorio multisectorial del gobierno provincial con capacidades en química analítica, microbiología, biotecnología y producción de biomoléculas.",
@@ -84,7 +84,7 @@ actores = [
     ),
     (
         "CONICET Córdoba — IIBYT",
-        "investigacion",
+        "investigador",
         "publica",
         "https://www.conicet.gov.ar",
         "Instituto de Investigaciones Biológicas y Tecnológicas. Investigación en biología molecular, genómica, proteómica y bioinformática aplicada a salud y agroindustria.",
@@ -92,7 +92,7 @@ actores = [
     ),
     (
         "CONICET Córdoba — IMMF",
-        "investigacion",
+        "investigador",
         "publica",
         "https://www.conicet.gov.ar",
         "Instituto de Multidisciplina en Matemática y Física. Desarrolla modelos computacionales y bioestadística para procesos biológicos complejos.",
@@ -172,7 +172,7 @@ actores = [
     ),
     (
         "IRAC-Biogen",
-        "investigacion",
+        "investigador",
         "publica",
         "https://www.irac.gov.ar",
         "Instituto de Recursos Biológicos del Centro de Investigaciones Agropecuarias (CIAP-INTA). Trabajo en mejoramiento genético animal, semen sexado y transferencia embrionaria bovina.",
@@ -180,7 +180,7 @@ actores = [
     ),
     (
         "Laboratorio Montpellier — Córdoba",
-        "laboratorio",
+        "empresa",
         "consolidada",
         "https://www.montpellier.com.ar",
         "Laboratorio farmacéutico con planta de producción en Córdoba. Manufactura de medicamentos genéricos y desarrollo de formas farmacéuticas sólidas.",
@@ -196,7 +196,7 @@ actores = [
     ),
     (
         "CertiLab Córdoba",
-        "laboratorio",
+        "empresa",
         "consolidada",
         None,
         "Laboratorio de certificación acreditado ANMAT. Realiza ensayos fisicoquímicos, microbiológicos y de estabilidad para industria farmacéutica y cosmética.",
@@ -212,7 +212,7 @@ actores = [
     ),
     (
         "INTI Córdoba",
-        "investigacion",
+        "gobierno",
         "publica",
         "https://www.inti.gob.ar",
         "Instituto Nacional de Tecnología Industrial. Servicios de calibración, ensayos de materiales, transferencia tecnológica y apoyo a PyMEs industriales.",
@@ -236,7 +236,7 @@ actores = [
     ),
     (
         "Centro REDES — Córdoba",
-        "investigacion",
+        "investigador",
         "publica",
         "https://centroredes.org.ar",
         "Centro de análisis de redes de innovación y transferencia tecnológica. Realiza mapeo de ecosistemas productivos y evaluación de políticas de CTI.",

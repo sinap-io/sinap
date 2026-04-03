@@ -1,19 +1,19 @@
 // Mapas de etiquetas y colores compartidos entre componentes
 
 export const TIPO_ACTOR_LABEL: Record<string, string> = {
-  laboratorio:   "Laboratorio",
-  empresa:       "Empresa",
-  startup:       "Startup",
-  universidad:   "Universidad",
-  investigacion: "Investigación",
+  empresa:      "Empresa",
+  startup:      "Startup",
+  universidad:  "Universidad",
+  investigador: "Investigación",
+  gobierno:     "Gobierno",
 };
 
 export const TIPO_ACTOR_COLOR: Record<string, string> = {
-  laboratorio:   "#22c55e",
-  empresa:       "#3b82f6",
-  startup:       "#64748b",
-  universidad:   "#eab308",
-  investigacion: "#f97316",
+  empresa:      "#3b82f6",
+  startup:      "#64748b",
+  universidad:  "#eab308",
+  investigador: "#f97316",
+  gobierno:     "#0d9488",
 };
 
 export const AREA_LABEL: Record<string, string> = {
