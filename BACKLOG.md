@@ -87,6 +87,23 @@ Detección automática de necesidades sin oferta disponible → oportunidades de
 
 ---
 
+## Vista de iniciativas por actor o tema
+
+Filtro estructurado sobre la lista de iniciativas que permita responder preguntas rápidas sin generar un informe IA completo:
+
+- ¿En qué iniciativas está CEPROCOR?
+- ¿Qué tiene abierto el vinculador Sebastián?
+- ¿Qué iniciativas hay sobre biosensores / agua / diagnóstico?
+
+**Propuesta de implementación:**
+- Extender la página `/iniciativas` con filtros: por actor participante (dropdown), por vinculador, por texto libre (busca en título y descripción)
+- No requiere IA — es búsqueda SQL sobre las tablas existentes (`iniciativa`, `iniciativa_actor`, `actor`)
+- El endpoint `GET /iniciativas` ya devuelve la lista; agregar query params `actor_id` y `q` al backend
+
+**Valor:** el vinculador puede arrancar el día viendo sus iniciativas activas; el Clúster puede ver de un vistazo qué actores están más involucrados.
+
+---
+
 ## Módulo Iniciativas — mejoras pendientes
 
 ### Búsqueda contextual dentro de una iniciativa
@@ -116,4 +133,4 @@ Acordado con Pablo — revisar los roles actuales (lider, demandante, oferente, 
 
 ---
 
-*Actualizado: 31 marzo 2026*
+*Actualizado: 3 abril 2026*
