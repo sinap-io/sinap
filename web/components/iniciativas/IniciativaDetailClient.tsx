@@ -327,12 +327,23 @@ export default function IniciativaDetailClient({
           </form>
         )}
 
-        {iniciativa.actores.length === 0 ? (
+        {iniciativa.actores.length === 0 && !iniciativa.vinculador_nombre ? (
           <p className="text-sm text-[var(--text-muted)] text-center py-4">
             No hay actores asignados aún.
           </p>
         ) : (
           <div className="space-y-2">
+            {iniciativa.vinculador_nombre && (
+              <div className="flex items-center justify-between gap-3 rounded-lg border border-[var(--border)] px-4 py-3">
+                <div>
+                  <p className="text-sm font-medium text-[var(--text)]">{iniciativa.vinculador_nombre}</p>
+                  <p className="text-xs text-[var(--text-muted)]">Clúster de Biotecnología</p>
+                </div>
+                <span className="text-xs font-medium text-[#0d9488] bg-[#0d9488]/10 px-2.5 py-1 rounded-full">
+                  Vinculador
+                </span>
+              </div>
+            )}
             {iniciativa.actores.map((a) => (
               <div
                 key={`${a.actor_id}-${a.rol}`}
