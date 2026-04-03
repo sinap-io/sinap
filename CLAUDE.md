@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (2 abril 2026 — cierre de sesión nocturno)
+## Estado actual (3 abril 2026 — cierre de sesión)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -30,7 +30,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - **Login de Pablo resuelto** ✅ — fix definitivo en producción
 - **Rol de Pablo resuelto** ✅ — figura como "Manager" correctamente
 
-**Branch activo:** `main` — todo mergeado. `claude/distracted-lamarr` sincronizado.
+**Branch activo:** `main` — todo mergeado y deployado.
 
 **⚠️ Nota de auth en preview:**
 - Login en preview NO funciona (URLs preview de Vercel no tienen las env vars de auth — AUTH_SECRET, DATABASE_URL). Solo funciona en sinap-psi.vercel.app (producción).
@@ -93,9 +93,24 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - `pdiazazulay@gmail.com` (manager) / `sinap2026` ✅
 - Script `api/scripts/crear_usuario.py` para crear usuarios desde CLI ✅
 
+**Datos ficticios verosímiles — estado (3 abril 2026):**
+- Script `api/scripts/seed_data.py` ✅ — carga 23 actores, 36 capacidades, 17 necesidades, 12 instrumentos, 4 iniciativas, 11 hitos
+- Actores clasificados con tipos nuevos: empresa, startup, universidad, investigador, gobierno
+- Vinculador: Sebastián Bizzi (`sebabizzi@gmail.com`) — Pablo NO es vinculador (es manager)
+- Script es re-ejecutable sin borrar usuarios (fix CASCADE)
+
+**Tipos de actor — migración 005 aplicada (3 abril 2026):**
+- `laboratorio` eliminado → convertidos a `empresa`
+- `investigacion` renombrado a `investigador`
+- `gobierno` agregado (CEPROCOR, INTI Córdoba)
+
+**Módulo Iniciativas — mejoras (3 abril 2026):**
+- Edición inline de título y descripción ✅ — botón "✏ Editar" en el header, disponible para admin/manager/directivo/vinculador
+- Vinculador visible en sección "Actores participantes" ✅ — con badge teal "Vinculador"
+
 **Lo que está pendiente:**
-- **Datos ficticios verosímiles** — cargar ~25-30 actores basados en empresas reales del ecosistema biotech cordobés, con capacidades, necesidades e instrumentos. Los datos reales del Clúster llegan en unas semanas; mientras tanto se usan ficticios para que la plataforma funcione con sentido. Hoy hay 15 actores en DB.
-- **Login con Google (OAuth)** — permitir que usuarios entren con su cuenta de Google además de email/contraseña. Acordado para implementar en la próxima sesión.
+- **Vista de iniciativas por actor o tema** — filtros estructurados en `/iniciativas`: por actor participante, por vinculador, por texto libre. Sin IA. **Próximo paso acordado.**
+- **Login con Google (OAuth)** — agregar Google como proveedor en Auth.js v5
 - Crear usuarios para el resto del equipo
 - Vista marketplace diferenciada por rol
 - Registrar dominio sinap.io en Cloudflare
@@ -129,8 +144,8 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Datos ficticios verosímiles** — script Python que carga ~25-30 actores del ecosistema biotech cordobés con capacidades, necesidades e instrumentos reales de Argentina (FONARSEC, ANR, PICT). Los datos reales del Clúster llegan en semanas — esto permite avanzar con la plataforma con sentido.
-2. **Login con Google (OAuth)** — agregar Google como proveedor en Auth.js v5. El usuario podrá elegir entre email/contraseña o "Continuar con Google". El rol se asigna igual que hoy (admin lo configura internamente).
+1. **Vista de iniciativas por actor o tema** — filtros en `/iniciativas`: por actor participante (dropdown), por vinculador, por texto libre. Sin IA. Backend: query params `actor_id` y `q` en `GET /iniciativas`. Frontend: dos filtros más en la lista. **Acordado para la próxima sesión.**
+2. **Login con Google (OAuth)** — agregar Google como proveedor en Auth.js v5
 3. **Crear usuarios** para el resto del equipo (vinculadores, oferentes)
 4. **Vista marketplace** — catálogo diferenciado por rol
 5. **Registrar dominio** sinap.io en Cloudflare
