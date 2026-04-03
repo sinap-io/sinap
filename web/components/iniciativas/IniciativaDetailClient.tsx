@@ -6,6 +6,8 @@ import type { IniciativaDetail, ActorList } from "@/lib/types";
 import {
   ESTADO_INICIATIVA_LABEL,
   ESTADO_INICIATIVA_COLOR,
+  TIPO_INICIATIVA_LABEL,
+  TIPO_INICIATIVA_COLOR,
   TIPO_HITO_LABEL,
   TIPO_HITO_COLOR,
   ROL_ACTOR_LABEL,
@@ -138,54 +140,101 @@ export default function IniciativaDetailClient({
   return (
     <div className="space-y-6">
 
-      {/* ── Editar título y descripción ──────────────────────── */}
-      {puedeGestionar && (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
-          <div className="flex items-center justify-between mb-0">
-            <p className={sectionTitle + " mb-0"}>Título y descripción</p>
-            <button
-              onClick={() => { setShowEditForm((v) => !v); setTituloEdit(iniciativa.titulo); setDescEdit(iniciativa.descripcion ?? ""); }}
-              className="text-xs text-[var(--accent)] hover:underline"
-            >
-              {showEditForm ? "Cancelar" : "Editar"}
-            </button>
-          </div>
-          {showEditForm && (
-            <form onSubmit={handleEditSubmit} className="mt-4 space-y-3">
-              <div>
-                <label className="block text-xs text-[var(--text-muted)] mb-1">Título *</label>
-                <input
-                  type="text"
-                  required
-                  value={tituloEdit}
-                  onChange={(e) => setTituloEdit(e.target.value)}
-                  className={inputCls}
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-[var(--text-muted)] mb-1">Descripción</label>
-                <textarea
-                  value={descEdit}
-                  onChange={(e) => setDescEdit(e.target.value)}
-                  rows={3}
-                  placeholder="Descripción de la iniciativa..."
-                  className={`${inputCls} resize-none`}
-                />
-              </div>
-              <div className="flex justify-end">
+      {/* ── Header ───────────────────────────────────────────── */}
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6 space-y-3">
+        {!showEditForm ? (
+          <>
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                style={{ background: `${TIPO_INICIATIVA_COLOR[iniciativa.tipo] ?? "#6b7280"}20`, color: TIPO_INICIATIVA_COLOR[iniciativa.tipo] ?? "#6b7280" }}
+              >
+                {TIPO_INICIATIVA_LABEL[iniciativa.tipo] ?? iniciativa.tipo}
+              </span>
+              <span
+                className="text-xs font-medium px-2.5 py-1 rounded-full border"
+                style={{ borderColor: ESTADO_INICIATIVA_COLOR[iniciativa.estado] ?? "#6b7280", color: ESTADO_INICIATIVA_COLOR[iniciativa.estado] ?? "#6b7280" }}
+              >
+                {ESTADO_INICIATIVA_LABEL[iniciativa.estado] ?? iniciativa.estado}
+              </span>
+              {iniciativa.vinculador_nombre && (
+                <span className="text-xs text-[var(--text-muted)] bg-[var(--border)] px-2.5 py-1 rounded-full">
+                  Vinculador: {iniciativa.vinculador_nombre}
+                </span>
+              )}
+              {puedeGestionar && (
                 <button
-                  type="submit"
-                  disabled={isPending || !tituloEdit.trim()}
-                  className="px-5 py-2 rounded-lg text-sm font-medium text-white bg-[var(--accent)]
-                             hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+                  onClick={() => { setShowEditForm(true); setTituloEdit(iniciativa.titulo); setDescEdit(iniciativa.descripcion ?? ""); }}
+                  className="ml-auto text-xs text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
+                  title="Editar título y descripción"
                 >
-                  {isPending ? "Guardando…" : "Guardar"}
+                  ✏ Editar
                 </button>
+              )}
+            </div>
+            <h1 className="text-xl font-bold text-[var(--text)]">{iniciativa.titulo}</h1>
+            {iniciativa.descripcion && (
+              <p className="text-sm text-[var(--text-muted)] leading-relaxed">{iniciativa.descripcion}</p>
+            )}
+            <div className="flex gap-6 pt-1">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-[var(--text)]">{iniciativa.actores.length}</div>
+                <div className="text-xs text-[var(--text-muted)]">actores</div>
               </div>
-            </form>
-          )}
-        </div>
-      )}
+              <div className="text-center">
+                <div className="text-2xl font-bold text-[var(--text)]">{iniciativa.hitos.length}</div>
+                <div className="text-xs text-[var(--text-muted)]">hitos</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-[var(--text)]">
+                  {iniciativa.necesidades.length + iniciativa.capacidades.length + iniciativa.instrumentos.length}
+                </div>
+                <div className="text-xs text-[var(--text-muted)]">vínculos</div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <form onSubmit={handleEditSubmit} className="space-y-3">
+            <div>
+              <label className="block text-xs text-[var(--text-muted)] mb-1">Título *</label>
+              <input
+                type="text"
+                required
+                value={tituloEdit}
+                onChange={(e) => setTituloEdit(e.target.value)}
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-[var(--text-muted)] mb-1">Descripción</label>
+              <textarea
+                value={descEdit}
+                onChange={(e) => setDescEdit(e.target.value)}
+                rows={3}
+                placeholder="Descripción de la iniciativa..."
+                className={`${inputCls} resize-none`}
+              />
+            </div>
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={() => setShowEditForm(false)}
+                className="px-4 py-2 rounded-lg text-sm text-[var(--text-muted)] border border-[var(--border)] hover:bg-[var(--bg-hover)] transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={isPending || !tituloEdit.trim()}
+                className="px-5 py-2 rounded-lg text-sm font-medium text-white bg-[var(--accent)]
+                           hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+              >
+                {isPending ? "Guardando…" : "Guardar"}
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
 
       {/* ── Cambiar estado ──────────────────────────────────── */}
       <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-5">
