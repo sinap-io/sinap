@@ -94,6 +94,7 @@ class IniciativaList(BaseModel):
     vinculador_nombre: str | None
     total_actores: int
     total_hitos: int
+    actor_ids: list[int] = []
     creado_en: datetime
     actualizado_en: datetime
 

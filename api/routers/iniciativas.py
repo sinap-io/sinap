@@ -46,7 +46,11 @@ async def list_iniciativas(
             v.nombre AS vinculador_nombre,
             i.creado_en, i.actualizado_en,
             COUNT(DISTINCT ia.actor_id)    AS total_actores,
-            COUNT(DISTINCT h.id)           AS total_hitos
+            COUNT(DISTINCT h.id)           AS total_hitos,
+            COALESCE(
+                ARRAY_AGG(DISTINCT ia.actor_id) FILTER (WHERE ia.actor_id IS NOT NULL),
+                ARRAY[]::int[]
+            ) AS actor_ids
         FROM iniciativa i
         LEFT JOIN vinculador v  ON v.id = i.vinculador_id
         LEFT JOIN iniciativa_actor ia ON ia.iniciativa_id = i.id
@@ -56,7 +60,7 @@ async def list_iniciativas(
         ORDER BY i.actualizado_en DESC
     """, *args)
 
-    return [IniciativaList(**dict(r)) for r in rows]
+    return [IniciativaList(**{**dict(r), "actor_ids": list(r["actor_ids"])}) for r in rows]
 
 
 # ── Crear ─────────────────────────────────────────────────────
@@ -361,7 +365,11 @@ async def _get_list_row(iid: int, db: asyncpg.Connection) -> IniciativaList:
                v.nombre AS vinculador_nombre,
                i.creado_en, i.actualizado_en,
                COUNT(DISTINCT ia.actor_id) AS total_actores,
-               COUNT(DISTINCT h.id)        AS total_hitos
+               COUNT(DISTINCT h.id)        AS total_hitos,
+               COALESCE(
+                   ARRAY_AGG(DISTINCT ia.actor_id) FILTER (WHERE ia.actor_id IS NOT NULL),
+                   ARRAY[]::int[]
+               ) AS actor_ids
         FROM iniciativa i
         LEFT JOIN vinculador v         ON v.id = i.vinculador_id
         LEFT JOIN iniciativa_actor ia  ON ia.iniciativa_id = i.id
@@ -369,4 +377,4 @@ async def _get_list_row(iid: int, db: asyncpg.Connection) -> IniciativaList:
         WHERE i.id = $1
         GROUP BY i.id, v.nombre
     """, iid)
-    return IniciativaList(**dict(row))
+    return IniciativaList(**{**dict(row), "actor_ids": list(row["actor_ids"])})

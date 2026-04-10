@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { fetchApi } from "@/lib/api";
-import type { IniciativaList } from "@/lib/types";
+import type { ActorList, IniciativaList } from "@/lib/types";
 import IniciativasClient from "@/components/iniciativas/IniciativasClient";
 
 const CAN_MANAGE = ["admin", "directivo", "vinculador"];
@@ -11,8 +11,14 @@ const CAN_MANAGE = ["admin", "directivo", "vinculador"];
 export default async function IniciativasPage() {
   const session = await auth();
   let iniciativas: IniciativaList[] = [];
+  let actores: Pick<ActorList, "id" | "nombre">[] = [];
   try {
-    iniciativas = await fetchApi<IniciativaList[]>("/iniciativas");
+    [iniciativas, actores] = await Promise.all([
+      fetchApi<IniciativaList[]>("/iniciativas"),
+      fetchApi<ActorList[]>("/actors").then((list) =>
+        list.map(({ id, nombre }) => ({ id, nombre }))
+      ),
+    ]);
   } catch {
     // API no disponible aún (ej: endpoint no desplegado en este entorno)
   }
@@ -65,7 +71,7 @@ export default async function IniciativasPage() {
       </div>
 
       {/* Lista con filtros */}
-      <IniciativasClient iniciativas={iniciativas} />
+      <IniciativasClient iniciativas={iniciativas} actores={actores} />
     </div>
   );
 }

@@ -135,6 +135,7 @@ export interface IniciativaList {
   vinculador_nombre: string | null;
   total_actores: number;
   total_hitos: number;
+  actor_ids: number[];
   creado_en: string;
   actualizado_en: string;
 }
