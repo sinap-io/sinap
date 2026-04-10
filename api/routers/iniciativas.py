@@ -147,7 +147,7 @@ async def patch_iniciativa(
     iid: int, body: IniciativaPatch,
     db: asyncpg.Connection = Depends(get_db),
 ):
-    existing = await db.fetchrow("SELECT id FROM iniciativa WHERE id = $1", iid)
+    existing = await db.fetchrow("SELECT id, estado FROM iniciativa WHERE id = $1", iid)
     if not existing:
         raise HTTPException(404, "Iniciativa no encontrada")
 
@@ -172,6 +172,16 @@ async def patch_iniciativa(
     await db.execute(
         f"UPDATE iniciativa SET {', '.join(updates)} WHERE id = ${len(args)}", *args
     )
+
+    # Registrar cambio de estado en el log histórico
+    if body.estado and body.estado != existing["estado"]:
+        await db.execute(
+            """INSERT INTO iniciativa_estado_log
+               (iniciativa_id, estado_antes, estado_despues)
+               VALUES ($1, $2, $3)""",
+            iid, existing["estado"], body.estado,
+        )
+
     return await _get_list_row(iid, db)
 
 
