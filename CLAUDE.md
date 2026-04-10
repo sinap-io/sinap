@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (3 abril 2026 — cierre de sesión)
+## Estado actual (10 abril 2026 — cierre de sesión)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -108,8 +108,33 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Edición inline de título y descripción ✅ — botón "✏ Editar" en el header, disponible para admin/manager/directivo/vinculador
 - Vinculador visible en sección "Actores participantes" ✅ — con badge teal "Vinculador"
 
-**Lo que está pendiente:**
-- **Vista de iniciativas por actor o tema** — filtros estructurados en `/iniciativas`: por actor participante, por vinculador, por texto libre. Sin IA. **Próximo paso acordado.**
+**Logs históricos — migración 006 aplicada (10 abril 2026):**
+- `iniciativa_estado_log` ✅ — registra cada cambio de estado con fecha (automático en PATCH)
+- `actor_etapa_log` ✅ — registra evolución de etapa de actores
+- `proyecto_trl_log` ✅ — preparada para cuando exista tabla `proyecto`
+- `creado_por` agregado a `iniciativa` y `hito` — listo para atribución ADIT
+
+**Edición de etapa de actores (10 abril 2026):**
+- PATCH `/actors/{id}` en API ✅ — actualiza etapa y escribe en `actor_etapa_log`
+- `ActorHeader.tsx` ✅ — selector de etapa inline con botón "✏ Cambiar etapa"
+- Server action `editarEtapaActor` ✅
+- Visible solo para admin/manager/directivo/vinculador
+
+**Documentos de definición pendiente (10 abril 2026):**
+- `Módulo ADIT — definición y preguntas pendientes.md` ✅ — enviado a Pablo
+- `Módulo Proyectos — definición y preguntas pendientes.md` ✅
+- `TRL - Niveles de Preparación Tecnológica.md` ✅ — referencia
+
+**Decisiones de producto pendientes (esperando respuesta de Pablo):**
+- Modelo de cobro del ADIT: quién valida el monto, qué define resultado positivo, comisión fija o variable
+- Zona geográfica: lista fija de regiones o texto libre
+- Perfil del actor: ¿reemplaza o complementa al tipo actual?
+- Roles en iniciativas: adoptar los 6 propuestos por Pablo
+- Áreas temáticas: adoptar las de Pablo (salud humana, agroindustria, biomateriales, bioinformática, medio ambiente)
+- Módulo Proyectos: quién carga, historial de TRL, carga masiva desde Excel
+
+**Lo que está pendiente de desarrollo:**
+- **Vista de iniciativas por actor o tema** — filtros en `/iniciativas`: por actor participante, por vinculador, por texto libre. **Próximo paso acordado.**
 - **Login con Google (OAuth)** — agregar Google como proveedor en Auth.js v5
 - Crear usuarios para el resto del equipo
 - Vista marketplace diferenciada por rol
@@ -144,12 +169,12 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Vista de iniciativas por actor o tema** — filtros en `/iniciativas`: por actor participante (dropdown), por vinculador, por texto libre. Sin IA. Backend: query params `actor_id` y `q` en `GET /iniciativas`. Frontend: dos filtros más en la lista. **Acordado para la próxima sesión.**
-2. **Login con Google (OAuth)** — agregar Google como proveedor en Auth.js v5
-3. **Crear usuarios** para el resto del equipo (vinculadores, oferentes)
-4. **Vista marketplace** — catálogo diferenciado por rol
-5. **Registrar dominio** sinap.io en Cloudflare
-6. **Tabla `persona`** — implementar cuando haya más usuarios activos (ver BACKLOG.md)
+1. **Vista de iniciativas por actor o tema** — filtros en `/iniciativas`: por actor participante (dropdown), por vinculador, por texto libre. Sin IA. Backend: query params `actor_id` y `q` en `GET /iniciativas`. Frontend: filtros adicionales en `IniciativasClient.tsx`. **Próxima sesión.**
+2. **Definiciones ADIT + Proyectos** — esperar respuesta de Pablo antes de implementar
+3. **Login con Google (OAuth)** — agregar Google como proveedor en Auth.js v5
+4. **Crear usuarios** para el resto del equipo
+5. **Vista marketplace** — catálogo diferenciado por rol
+6. **Registrar dominio** sinap.io en Cloudflare
 
 ---
 
@@ -193,7 +218,7 @@ En orden de prioridad:
 |---|---|---|
 | Gmail | sinap.io.dev@gmail.com | ✅ Creado |
 | GitHub | sinap-io/sinap | ✅ Organización creada, repo transferido y renombrado |
-| Neon.tech | sinap-production `ep-tiny-cell-acjfdkps` (14 tablas + migraciones 001–004) | ✅ Operativo |
+| Neon.tech | sinap-production `ep-tiny-cell-acjfdkps` (17 tablas + migraciones 001–006) | ✅ Operativo |
 | Railway | sinap-production.up.railway.app | ✅ Operativo (FastAPI) |
 | Vercel | sinap-psi.vercel.app | ✅ Operativo (Next.js) |
 | Cloudflare / sinap.io | — | ⏳ Registrar dominio |
