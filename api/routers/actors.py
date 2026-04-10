@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 import asyncpg
 
 from db.connection import get_db
-from schemas.actor import ActorDetail, ActorList, NeedSummary, ServiceSummary
+from schemas.actor import ActorDetail, ActorList, ActorPatch, NeedSummary, ServiceSummary
 
 router = APIRouter(prefix="/actors", tags=["actors"])
 
@@ -69,3 +69,39 @@ async def get_actor(actor_id: int, db: asyncpg.Connection = Depends(get_db)):
         servicios=[ServiceSummary(**dict(r)) for r in servicios],
         necesidades=[NeedSummary(**dict(r)) for r in necesidades],
     )
+
+
+ETAPAS_VALIDAS = {"spinoff", "seed", "growth", "consolidada", "publica"}
+
+
+@router.patch("/{actor_id}", response_model=ActorDetail)
+async def patch_actor(
+    actor_id: int, body: ActorPatch,
+    db: asyncpg.Connection = Depends(get_db),
+):
+    existing = await db.fetchrow(
+        "SELECT id, etapa FROM actor WHERE id = $1", actor_id
+    )
+    if not existing:
+        raise HTTPException(404, "Actor no encontrado")
+
+    if body.etapa is not None:
+        if body.etapa not in ETAPAS_VALIDAS:
+            raise HTTPException(
+                422, f"Etapa inválida. Opciones: {', '.join(sorted(ETAPAS_VALIDAS))}"
+            )
+        # Registrar en log histórico si la etapa cambió
+        if body.etapa != existing["etapa"]:
+            await db.execute(
+                """UPDATE actor SET etapa = $1, actualizado_en = NOW()
+                   WHERE id = $2""",
+                body.etapa, actor_id,
+            )
+            await db.execute(
+                """INSERT INTO actor_etapa_log
+                   (actor_id, etapa_antes, etapa_despues)
+                   VALUES ($1, $2, $3)""",
+                actor_id, existing["etapa"], body.etapa,
+            )
+
+    return await get_actor(actor_id, db)
