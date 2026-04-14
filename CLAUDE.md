@@ -242,7 +242,7 @@ En orden de prioridad:
 |---|---|---|
 | Gmail | sinap.io.dev@gmail.com | ✅ Creado |
 | GitHub | sinap-io/sinap | ✅ Organización creada, repo transferido y renombrado |
-| Neon.tech | sinap-production `ep-tiny-cell-acjfdkps` (17 tablas + migraciones 001–006) | ✅ Operativo |
+| Neon.tech | sinap-production `ep-tiny-cell-acjfdkps` (21 tablas + migraciones 001–007) | ✅ Operativo |
 | Railway | sinap-production.up.railway.app | ✅ Operativo (FastAPI) |
 | Vercel | sinap-psi.vercel.app | ✅ Operativo (Next.js) |
 | Cloudflare / sinap.io | — | ⏳ Registrar dominio |
