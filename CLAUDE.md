@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (10 abril 2026 — cierre de sesión)
+## Estado actual (14 abril 2026)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -133,13 +133,35 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Áreas temáticas: adoptar las de Pablo (salud humana, agroindustria, biomateriales, bioinformática, medio ambiente)
 - Módulo Proyectos: quién carga, historial de TRL, carga masiva desde Excel
 
-**Lo que está pendiente de desarrollo:**
-- **Vista de iniciativas por actor o tema** — filtros en `/iniciativas`: por actor participante, por vinculador, por texto libre. **Próximo paso acordado.**
-- **Login con Google (OAuth)** — agregar Google como proveedor en Auth.js v5
-- Crear usuarios para el resto del equipo
-- Vista marketplace diferenciada por rol
-- Registrar dominio sinap.io en Cloudflare
-- Tabla `persona` vinculada a `actor` (ver BACKLOG.md)
+**Filtros de iniciativas (14 abril 2026):**
+- Filtro por actor participante (dropdown) ✅
+- Filtro por vinculador (dropdown) ✅
+- actor_ids en IniciativaList (ARRAY_AGG en SQL) ✅
+- Botón "Limpiar filtros" ✅
+
+**Bug conocido — pendiente fix:**
+- DELETE en `iniciativa_actor` compara `result == "DELETE 0"` (nunca True) → el 404 no funciona. Fix simple, pendiente.
+
+**Decisiones de producto tomadas (14 abril 2026 — Sebastián):**
+- ADIT = vinculador (sinónimos en SINAP). Mismo rol, mismas capacidades.
+- Zonas geográficas: tabla `zona` editable por admin/manager. Arranca solo con "Gran Córdoba".
+- SINAP registra actividades del ADIT pero NO calcula compensación (se hace en planilla externa).
+- Actividades que registra SINAP: iniciativas creadas + hitos creados + proyectos creados + actores vinculados + cambios de TRL logueados (todo vía `creado_por` / `cambiado_por`).
+- Módulo Proyectos: sin actor dueño único (interinstitucional desde el arranque, join table `proyecto_actor`).
+- Proyectos pueden estar vinculados a una iniciativa (FK opcional `iniciativa_id`).
+- Crean proyectos: admin, manager, directivo, vinculador (agregar actor-self-load es 1 línea de código después).
+- TRL actualizable por cualquiera con acceso (dato objetivo, no editorial).
+- Campos mínimos de proyecto: título, descripción, TRL (1-9), área temática, estado, actores, instrumentos, búsqueda IA contextual.
+
+**Lo que está pendiente de desarrollo (ver BACKLOG.md para detalle completo):**
+- Fix bug DELETE en iniciativas.py ← inmediato, 15 min
+- Poblar `creado_por` en endpoints de iniciativa e hito ← inmediato, 1h
+- **Módulo Proyectos** — Migración 007 + API + Frontend ← próxima fase
+- **Módulo ADIT** — extensión del vinculador + zonas + panel de actividad ← fase siguiente
+- Seguridad: middleware JWT en FastAPI
+- Login con Google (OAuth)
+- Datos reales del Clúster (cuando estén disponibles)
+- Dominio sinap.io en Cloudflare
 
 ---
 
@@ -169,12 +191,14 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Vista de iniciativas por actor o tema** — filtros en `/iniciativas`: por actor participante (dropdown), por vinculador, por texto libre. Sin IA. Backend: query params `actor_id` y `q` en `GET /iniciativas`. Frontend: filtros adicionales en `IniciativasClient.tsx`. **Próxima sesión.**
-2. **Definiciones ADIT + Proyectos** — esperar respuesta de Pablo antes de implementar
-3. **Login con Google (OAuth)** — agregar Google como proveedor en Auth.js v5
-4. **Crear usuarios** para el resto del equipo
-5. **Vista marketplace** — catálogo diferenciado por rol
-6. **Registrar dominio** sinap.io en Cloudflare
+1. **Fix bug DELETE** — `iniciativas.py:232` — 15 min ← **INMEDIATO**
+2. **Poblar `creado_por`** en endpoints `POST /iniciativas` y `POST /iniciativas/{id}/hitos` — 1h ← **INMEDIATO**
+3. **Módulo Proyectos** — Migración 007 + 5 endpoints API + 3 páginas frontend ← **PRÓXIMA FASE**
+4. **Módulo ADIT** — extensión de vinculador con zona + panel de actividad ← **FASE SIGUIENTE**
+5. **Seguridad API** — middleware JWT en FastAPI ← luego
+6. **Login con Google (OAuth)** — Auth.js v5 Google provider ← luego
+7. **Datos reales** — cuando Sebastián los tenga disponibles
+8. **Registrar dominio** sinap.io en Cloudflare ← cuando el producto esté listo para público
 
 ---
 
