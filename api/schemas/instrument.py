@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 
 class InstrumentItem(BaseModel):
+    id: int
     nombre: str
     tipo: str
     organismo: str

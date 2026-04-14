@@ -227,11 +227,12 @@ async def remove_actor(
     db: asyncpg.Connection = Depends(get_db),
 ):
     await _check_iniciativa(iid, db)
-    result = await db.execute("""
+    deleted = await db.fetchval("""
         DELETE FROM iniciativa_actor
         WHERE iniciativa_id = $1 AND actor_id = $2 AND rol = $3
+        RETURNING 1
     """, iid, actor_id, rol)
-    if result == "DELETE 0":
+    if not deleted:
         raise HTTPException(404, "Relación no encontrada")
 
 

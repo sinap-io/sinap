@@ -35,7 +35,7 @@ async def list_instruments(
 
     query = f"""
         SELECT
-            nombre, tipo, organismo, sectores_elegibles, status, url,
+            id, nombre, tipo, organismo, sectores_elegibles, status, url,
             monto_maximo, cobertura_porcentaje, plazo_ejecucion,
             contrapartida, gastos_elegibles, descripcion_extendida
         FROM instrumento

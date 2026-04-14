@@ -148,3 +148,44 @@ export const TIPO_HITO_COLOR: Record<string, string> = {
   financiamiento_obtenido: "#eab308",
   otro:                   "#94a3b8",
 };
+
+// ── Proyectos ─────────────────────────────────────────────────
+
+export const ESTADO_PROYECTO_LABEL: Record<string, string> = {
+  en_desarrollo:           "En desarrollo",
+  buscando_financiamiento: "Buscando financiamiento",
+  buscando_socio:          "Buscando socio",
+  finalizado:              "Finalizado",
+};
+
+export const ESTADO_PROYECTO_COLOR: Record<string, string> = {
+  en_desarrollo:           "#3b82f6",
+  buscando_financiamiento: "#eab308",
+  buscando_socio:          "#a855f7",
+  finalizado:              "#22c55e",
+};
+
+// TRL: colores progresivos del 1 (rojo, básico) al 9 (verde, listo para mercado)
+export const TRL_COLOR: Record<number, string> = {
+  1: "#ef4444",
+  2: "#f97316",
+  3: "#f97316",
+  4: "#eab308",
+  5: "#eab308",
+  6: "#22d3ee",
+  7: "#22c55e",
+  8: "#16a34a",
+  9: "#0d9488",
+};
+
+export const TRL_LABEL: Record<number, string> = {
+  1: "TRL 1 — Principios básicos observados",
+  2: "TRL 2 — Concepto tecnológico formulado",
+  3: "TRL 3 — Prueba de concepto experimental",
+  4: "TRL 4 — Validado en laboratorio",
+  5: "TRL 5 — Validado en entorno relevante",
+  6: "TRL 6 — Demostrado en entorno relevante",
+  7: "TRL 7 — Demostrado en entorno operacional",
+  8: "TRL 8 — Sistema completo y calificado",
+  9: "TRL 9 — Sistema probado en entorno real",
+};

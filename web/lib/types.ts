@@ -31,6 +31,7 @@ export interface ActorDetail extends Omit<ActorList, "total_servicios" | "total_
 
 // ── Services ──────────────────────────────────────────────────
 export interface ServiceItem {
+  id?: number;
   actor: string;
   tipo_actor: string;
   area_tematica: string;
@@ -54,6 +55,7 @@ export interface NeedItem {
 
 // ── Instruments ───────────────────────────────────────────────
 export interface InstrumentItem {
+  id: number;
   nombre: string;
   tipo: string;
   organismo: string;
@@ -156,6 +158,64 @@ export interface IniciativaDetail {
   capacidades: CapacidadRef[];
   instrumentos: InstrumentoRef[];
   hitos: HitoItem[];
+}
+
+// ── Proyectos ─────────────────────────────────────────────────
+export interface ProyectoActorOut {
+  actor_id: number;
+  actor_nombre: string;
+  actor_tipo: string;
+  rol: string | null;
+}
+
+export interface ProyectoInstrumentoOut {
+  instrumento_id: number;
+  nombre: string;
+  tipo: string;
+}
+
+export interface TRLLogOut {
+  id: number;
+  trl_antes: number | null;
+  trl_despues: number;
+  creado_en: string;
+}
+
+export interface ProyectoList {
+  id: number;
+  titulo: string;
+  trl: number | null;
+  area_tematica: string | null;
+  estado: string;
+  iniciativa_id: number | null;
+  iniciativa_titulo: string | null;
+  total_actores: number;
+  actor_ids: number[];
+  creado_en: string;
+  actualizado_en: string;
+}
+
+export interface ProyectoDetail {
+  id: number;
+  titulo: string;
+  descripcion: string | null;
+  trl: number | null;
+  area_tematica: string | null;
+  estado: string;
+  iniciativa_id: number | null;
+  iniciativa_titulo: string | null;
+  creado_en: string;
+  actualizado_en: string;
+  actores: ProyectoActorOut[];
+  instrumentos: ProyectoInstrumentoOut[];
+  historial_trl: TRLLogOut[];
+}
+
+export interface ZonaOut {
+  id: number;
+  nombre: string;
+  activa: boolean;
+  creado_en: string;
 }
 
 // ── Search ────────────────────────────────────────────────────

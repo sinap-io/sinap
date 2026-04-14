@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from db.connection import get_pool, settings
 from routers import actors, services, needs, instruments, gaps, search, vinculador, iniciativas, informe, radar
+from routers.proyectos import router as proyectos_router, zonas_router
 
 
 @asynccontextmanager
@@ -39,6 +40,8 @@ app.include_router(vinculador.router)
 app.include_router(iniciativas.router)
 app.include_router(informe.router)
 app.include_router(radar.router)
+app.include_router(proyectos_router)
+app.include_router(zonas_router)
 
 
 @app.get("/health")
