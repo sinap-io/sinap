@@ -206,6 +206,17 @@ async def patch_proyecto(
     return await _get_list_row(pid, db)
 
 
+# ── Eliminar ─────────────────────────────────────────────────
+
+@router.delete("/{pid}", status_code=204)
+async def delete_proyecto(pid: int, db: asyncpg.Connection = Depends(get_db)):
+    deleted = await db.fetchval(
+        "DELETE FROM proyecto WHERE id = $1 RETURNING 1", pid
+    )
+    if not deleted:
+        raise HTTPException(404, "Proyecto no encontrado")
+
+
 # ── Actores ───────────────────────────────────────────────────
 
 @router.post("/{pid}/actores", response_model=ProyectoActorOut, status_code=201)
