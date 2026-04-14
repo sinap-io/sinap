@@ -152,17 +152,63 @@ export const TIPO_HITO_COLOR: Record<string, string> = {
 // ── Proyectos ─────────────────────────────────────────────────
 
 export const ESTADO_PROYECTO_LABEL: Record<string, string> = {
-  en_desarrollo:           "En desarrollo",
-  buscando_financiamiento: "Buscando financiamiento",
-  buscando_socio:          "Buscando socio",
-  finalizado:              "Finalizado",
+  activo:    "Activo",
+  pausado:   "Pausado",
+  finalizado: "Finalizado",
 };
 
 export const ESTADO_PROYECTO_COLOR: Record<string, string> = {
-  en_desarrollo:           "#3b82f6",
-  buscando_financiamiento: "#eab308",
-  buscando_socio:          "#a855f7",
-  finalizado:              "#22c55e",
+  activo:    "#3b82f6",
+  pausado:   "#f97316",
+  finalizado: "#22c55e",
+};
+
+// Apoyos que busca el proyecto (multi-selección)
+export const APOYO_LABEL: Record<string, string> = {
+  financiamiento:          "Busca financiamiento",
+  socio_tecnologico:       "Busca socio tecnológico",
+  validacion:              "Busca validación técnica/clínica",
+  mercado:                 "Busca acceso a mercado",
+  regulacion:              "Busca aprobación regulatoria",
+  alianza_internacional:   "Busca alianza internacional",
+  transferencia_tecnologica: "Busca transferencia tecnológica",
+};
+
+export const APOYO_COLOR: Record<string, string> = {
+  financiamiento:          "#eab308",
+  socio_tecnologico:       "#a855f7",
+  validacion:              "#3b82f6",
+  mercado:                 "#22c55e",
+  regulacion:              "#ef4444",
+  alianza_internacional:   "#0ea5e9",
+  transferencia_tecnologica: "#f97316",
+};
+
+// Hitos de proyecto
+export const TIPO_HITO_PROYECTO_LABEL: Record<string, string> = {
+  prototipo_desarrollado:    "Prototipo desarrollado",
+  validacion_tecnica:        "Validación técnica completada",
+  presentacion_fondos:       "Presentación a fondos",
+  financiamiento_obtenido:   "Financiamiento obtenido",
+  acuerdo_transferencia:     "Acuerdo de transferencia tecnológica",
+  publicacion:               "Publicación científica",
+  patente:                   "Patente presentada / otorgada",
+  reunion_estrategica:       "Reunión estratégica",
+  cambio_trl:                "Cambio de TRL",
+  otro:                      "Otro",
+};
+
+export const TIPO_HITO_PROYECTO_COLOR: Record<string, string> = {
+  prototipo_desarrollado:    "#a855f7",
+  validacion_tecnica:        "#3b82f6",
+  presentacion_fondos:       "#eab308",
+  financiamiento_obtenido:   "#22c55e",
+  acuerdo_transferencia:     "#0d9488",
+  publicacion:               "#6366f1",
+  patente:                   "#f97316",
+  reunion_estrategica:       "#0ea5e9",
+  cambio_trl:                "#e8622a",
+  otro:                      "#94a3b8",
 };
 
 // TRL: colores progresivos del 1 (rojo, básico) al 9 (verde, listo para mercado)

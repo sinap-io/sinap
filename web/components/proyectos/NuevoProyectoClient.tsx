@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { crearProyecto } from "@/app/proyectos/actions";
-import { AREA_LABEL, ESTADO_PROYECTO_LABEL } from "@/lib/labels";
+import { AREA_LABEL, ESTADO_PROYECTO_LABEL, APOYO_LABEL, APOYO_COLOR } from "@/lib/labels";
 
 interface IniciativaOption { id: number; titulo: string }
 
@@ -21,9 +21,16 @@ export default function NuevoProyectoClient({
     descripcion:   "",
     trl:           "" as string,
     area_tematica: "",
-    estado:        "en_desarrollo",
+    estado:        "activo",
     iniciativa_id: "" as string,
   });
+  const [apoyosSeleccionados, setApoyosSeleccionados] = useState<string[]>([]);
+
+  function toggleApoyo(apoyo: string) {
+    setApoyosSeleccionados((prev) =>
+      prev.includes(apoyo) ? prev.filter((a) => a !== apoyo) : [...prev, apoyo]
+    );
+  }
 
   const inputCls = `w-full rounded-lg border border-[var(--border)] bg-white
     px-3 py-2 text-sm text-[var(--text)]
@@ -42,12 +49,13 @@ export default function NuevoProyectoClient({
 
     startTransition(async () => {
       const result = await crearProyecto({
-        titulo:        form.titulo.trim(),
-        descripcion:   form.descripcion.trim() || undefined,
-        trl:           form.trl ? Number(form.trl) : undefined,
-        area_tematica: form.area_tematica || undefined,
-        estado:        form.estado,
-        iniciativa_id: form.iniciativa_id ? Number(form.iniciativa_id) : undefined,
+        titulo:          form.titulo.trim(),
+        descripcion:     form.descripcion.trim() || undefined,
+        trl:             form.trl ? Number(form.trl) : undefined,
+        area_tematica:   form.area_tematica || undefined,
+        estado:          form.estado,
+        apoyos_buscados: apoyosSeleccionados,
+        iniciativa_id:   form.iniciativa_id ? Number(form.iniciativa_id) : undefined,
       });
       if (result.ok) {
         router.push("/proyectos");
@@ -111,6 +119,34 @@ export default function NuevoProyectoClient({
               <option key={k} value={k}>{v}</option>
             ))}
           </select>
+        </div>
+      </div>
+
+      {/* ¿Qué busca el proyecto? */}
+      <div>
+        <label className="block text-sm font-medium text-[var(--text)] mb-2">
+          ¿Qué busca este proyecto?{" "}
+          <span className="text-[var(--text-muted)] font-normal">(podés elegir varias)</span>
+        </label>
+        <div className="flex flex-wrap gap-2">
+          {Object.entries(APOYO_LABEL).map(([k, v]) => {
+            const activo = apoyosSeleccionados.includes(k);
+            const color = APOYO_COLOR[k] ?? "#6b7280";
+            return (
+              <button
+                key={k}
+                type="button"
+                onClick={() => toggleApoyo(k)}
+                className={`text-xs px-3 py-1.5 rounded-full font-medium transition-all cursor-pointer hover:opacity-80 ${activo ? "shadow-sm" : "opacity-50"}`}
+                style={activo
+                  ? { background: `${color}20`, color, border: `1.5px solid ${color}` }
+                  : { background: "#f1f5f9", color: "#94a3b8", border: "1.5px solid #e2e8f0" }
+                }
+              >
+                {v}
+              </button>
+            );
+          })}
         </div>
       </div>
 

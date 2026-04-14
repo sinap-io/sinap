@@ -8,6 +8,8 @@ import {
   ESTADO_PROYECTO_COLOR,
   AREA_LABEL,
   TRL_COLOR,
+  APOYO_LABEL,
+  APOYO_COLOR,
 } from "@/lib/labels";
 
 const TODOS = "todos";
@@ -155,9 +157,20 @@ export default function ProyectosClient({
                   </p>
                 </div>
 
-                {/* Stats */}
-                <div className="hidden sm:flex items-center gap-4 text-xs text-[var(--text-muted)] shrink-0">
-                  <span>{p.total_actores} actor{p.total_actores !== 1 ? "es" : ""}</span>
+                {/* Apoyos buscados */}
+                <div className="hidden sm:flex items-center gap-1.5 flex-wrap max-w-xs">
+                  {p.apoyos_buscados.slice(0, 2).map((apoyo) => {
+                    const c = APOYO_COLOR[apoyo] ?? "#6b7280";
+                    return (
+                      <span key={apoyo} className="text-xs px-2 py-0.5 rounded-full font-medium"
+                        style={{ background: `${c}18`, color: c }}>
+                        {APOYO_LABEL[apoyo] ?? apoyo}
+                      </span>
+                    );
+                  })}
+                  {p.apoyos_buscados.length > 2 && (
+                    <span className="text-xs text-[var(--text-muted)]">+{p.apoyos_buscados.length - 2}</span>
+                  )}
                 </div>
 
                 {/* Estado */}

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from pydantic import BaseModel
 
 
@@ -28,6 +28,26 @@ class ProyectoInstrumentoOut(BaseModel):
     tipo: str
 
 
+# ── Hitos del proyecto ────────────────────────────────────────
+
+class ProyectoHitoCreate(BaseModel):
+    tipo: str
+    descripcion: str | None = None
+    fecha: date
+    evidencia_url: str | None = None
+    creado_por: int | None = None
+
+
+class ProyectoHitoOut(BaseModel):
+    id: int
+    tipo: str
+    descripcion: str | None
+    fecha: date
+    evidencia_url: str | None
+    creado_por: int | None
+    creado_en: datetime
+
+
 # ── TRL log ───────────────────────────────────────────────────
 
 class TRLLogOut(BaseModel):
@@ -44,7 +64,8 @@ class ProyectoCreate(BaseModel):
     descripcion: str | None = None
     trl: int | None = None
     area_tematica: str | None = None
-    estado: str = "en_desarrollo"
+    estado: str = "activo"
+    apoyos_buscados: list[str] = []
     iniciativa_id: int | None = None
     creado_por: int | None = None
 
@@ -55,6 +76,7 @@ class ProyectoPatch(BaseModel):
     trl: int | None = None
     area_tematica: str | None = None
     estado: str | None = None
+    apoyos_buscados: list[str] | None = None
     iniciativa_id: int | None = None
     cambiado_por: int | None = None
 
@@ -65,6 +87,7 @@ class ProyectoList(BaseModel):
     trl: int | None
     area_tematica: str | None
     estado: str
+    apoyos_buscados: list[str] = []
     iniciativa_id: int | None
     iniciativa_titulo: str | None
     total_actores: int
@@ -80,6 +103,7 @@ class ProyectoDetail(BaseModel):
     trl: int | None
     area_tematica: str | None
     estado: str
+    apoyos_buscados: list[str] = []
     iniciativa_id: int | None
     iniciativa_titulo: str | None
     creado_en: datetime
@@ -87,6 +111,7 @@ class ProyectoDetail(BaseModel):
     actores: list[ProyectoActorOut]
     instrumentos: list[ProyectoInstrumentoOut]
     historial_trl: list[TRLLogOut]
+    hitos: list[ProyectoHitoOut]
 
 
 # ── Zona ──────────────────────────────────────────────────────

@@ -25,9 +25,9 @@ export default async function ProyectosPage() {
   }
 
   const metricas = {
-    en_desarrollo:           proyectos.filter((p) => p.estado === "en_desarrollo").length,
-    buscando_financiamiento: proyectos.filter((p) => p.estado === "buscando_financiamiento").length,
-    buscando_socio:          proyectos.filter((p) => p.estado === "buscando_socio").length,
+    activos:                 proyectos.filter((p) => p.estado === "activo").length,
+    busca_financiamiento:    proyectos.filter((p) => p.apoyos_buscados.includes("financiamiento")).length,
+    busca_socio:             proyectos.filter((p) => p.apoyos_buscados.includes("socio_tecnologico")).length,
     finalizado:              proyectos.filter((p) => p.estado === "finalizado").length,
   };
 
@@ -57,10 +57,10 @@ export default async function ProyectosPage() {
       {/* Métricas */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "En desarrollo",     value: metricas.en_desarrollo,           color: "#3b82f6" },
-          { label: "Busca financiamiento", value: metricas.buscando_financiamiento, color: "#eab308" },
-          { label: "Busca socio",        value: metricas.buscando_socio,           color: "#a855f7" },
-          { label: "Finalizados",        value: metricas.finalizado,               color: "#22c55e" },
+          { label: "Activos",              value: metricas.activos,              color: "#3b82f6" },
+          { label: "Buscan financiamiento",value: metricas.busca_financiamiento, color: "#eab308" },
+          { label: "Buscan socio",         value: metricas.busca_socio,          color: "#a855f7" },
+          { label: "Finalizados",          value: metricas.finalizado,           color: "#22c55e" },
         ].map(({ label, value, color }) => (
           <div
             key={label}

@@ -11,6 +11,7 @@ export async function crearProyecto(data: {
   trl?: number;
   area_tematica?: string;
   estado: string;
+  apoyos_buscados?: string[];
   iniciativa_id?: number;
 }): Promise<Result> {
   try {
@@ -47,6 +48,48 @@ export async function editarEstadoProyecto(id: number, estado: string): Promise<
     return { ok: true };
   } catch (e: unknown) {
     return { ok: false, error: e instanceof Error ? e.message : "Error al actualizar estado" };
+  }
+}
+
+export async function editarApoyosProyecto(
+  id: number, apoyos_buscados: string[]
+): Promise<Result> {
+  try {
+    await fetchApi(`/proyectos/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ apoyos_buscados }),
+    });
+    revalidatePath(`/proyectos/${id}`);
+    revalidatePath("/proyectos");
+    return { ok: true };
+  } catch (e: unknown) {
+    return { ok: false, error: e instanceof Error ? e.message : "Error al actualizar apoyos" };
+  }
+}
+
+export async function agregarHitoProyecto(
+  id: number,
+  data: { tipo: string; descripcion?: string; fecha: string; evidencia_url?: string }
+): Promise<Result> {
+  try {
+    await fetchApi(`/proyectos/${id}/hitos`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    revalidatePath(`/proyectos/${id}`);
+    return { ok: true };
+  } catch (e: unknown) {
+    return { ok: false, error: e instanceof Error ? e.message : "Error al agregar hito" };
+  }
+}
+
+export async function quitarHitoProyecto(id: number, hito_id: number): Promise<Result> {
+  try {
+    await fetchApi(`/proyectos/${id}/hitos/${hito_id}`, { method: "DELETE" });
+    revalidatePath(`/proyectos/${id}`);
+    return { ok: true };
+  } catch (e: unknown) {
+    return { ok: false, error: e instanceof Error ? e.message : "Error al eliminar hito" };
   }
 }
 

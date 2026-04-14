@@ -181,12 +181,23 @@ export interface TRLLogOut {
   creado_en: string;
 }
 
+export interface ProyectoHitoOut {
+  id: number;
+  tipo: string;
+  descripcion: string | null;
+  fecha: string;
+  evidencia_url: string | null;
+  creado_por: number | null;
+  creado_en: string;
+}
+
 export interface ProyectoList {
   id: number;
   titulo: string;
   trl: number | null;
   area_tematica: string | null;
   estado: string;
+  apoyos_buscados: string[];
   iniciativa_id: number | null;
   iniciativa_titulo: string | null;
   total_actores: number;
@@ -202,6 +213,7 @@ export interface ProyectoDetail {
   trl: number | null;
   area_tematica: string | null;
   estado: string;
+  apoyos_buscados: string[];
   iniciativa_id: number | null;
   iniciativa_titulo: string | null;
   creado_en: string;
@@ -209,6 +221,7 @@ export interface ProyectoDetail {
   actores: ProyectoActorOut[];
   instrumentos: ProyectoInstrumentoOut[];
   historial_trl: TRLLogOut[];
+  hitos: ProyectoHitoOut[];
 }
 
 export interface ZonaOut {
