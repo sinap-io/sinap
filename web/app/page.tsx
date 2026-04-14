@@ -3,16 +3,17 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { fetchApi } from "@/lib/api";
-import type { ActorList, ServiceItem, NeedItem, InstrumentItem, GapSummary, IniciativaList } from "@/lib/types";
+import type { ActorList, ServiceItem, NeedItem, InstrumentItem, GapSummary, IniciativaList, ProyectoList } from "@/lib/types";
 
 async function getStats() {
-  const [actors, services, needs, instruments, gapSummary, iniciativas] = await Promise.allSettled([
+  const [actors, services, needs, instruments, gapSummary, iniciativas, proyectos] = await Promise.allSettled([
     fetchApi<ActorList[]>("/actors"),
     fetchApi<ServiceItem[]>("/services"),
     fetchApi<NeedItem[]>("/needs"),
     fetchApi<InstrumentItem[]>("/instruments?status=activo"),
     fetchApi<GapSummary>("/gaps/summary"),
     fetchApi<IniciativaList[]>("/iniciativas"),
+    fetchApi<ProyectoList[]>("/proyectos"),
   ]);
 
   return {
@@ -22,6 +23,7 @@ async function getStats() {
     instrumentos:instruments.status === "fulfilled" ? instruments.value.length : 0,
     gaps:        gapSummary.status  === "fulfilled" ? gapSummary.value.total_gaps : 0,
     iniciativas: iniciativas.status === "fulfilled" ? iniciativas.value.length : 0,
+    proyectos:   proyectos.status   === "fulfilled" ? proyectos.value.length   : 0,
   };
 }
 
@@ -71,6 +73,7 @@ export default async function HomePage() {
     { label: "Fondos disponibles", value: stats.instrumentos },
     { label: "Gaps detectados",    value: stats.gaps },
     { label: "Iniciativas",        value: stats.iniciativas },
+    { label: "Proyectos",          value: stats.proyectos },
   ];
 
   return (
