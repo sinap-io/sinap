@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (14 abril 2026)
+## Estado actual (14 abril 2026 — tarde)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -29,6 +29,8 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Buscador IA dentro del detalle de iniciativa ✅ — panel colapsable "Buscar en el ecosistema"
 - **Login de Pablo resuelto** ✅ — fix definitivo en producción
 - **Rol de Pablo resuelto** ✅ — figura como "Manager" correctamente
+- **Módulo Proyectos** ✅ — CRUD completo + actores + instrumentos + historial TRL + buscador IA
+- **Módulo ADIT** ✅ — panel de actividad de vinculadores, detalle por vinculador, zona editable
 
 **Branch activo:** `main` — todo mergeado y deployado.
 
@@ -139,8 +141,24 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - actor_ids en IniciativaList (ARRAY_AGG en SQL) ✅
 - Botón "Limpiar filtros" ✅
 
-**Bug conocido — pendiente fix:**
-- DELETE en `iniciativa_actor` compara `result == "DELETE 0"` (nunca True) → el 404 no funciona. Fix simple, pendiente.
+**Bug DELETE en iniciativas — resuelto (14 abril 2026):**
+- Reemplazado `db.execute` + comparación string por `db.fetchval` + `RETURNING 1` ✅
+
+**Módulo Proyectos (14 abril 2026):**
+- Migración 007 aplicada ✅ — tablas zona, proyecto, proyecto_actor, proyecto_instrumento
+- API completa: CRUD + actores + instrumentos + zonas ✅
+- Frontend: /proyectos (lista + filtros), /proyectos/nuevo, /proyectos/[id] (detalle editable) ✅
+- TRL auto-logueado en proyecto_trl_log en cada cambio ✅
+- creado_por en POST /proyectos ✅
+
+**Módulo ADIT (14 abril 2026):**
+- Migración 008 aplicada ✅ — vincula vinculadores con usuarios por email, cambiado_por en trl_log
+- API /adit: lista vinculadores, detalle con actividad completa, resumen global ✅
+- creado_por en POST /iniciativas, POST /hitos, POST /proyectos ✅
+- cambiado_por en PATCH /proyectos (cambio TRL) ✅
+- Frontend /adit: métricas globales, lista con barra de actividad por vinculador ✅
+- Frontend /adit/[id]: detalle con iniciativas, hitos, proyectos y cambios TRL, zona editable ✅
+- Nav: enlace ADIT con ícono Activity (visible para admin/manager/directivo/vinculador) ✅
 
 **Decisiones de producto tomadas (14 abril 2026 — Sebastián):**
 - ADIT = vinculador (sinónimos en SINAP). Mismo rol, mismas capacidades.
@@ -154,14 +172,11 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Campos mínimos de proyecto: título, descripción, TRL (1-9), área temática, estado, actores, instrumentos, búsqueda IA contextual.
 
 **Lo que está pendiente de desarrollo (ver BACKLOG.md para detalle completo):**
-- Fix bug DELETE en iniciativas.py ← inmediato, 15 min
-- Poblar `creado_por` en endpoints de iniciativa e hito ← inmediato, 1h
-- **Módulo Proyectos** — Migración 007 + API + Frontend ← próxima fase
-- **Módulo ADIT** — extensión del vinculador + zonas + panel de actividad ← fase siguiente
-- Seguridad: middleware JWT en FastAPI
+- Seguridad: middleware JWT en FastAPI (para que creado_por se pueble automáticamente del token)
 - Login con Google (OAuth)
 - Datos reales del Clúster (cuando estén disponibles)
 - Dominio sinap.io en Cloudflare
+- Home dashboard: agregar métricas de proyectos
 
 ---
 
@@ -191,14 +206,11 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Fix bug DELETE** — `iniciativas.py:232` — 15 min ← **INMEDIATO**
-2. **Poblar `creado_por`** en endpoints `POST /iniciativas` y `POST /iniciativas/{id}/hitos` — 1h ← **INMEDIATO**
-3. **Módulo Proyectos** — Migración 007 + 5 endpoints API + 3 páginas frontend ← **PRÓXIMA FASE**
-4. **Módulo ADIT** — extensión de vinculador con zona + panel de actividad ← **FASE SIGUIENTE**
-5. **Seguridad API** — middleware JWT en FastAPI ← luego
-6. **Login con Google (OAuth)** — Auth.js v5 Google provider ← luego
-7. **Datos reales** — cuando Sebastián los tenga disponibles
-8. **Registrar dominio** sinap.io en Cloudflare ← cuando el producto esté listo para público
+1. **Home dashboard** — agregar métricas de proyectos (tarjetas de totales) ← rápido, 30 min
+2. **Seguridad API** — middleware JWT en FastAPI (creado_por automático del token) ← luego
+3. **Login con Google (OAuth)** — Auth.js v5 Google provider ← luego
+4. **Datos reales** — cuando Sebastián los tenga disponibles
+5. **Registrar dominio** sinap.io en Cloudflare ← cuando el producto esté listo para público
 
 ---
 
@@ -242,7 +254,7 @@ En orden de prioridad:
 |---|---|---|
 | Gmail | sinap.io.dev@gmail.com | ✅ Creado |
 | GitHub | sinap-io/sinap | ✅ Organización creada, repo transferido y renombrado |
-| Neon.tech | sinap-production `ep-tiny-cell-acjfdkps` (21 tablas + migraciones 001–007) | ✅ Operativo |
+| Neon.tech | sinap-production `ep-tiny-cell-acjfdkps` (21 tablas + migraciones 001–008) | ✅ Operativo |
 | Railway | sinap-production.up.railway.app | ✅ Operativo (FastAPI) |
 | Vercel | sinap-psi.vercel.app | ✅ Operativo (Next.js) |
 | Cloudflare / sinap.io | — | ⏳ Registrar dominio |
