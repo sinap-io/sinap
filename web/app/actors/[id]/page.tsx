@@ -57,11 +57,12 @@ export default async function ActorDetailPage({
                     <span className="font-medium text-[var(--text)] text-sm">
                       {SERVICIO_LABEL[s.tipo_servicio] ?? s.tipo_servicio}
                     </span>
-                    <Badge
-                      label={s.disponibilidad}
-                      color={dispColor}
-                      className="shrink-0"
-                    />
+                    <span
+                      className="shrink-0 text-xs font-medium px-2 py-0.5 rounded-full"
+                      style={{ background: `${dispColor}20`, color: dispColor }}
+                    >
+                      {s.disponibilidad}
+                    </span>
                   </div>
                   <span className="text-xs text-[var(--text-muted)]">
                     {AREA_LABEL[s.area_tematica] ?? s.area_tematica}
@@ -97,11 +98,12 @@ export default async function ActorDetailPage({
                     <span className="font-medium text-[var(--text)] text-sm">
                       {SERVICIO_LABEL[n.tipo_servicio] ?? n.tipo_servicio}
                     </span>
-                    <Badge
-                      label={`Urgencia ${n.urgencia}`}
-                      color={urgColor}
-                      className="shrink-0"
-                    />
+                    <span
+                      className="shrink-0 text-xs font-medium px-2 py-0.5 rounded-full"
+                      style={{ background: `${urgColor}20`, color: urgColor }}
+                    >
+                      {n.urgencia}
+                    </span>
                   </div>
                 </div>
               );

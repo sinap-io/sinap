@@ -361,7 +361,7 @@ export default function ProyectoDetailClient({
                       <td className="px-4 py-3 text-right">
                         <button
                           onClick={() =>
-                            startTransition(() => quitarActorProyecto(proyecto.id, a.actor_id))
+                            startTransition(async () => { await quitarActorProyecto(proyecto.id, a.actor_id); })
                           }
                           disabled={isPending}
                           className="text-xs text-red-400 hover:text-red-600 transition-colors"
@@ -442,9 +442,7 @@ export default function ProyectoDetailClient({
                   {canManage && (
                     <button
                       onClick={() =>
-                        startTransition(() =>
-                          quitarInstrumentoProyecto(proyecto.id, inst.instrumento_id)
-                        )
+                        startTransition(async () => { await quitarInstrumentoProyecto(proyecto.id, inst.instrumento_id); })
                       }
                       disabled={isPending}
                       className="text-xs text-red-400 hover:text-red-600 transition-colors"
