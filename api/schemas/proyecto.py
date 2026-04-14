@@ -46,6 +46,7 @@ class ProyectoCreate(BaseModel):
     area_tematica: str | None = None
     estado: str = "en_desarrollo"
     iniciativa_id: int | None = None
+    creado_por: int | None = None
 
 
 class ProyectoPatch(BaseModel):
@@ -55,6 +56,7 @@ class ProyectoPatch(BaseModel):
     area_tematica: str | None = None
     estado: str | None = None
     iniciativa_id: int | None = None
+    cambiado_por: int | None = None
 
 
 class ProyectoList(BaseModel):

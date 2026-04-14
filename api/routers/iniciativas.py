@@ -74,10 +74,10 @@ async def create_iniciativa(
         raise HTTPException(422, f"Tipo inválido. Opciones: {', '.join(sorted(TIPOS_VALIDOS))}")
 
     row = await db.fetchrow("""
-        INSERT INTO iniciativa (tipo, titulo, descripcion, vinculador_id, notas)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO iniciativa (tipo, titulo, descripcion, vinculador_id, notas, creado_por)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id
-    """, body.tipo, body.titulo, body.descripcion, body.vinculador_id, body.notas)
+    """, body.tipo, body.titulo, body.descripcion, body.vinculador_id, body.notas, body.creado_por)
 
     return await _get_list_row(row["id"], db)
 
@@ -341,10 +341,10 @@ async def add_hito(
         raise HTTPException(422, f"Tipo inválido. Opciones: {', '.join(sorted(TIPOS_HITO))}")
 
     row = await db.fetchrow("""
-        INSERT INTO hito (iniciativa_id, tipo, descripcion, fecha, evidencia_url)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO hito (iniciativa_id, tipo, descripcion, fecha, evidencia_url, creado_por)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id, tipo, descripcion, fecha, evidencia_url, creado_en
-    """, iid, body.tipo, body.descripcion, body.fecha, body.evidencia_url)
+    """, iid, body.tipo, body.descripcion, body.fecha, body.evidencia_url, body.creado_por)
 
     await db.execute(
         "UPDATE iniciativa SET actualizado_en = NOW() WHERE id = $1", iid

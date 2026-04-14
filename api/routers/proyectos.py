@@ -94,11 +94,11 @@ async def create_proyecto(
         raise HTTPException(422, "TRL debe estar entre 1 y 9")
 
     row = await db.fetchrow("""
-        INSERT INTO proyecto (titulo, descripcion, trl, area_tematica, estado, iniciativa_id)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO proyecto (titulo, descripcion, trl, area_tematica, estado, iniciativa_id, creado_por)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING id
     """, body.titulo, body.descripcion, body.trl, body.area_tematica,
-        body.estado, body.iniciativa_id)
+        body.estado, body.iniciativa_id, body.creado_por)
 
     pid = row["id"]
 
@@ -199,9 +199,9 @@ async def patch_proyecto(
     # Registrar cambio de TRL en historial
     if body.trl is not None and body.trl != existing["trl"]:
         await db.execute("""
-            INSERT INTO proyecto_trl_log (proyecto_id, trl_antes, trl_despues)
-            VALUES ($1, $2, $3)
-        """, pid, existing["trl"], body.trl)
+            INSERT INTO proyecto_trl_log (proyecto_id, trl_antes, trl_despues, cambiado_por)
+            VALUES ($1, $2, $3, $4)
+        """, pid, existing["trl"], body.trl, body.cambiado_por)
 
     return await _get_list_row(pid, db)
 

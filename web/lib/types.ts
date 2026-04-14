@@ -218,6 +218,77 @@ export interface ZonaOut {
   creado_en: string;
 }
 
+// ── ADIT ──────────────────────────────────────────────────────
+export interface VinculadorList {
+  id: number;
+  nombre: string;
+  email: string | null;
+  activo: boolean;
+  zona_id: number | null;
+  zona_nombre: string | null;
+  usuario_id: number | null;
+  total_iniciativas: number;
+  total_hitos: number;
+  total_proyectos: number;
+  creado_en: string;
+}
+
+export interface IniciativaResumen {
+  id: number;
+  titulo: string;
+  tipo: string;
+  estado: string;
+  creado_en: string;
+}
+
+export interface HitoResumen {
+  id: number;
+  tipo: string;
+  descripcion: string | null;
+  fecha: string;
+  iniciativa_titulo: string;
+  creado_en: string;
+}
+
+export interface ProyectoResumen {
+  id: number;
+  titulo: string;
+  trl: number | null;
+  estado: string;
+  creado_en: string;
+}
+
+export interface TRLChangeResumen {
+  id: number;
+  trl_antes: number | null;
+  trl_despues: number | null;
+  proyecto_titulo: string;
+  creado_en: string;
+}
+
+export interface VinculadorDetail {
+  id: number;
+  nombre: string;
+  email: string | null;
+  activo: boolean;
+  zona_id: number | null;
+  zona_nombre: string | null;
+  usuario_id: number | null;
+  creado_en: string;
+  iniciativas: IniciativaResumen[];
+  hitos: HitoResumen[];
+  proyectos: ProyectoResumen[];
+  trl_changes: TRLChangeResumen[];
+}
+
+export interface ActividadResumen {
+  vinculadores_activos: number;
+  total_iniciativas: number;
+  total_hitos: number;
+  total_proyectos: number;
+  total_trl_changes: number;
+}
+
 // ── Search ────────────────────────────────────────────────────
 export interface SearchResponse {
   respuesta: string;

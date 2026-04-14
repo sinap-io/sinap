@@ -9,6 +9,7 @@ class HitoCreate(BaseModel):
     descripcion: str | None = None
     fecha: date
     evidencia_url: str | None = None
+    creado_por: int | None = None
 
 
 class HitoOut(BaseModel):
@@ -76,6 +77,7 @@ class IniciativaCreate(BaseModel):
     descripcion: str | None = None
     vinculador_id: int | None = None
     notas: str | None = None
+    creado_por: int | None = None
 
 
 class IniciativaPatch(BaseModel):
