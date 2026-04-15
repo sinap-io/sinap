@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import Link from "next/link";
 import type { ProyectoDetail } from "@/lib/types";
 import {
@@ -99,8 +99,17 @@ export default function ProyectoDetailClient({
   // ── Apoyos buscados (multi) ───────────────────────────────────
   const [apoyosActivos, setApoyosActivos] = useState<string[]>(proyecto.apoyos_buscados);
 
+  // Sincronizar con el servidor cuando termina la transición
+  // (proyecto.apoyos_buscados se actualiza después del revalidatePath)
+  useEffect(() => {
+    if (!isApoyosPending) {
+      setApoyosActivos(proyecto.apoyos_buscados);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [proyecto.apoyos_buscados.join(","), isApoyosPending]);
+
   function toggleApoyo(apoyo: string) {
-    if (!canManage) return;
+    if (!canManage || isApoyosPending) return;
     const nuevos = apoyosActivos.includes(apoyo)
       ? apoyosActivos.filter((a) => a !== apoyo)
       : [...apoyosActivos, apoyo];
@@ -372,10 +381,9 @@ export default function ProyectoDetailClient({
               <button
                 key={apoyo}
                 onClick={() => toggleApoyo(apoyo)}
-                disabled={isApoyosPending}
                 className={`text-xs px-3 py-1.5 rounded-full font-medium transition-all ${
-                  canManage ? "cursor-pointer hover:opacity-80" : "cursor-default"
-                } ${activo ? "shadow-sm" : ""}`}
+                  canManage && !isApoyosPending ? "cursor-pointer hover:opacity-80" : "cursor-default"
+                } ${activo ? "shadow-sm" : ""} ${isApoyosPending ? "opacity-60" : ""}`}
                 style={activo
                   ? { background: `${color}20`, color, border: `1.5px solid ${color}` }
                   : { background: "transparent", color: "#94a3b8", border: "1.5px dashed #cbd5e1" }
