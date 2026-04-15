@@ -30,7 +30,6 @@ export async function editarTRLProyecto(id: number, trl: number): Promise<Result
       body: JSON.stringify({ trl }),
     });
     revalidatePath(`/proyectos/${id}`);
-    revalidatePath("/proyectos");
     return { ok: true };
   } catch (e: unknown) {
     return { ok: false, error: e instanceof Error ? e.message : "Error al actualizar TRL" };
@@ -44,7 +43,6 @@ export async function editarEstadoProyecto(id: number, estado: string): Promise<
       body: JSON.stringify({ estado }),
     });
     revalidatePath(`/proyectos/${id}`);
-    revalidatePath("/proyectos");
     return { ok: true };
   } catch (e: unknown) {
     return { ok: false, error: e instanceof Error ? e.message : "Error al actualizar estado" };
@@ -60,7 +58,6 @@ export async function editarPrioridadProyecto(
       body: JSON.stringify({ prioridad: prioridad === null ? -1 : prioridad }),
     });
     revalidatePath(`/proyectos/${id}`);
-    revalidatePath("/proyectos");
     return { ok: true };
   } catch (e: unknown) {
     return { ok: false, error: e instanceof Error ? e.message : "Error al actualizar prioridad" };
@@ -76,7 +73,6 @@ export async function editarApoyosProyecto(
       body: JSON.stringify({ apoyos_buscados }),
     });
     revalidatePath(`/proyectos/${id}`);
-    revalidatePath("/proyectos");
     return { ok: true };
   } catch (e: unknown) {
     return { ok: false, error: e instanceof Error ? e.message : "Error al actualizar apoyos" };
@@ -119,7 +115,6 @@ export async function editarCamposProyecto(
       body: JSON.stringify(campos),
     });
     revalidatePath(`/proyectos/${id}`);
-    revalidatePath("/proyectos");
     return { ok: true };
   } catch (e: unknown) {
     return { ok: false, error: e instanceof Error ? e.message : "Error al guardar cambios" };
