@@ -2,7 +2,7 @@
 
 > Documento vivo. Captura el estado del proyecto, las decisiones de diseño y el razonamiento detrás de cada una. Actualizar al cerrar cada sprint.
 >
-> Última actualización: 10 abril 2026
+> Última actualización: 15 abril 2026
 
 ---
 
@@ -235,6 +235,16 @@ En producción se podría migrar a `tool_use` de Anthropic para mayor confiabili
 | `/login` | Server | Login con Auth.js v5 |
 
 Las rutas `/vinculador/*` redirigen a `/iniciativas/*` (código legacy, no eliminar aún).
+
+**Módulo Proyectos + Vinculadores (en main desde 15/04/2026):**
+
+| Ruta | Tipo | Descripción |
+|---|---|---|
+| `/proyectos` | Server (dynamic) | Lista de proyectos con filtros: estado, apoyo, prioridad |
+| `/proyectos/nuevo` | Server (dynamic) | Formulario de creación de proyecto |
+| `/proyectos/[id]` | Server (dynamic) | Detalle editable: TRL, apoyos, hitos timeline, actores, instrumentos |
+| `/vinculadores` | Server (dynamic) | Lista de vinculadores activos con barra de actividad |
+| `/vinculadores/[id]` | Server (dynamic) | Detalle del vinculador: iniciativas, hitos, proyectos, cambios TRL |
 
 ---
 

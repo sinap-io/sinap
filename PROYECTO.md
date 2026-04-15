@@ -3,7 +3,7 @@
 > Este documento está escrito para Sebastián. No asume conocimientos de programación.
 > Explica qué es cada parte del sistema, por qué existe, y cómo se conecta todo.
 >
-> Última actualización: 10 abril 2026
+> Última actualización: 15 abril 2026
 
 ---
 
@@ -113,6 +113,11 @@ Las pantallas actuales:
 | `/iniciativas/[id]` | Detalle: actores participantes, vínculos y buscador IA contextual |
 | `/informe` | Informe IA semanal: análisis cruzado de todos los módulos |
 | `/radar` | Radar sectorial: inteligencia externa por área temática |
+| `/proyectos` | Panel de proyectos con filtros: estado, apoyo buscado, prioridad |
+| `/proyectos/nuevo` | Formulario para registrar un nuevo proyecto |
+| `/proyectos/[id]` | Detalle editable: TRL, apoyos, hitos, actores, instrumentos |
+| `/vinculadores` | Panel de vinculadores activos con actividad registrada |
+| `/vinculadores/[id]` | Detalle del vinculador: iniciativas, hitos, proyectos y cambios TRL |
 
 ---
 
@@ -363,6 +368,44 @@ El catálogo de actores, servicios, necesidades e instrumentos es el mapa del ec
 Sin iniciativas, SINAP es un directorio inteligente. Con iniciativas, SINAP es el sistema operativo de la articulación: cada conexión que el Clúster facilita queda registrada, tiene trazabilidad, genera métricas y acumula conocimiento institucional sobre qué tipo de colaboraciones funcionan, entre quiénes, con qué instrumentos y en qué tiempos.
 
 Con el tiempo, esa base de iniciativas concretadas se convierte en el activo más valioso de la plataforma: evidencia concreta del impacto del Clúster en el ecosistema.
+
+---
+
+## El Módulo Proyectos
+
+Un **Proyecto** en SINAP es una iniciativa de I+D o transferencia tecnológica que ya existe y tiene vida propia — no es solo un proceso de articulación, sino algo que se está ejecutando.
+
+La diferencia con una Iniciativa: una Iniciativa es el proceso de conectar actores (puede terminar en un proyecto, o no). Un Proyecto es lo que se construye después de esa conexión.
+
+### Las tres dimensiones de un proyecto
+
+**TRL (Technology Readiness Level):** Escala internacional del 1 al 9 que indica qué tan madura está la tecnología. TRL 1 es una idea básica; TRL 9 es un sistema probado en el mercado real. SINAP registra la evolución del TRL en el tiempo, con fecha de cada cambio.
+
+**Estado operativo:** Activo / Pausado / Finalizado. Describe si el proyecto está en marcha, detenido temporalmente, o concluido.
+
+**¿Qué necesita para avanzar?** — multi-selección de necesidades actuales del proyecto: financiamiento, socio tecnológico, validación técnica/clínica, acceso a mercado, aprobación regulatoria, alianza internacional, transferencia tecnológica. Un proyecto puede necesitar varias cosas a la vez.
+
+### Prioridad
+
+Los proyectos pueden marcarse con 4 niveles de prioridad para el Clúster: Estratégica / Alta / Media / Baja. Los proyectos priorizados aparecen primero en la lista. Los sin priorizar van al final.
+
+### Hitos
+
+Cada proyecto tiene una línea de tiempo de hitos: resultados concretos y fechados que documentan el avance. 10 tipos disponibles: prototipo desarrollado, validación técnica, presentación a fondos, financiamiento obtenido, acuerdo de transferencia, publicación científica, patente, reunión estratégica, cambio de TRL, otro.
+
+### Actores y roles
+
+Los proyectos son interinstitucionales desde el arranque — no tienen un "dueño único". Cualquier actor del ecosistema puede participar con un rol específico: Líder técnico, Investigador, Socio tecnológico, Socio comercial, Financiador, Inversor, Proveedor tecnológico, Asesor científico, Vinculador, Colaborador, u Otro.
+
+---
+
+## El Módulo Vinculadores
+
+Los **Vinculadores** son los operadores del Clúster que gestionan los procesos de articulación. Este módulo registra su actividad: iniciativas creadas, hitos registrados, proyectos gestionados y cambios de TRL logueados.
+
+SINAP registra la actividad pero **no calcula compensación** — eso se gestiona en planilla externa. Lo que sí provee es la trazabilidad completa: qué hizo cada vinculador, cuándo, en qué contexto.
+
+Cada vinculador puede tener asignada una zona geográfica (por ejemplo: "Gran Córdoba"). La zona es editable desde el detalle del vinculador.
 
 ---
 
