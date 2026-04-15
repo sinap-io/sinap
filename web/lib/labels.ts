@@ -184,6 +184,37 @@ export const APOYO_COLOR: Record<string, string> = {
   transferencia_tecnologica: "#f97316",
 };
 
+// Prioridad de proyecto (1=Estratégica ... 4=Baja, null=sin priorizar)
+export const PRIORIDAD_LABEL: Record<number, string> = {
+  1: "Estratégica",
+  2: "Alta",
+  3: "Media",
+  4: "Baja",
+};
+
+export const PRIORIDAD_COLOR: Record<number, string> = {
+  1: "#dc2626",   // rojo
+  2: "#f97316",   // naranja
+  3: "#eab308",   // amarillo
+  4: "#94a3b8",   // gris
+};
+
+// Roles predefinidos para actores en proyectos
+export const ROL_ACTOR_PROYECTO_LABEL: Record<string, string> = {
+  lider_tecnico:         "Líder técnico",
+  investigador:          "Investigador",
+  socio_tecnologico:     "Socio tecnológico",
+  socio:                 "Socio",
+  socio_comercial:       "Socio comercial",
+  proveedor:             "Proveedor tecnológico",
+  financiador:           "Financiador",
+  inversor:              "Inversor",
+  asesor:                "Asesor científico",
+  vinculador:            "Vinculador",
+  colaborador:           "Colaborador",
+  otro:                  "Otro",
+};
+
 // Hitos de proyecto
 export const TIPO_HITO_PROYECTO_LABEL: Record<string, string> = {
   prototipo_desarrollado:    "Prototipo desarrollado",

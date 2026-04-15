@@ -79,7 +79,7 @@ async def list_proyectos(
     rows = await db.fetch(f"""
         SELECT
             p.id, p.titulo, p.trl, p.area_tematica, p.estado,
-            p.apoyos_buscados,
+            p.apoyos_buscados, p.prioridad,
             p.iniciativa_id,
             i.titulo AS iniciativa_titulo,
             p.creado_en, p.actualizado_en,
@@ -93,7 +93,7 @@ async def list_proyectos(
         LEFT JOIN proyecto_actor pa ON pa.proyecto_id = p.id
         {where}
         GROUP BY p.id, i.titulo
-        ORDER BY p.actualizado_en DESC
+        ORDER BY p.prioridad NULLS LAST, p.actualizado_en DESC
     """, *args)
 
     return [
@@ -144,7 +144,7 @@ async def create_proyecto(
 async def get_proyecto(pid: int, db: asyncpg.Connection = Depends(get_db)):
     row = await db.fetchrow("""
         SELECT p.id, p.titulo, p.descripcion, p.trl, p.area_tematica, p.estado,
-               p.apoyos_buscados,
+               p.apoyos_buscados, p.prioridad,
                p.iniciativa_id, i.titulo AS iniciativa_titulo,
                p.creado_en, p.actualizado_en
         FROM proyecto p
@@ -217,6 +217,11 @@ async def patch_proyecto(
         if val is not None:
             args.append(val)
             updates.append(f"{field} = ${len(args)}")
+
+    # prioridad: -1 = quitar (NULL), 1-4 = asignar
+    if body.prioridad is not None:
+        args.append(None if body.prioridad == -1 else body.prioridad)
+        updates.append(f"prioridad = ${len(args)}")
 
     # apoyos_buscados puede ser lista vacía (válida), usar sentinel None = no enviado
     if body.apoyos_buscados is not None:
@@ -354,7 +359,7 @@ async def _get_list_row(pid: int, db: asyncpg.Connection) -> ProyectoList:
     row = await db.fetchrow("""
         SELECT
             p.id, p.titulo, p.trl, p.area_tematica, p.estado,
-            p.apoyos_buscados,
+            p.apoyos_buscados, p.prioridad,
             p.iniciativa_id,
             i.titulo AS iniciativa_titulo,
             p.creado_en, p.actualizado_en,

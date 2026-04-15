@@ -77,6 +77,7 @@ class ProyectoPatch(BaseModel):
     area_tematica: str | None = None
     estado: str | None = None
     apoyos_buscados: list[str] | None = None
+    prioridad: int | None = None          # 1-4, -1 = quitar prioridad
     iniciativa_id: int | None = None
     cambiado_por: int | None = None
 
@@ -88,6 +89,7 @@ class ProyectoList(BaseModel):
     area_tematica: str | None
     estado: str
     apoyos_buscados: list[str] = []
+    prioridad: int | None
     iniciativa_id: int | None
     iniciativa_titulo: str | None
     total_actores: int
@@ -104,6 +106,7 @@ class ProyectoDetail(BaseModel):
     area_tematica: str | None
     estado: str
     apoyos_buscados: list[str] = []
+    prioridad: int | None
     iniciativa_id: int | None
     iniciativa_titulo: str | None
     creado_en: datetime

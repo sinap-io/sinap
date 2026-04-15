@@ -10,12 +10,15 @@ import {
   TIPO_INSTRUMENTO_LABEL, TIPO_INSTRUMENTO_COLOR,
   APOYO_LABEL, APOYO_COLOR,
   TIPO_HITO_PROYECTO_LABEL, TIPO_HITO_PROYECTO_COLOR,
+  PRIORIDAD_LABEL, PRIORIDAD_COLOR,
+  ROL_ACTOR_PROYECTO_LABEL,
 } from "@/lib/labels";
 import {
   editarTRLProyecto,
   editarEstadoProyecto,
   editarCamposProyecto,
   editarApoyosProyecto,
+  editarPrioridadProyecto,
   agregarActorProyecto,
   quitarActorProyecto,
   agregarInstrumentoProyecto,
@@ -130,6 +133,21 @@ export default function ProyectoDetailClient({
     startTransition(async () => {
       await agregarInstrumentoProyecto(proyecto.id, Number(instSel));
       setInstSel("");
+    });
+  }
+
+  // ── Prioridad ────────────────────────────────────────────────
+  const [prioridadEdit, setPrioridadEdit] = useState(false);
+  const [prioridadVal,  setPrioridadVal]  = useState<string>(
+    proyecto.prioridad?.toString() ?? ""
+  );
+
+  function guardarPrioridad(val: string) {
+    const n = val === "" ? null : Number(val);
+    startTransition(async () => {
+      await editarPrioridadProyecto(proyecto.id, n);
+      setPrioridadVal(val);
+      setPrioridadEdit(false);
     });
   }
 
@@ -261,6 +279,56 @@ export default function ProyectoDetailClient({
                   ↗ {proyecto.iniciativa_titulo}
                 </Link>
               )}
+
+              {/* Prioridad */}
+              {canManage && (
+                prioridadEdit ? (
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={prioridadVal}
+                      onChange={(e) => guardarPrioridad(e.target.value)}
+                      className="text-xs rounded-lg border border-[var(--border)] px-2 py-1 bg-white"
+                      autoFocus
+                      onBlur={() => setPrioridadEdit(false)}
+                    >
+                      <option value="">Sin prioridad</option>
+                      {[1, 2, 3, 4].map((n) => (
+                        <option key={n} value={n}>{PRIORIDAD_LABEL[n]}</option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setPrioridadEdit(true)}
+                    className="text-xs font-medium px-3 py-1 rounded-full border border-dashed transition-colors hover:opacity-80"
+                    style={
+                      prioridadVal
+                        ? {
+                            background: `${PRIORIDAD_COLOR[Number(prioridadVal)]}20`,
+                            color: PRIORIDAD_COLOR[Number(prioridadVal)],
+                            borderColor: PRIORIDAD_COLOR[Number(prioridadVal)],
+                            borderStyle: "solid",
+                          }
+                        : { borderColor: "#cbd5e1", color: "#94a3b8" }
+                    }
+                  >
+                    {prioridadVal
+                      ? `${PRIORIDAD_LABEL[Number(prioridadVal)]} ✏`
+                      : "Prioridad ✏"}
+                  </button>
+                )
+              )}
+              {!canManage && prioridadVal && (
+                <span
+                  className="text-xs font-medium px-3 py-1 rounded-full"
+                  style={{
+                    background: `${PRIORIDAD_COLOR[Number(prioridadVal)]}20`,
+                    color: PRIORIDAD_COLOR[Number(prioridadVal)],
+                  }}
+                >
+                  {PRIORIDAD_LABEL[Number(prioridadVal)]}
+                </span>
+              )}
             </div>
 
             {trlActual && (
@@ -290,7 +358,7 @@ export default function ProyectoDetailClient({
       {/* ── APOYOS BUSCADOS ──────────────────────────────────── */}
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-[var(--text)]">¿Qué busca este proyecto?</h2>
+          <h2 className="text-sm font-semibold text-[var(--text)]">¿Qué necesita para avanzar?</h2>
           {canManage && (
             <span className="text-xs text-[var(--text-muted)]">Hacé clic para activar/desactivar</span>
           )}
@@ -306,10 +374,10 @@ export default function ProyectoDetailClient({
                 disabled={isPending}
                 className={`text-xs px-3 py-1.5 rounded-full font-medium transition-all ${
                   canManage ? "cursor-pointer hover:opacity-80" : "cursor-default"
-                } ${activo ? "shadow-sm" : "opacity-40"}`}
+                } ${activo ? "shadow-sm" : ""}`}
                 style={activo
                   ? { background: `${color}20`, color, border: `1.5px solid ${color}` }
-                  : { background: "#f1f5f9", color: "#94a3b8", border: "1.5px solid #e2e8f0" }
+                  : { background: "transparent", color: "#94a3b8", border: "1.5px dashed #cbd5e1" }
                 }
               >
                 {APOYO_LABEL[apoyo]}
@@ -475,13 +543,14 @@ export default function ProyectoDetailClient({
       {proyecto.historial_trl.length > 0 && (
         <section>
           <h2 className="text-sm font-semibold text-[var(--text)] mb-3">Evolución del TRL</h2>
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-start gap-2 flex-wrap">
             {proyecto.historial_trl.map((entry, idx) => {
               const color = TRL_COLOR[entry.trl_despues] ?? "#6b7280";
+              const desc = TRL_LABEL[entry.trl_despues]?.split("—")[1]?.trim();
               return (
-                <div key={entry.id} className="flex items-center gap-2">
-                  {idx > 0 && <span className="text-[var(--text-muted)]">→</span>}
-                  <div className="text-center">
+                <div key={entry.id} className="flex items-start gap-2">
+                  {idx > 0 && <span className="text-[var(--text-muted)] mt-1">→</span>}
+                  <div className="text-center max-w-[110px]">
                     <span className="text-sm font-bold px-3 py-1 rounded-full block"
                       style={{ background: `${color}20`, color }}>
                       TRL {entry.trl_despues}
@@ -489,6 +558,11 @@ export default function ProyectoDetailClient({
                     <span className="text-xs text-[var(--text-muted)] mt-0.5 block">
                       {fmt(entry.creado_en)}
                     </span>
+                    {desc && (
+                      <span className="text-xs text-[var(--text-muted)] italic leading-tight block mt-0.5">
+                        {desc}
+                      </span>
+                    )}
                   </div>
                 </div>
               );
@@ -515,7 +589,9 @@ export default function ProyectoDetailClient({
                       </Link>
                       <span className="ml-2 text-xs text-[var(--text-muted)]">{a.actor_tipo}</span>
                     </td>
-                    <td className="px-4 py-3 text-[var(--text-muted)]">{a.rol ?? "—"}</td>
+                    <td className="px-4 py-3 text-[var(--text-muted)]">
+                      {a.rol ? (ROL_ACTOR_PROYECTO_LABEL[a.rol] ?? a.rol) : "—"}
+                    </td>
                     {canManage && (
                       <td className="px-4 py-3 text-right">
                         <button
@@ -540,9 +616,13 @@ export default function ProyectoDetailClient({
                 <option key={a.id} value={a.id}>{a.nombre}</option>
               ))}
             </select>
-            <input value={rolActor} onChange={(e) => setRolActor(e.target.value)}
-              placeholder="Rol (ej: Líder técnico)"
-              className="rounded-lg border border-[var(--border)] bg-white px-3 py-1.5 text-sm text-[var(--text)] focus:outline-none focus:border-[var(--accent)] w-44" />
+            <select value={rolActor} onChange={(e) => setRolActor(e.target.value)}
+              className="rounded-lg border border-[var(--border)] bg-white px-3 py-1.5 text-sm text-[var(--text)] focus:outline-none focus:border-[var(--accent)]">
+              <option value="">Rol (opcional)</option>
+              {Object.entries(ROL_ACTOR_PROYECTO_LABEL).map(([k, v]) => (
+                <option key={k} value={k}>{v}</option>
+              ))}
+            </select>
             <button onClick={agregarActor} disabled={!actorSel || isPending}
               className="px-4 py-1.5 rounded-lg text-sm font-medium text-white bg-[var(--accent)] hover:opacity-90 disabled:opacity-40">
               Agregar

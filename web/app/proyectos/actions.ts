@@ -51,6 +51,22 @@ export async function editarEstadoProyecto(id: number, estado: string): Promise<
   }
 }
 
+export async function editarPrioridadProyecto(
+  id: number, prioridad: number | null
+): Promise<Result> {
+  try {
+    await fetchApi(`/proyectos/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ prioridad: prioridad === null ? -1 : prioridad }),
+    });
+    revalidatePath(`/proyectos/${id}`);
+    revalidatePath("/proyectos");
+    return { ok: true };
+  } catch (e: unknown) {
+    return { ok: false, error: e instanceof Error ? e.message : "Error al actualizar prioridad" };
+  }
+}
+
 export async function editarApoyosProyecto(
   id: number, apoyos_buscados: string[]
 ): Promise<Result> {

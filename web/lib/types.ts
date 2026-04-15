@@ -198,6 +198,7 @@ export interface ProyectoList {
   area_tematica: string | null;
   estado: string;
   apoyos_buscados: string[];
+  prioridad: number | null;
   iniciativa_id: number | null;
   iniciativa_titulo: string | null;
   total_actores: number;
@@ -214,6 +215,7 @@ export interface ProyectoDetail {
   area_tematica: string | null;
   estado: string;
   apoyos_buscados: string[];
+  prioridad: number | null;
   iniciativa_id: number | null;
   iniciativa_titulo: string | null;
   creado_en: string;
