@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (15 abril 2026)
+## Estado actual (16 abril 2026)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -176,12 +176,19 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - TRL actualizable por cualquiera con acceso (dato objetivo, no editorial).
 - Campos mínimos de proyecto: título, descripción, TRL (1-9), área temática, estado, actores, instrumentos, búsqueda IA contextual.
 
+**Fixes y mejoras (16 abril 2026):**
+- Tags de apoyos: useEffect para sincronizar estado local con servidor post-revalidación ✅
+- Tags de apoyos: opacity-60 durante carga (sin deshabilitar) ✅
+- keep-alive: GitHub Actions pingea /health cada 10 min → Railway no duerme ✅
+- revalidatePath optimizado: eliminado "/proyectos" innecesario de acciones del detalle ✅
+- Vinculadores: actividad cuenta por vinculador_id (no creado_por) ✅
+- Iniciativas: eliminado nombre de vinculador debajo del título en la lista ✅
+
 **Lo que está pendiente de desarrollo (ver BACKLOG.md para detalle completo):**
 - Seguridad: middleware JWT en FastAPI (para que creado_por se pueble automáticamente del token)
 - Login con Google (OAuth)
 - Datos reales del Clúster (cuando estén disponibles)
 - Dominio sinap.io en Cloudflare
-- Home dashboard: agregar métricas de proyectos
 
 ---
 
@@ -211,11 +218,10 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Home dashboard** — agregar métricas de proyectos (tarjetas de totales)
-2. **Datos reales** — cargar actores, necesidades, instrumentos del Clúster real
-3. **Crear usuarios** para el resto del equipo (vinculadores, oferentes)
-4. **Registrar dominio** sinap.io en Cloudflare
-5. **Seguridad API** — middleware JWT en FastAPI (creado_por automático del token)
+1. **Datos reales** — cargar actores, necesidades, instrumentos del Clúster real
+2. **Crear usuarios** para el resto del equipo (vinculadores, oferentes)
+3. **Registrar dominio** sinap.io en Cloudflare
+4. **Seguridad API** — middleware JWT en FastAPI (creado_por automático del token)
 
 ---
 
