@@ -54,6 +54,7 @@ export default function ProyectoDetailClient({
 }) {
   const canManage = CAN_MANAGE.includes(rol);
   const [isPending, startTransition] = useTransition();
+  const [isApoyosPending, startApoyosTransition] = useTransition();
 
   // ── Header ───────────────────────────────────────────────────
   const [editandoHeader, setEditandoHeader] = useState(false);
@@ -104,7 +105,7 @@ export default function ProyectoDetailClient({
       ? apoyosActivos.filter((a) => a !== apoyo)
       : [...apoyosActivos, apoyo];
     setApoyosActivos(nuevos);
-    startTransition(async () => {
+    startApoyosTransition(async () => {
       await editarApoyosProyecto(proyecto.id, nuevos);
     });
   }
@@ -371,7 +372,7 @@ export default function ProyectoDetailClient({
               <button
                 key={apoyo}
                 onClick={() => toggleApoyo(apoyo)}
-                disabled={isPending}
+                disabled={isApoyosPending}
                 className={`text-xs px-3 py-1.5 rounded-full font-medium transition-all ${
                   canManage ? "cursor-pointer hover:opacity-80" : "cursor-default"
                 } ${activo ? "shadow-sm" : ""}`}
