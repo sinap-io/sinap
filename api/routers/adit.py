@@ -29,7 +29,7 @@ async def list_vinculadores(
             COUNT(DISTINCT p.id)   AS total_proyectos
         FROM vinculador v
         LEFT JOIN zona z ON z.id = v.zona_id
-        LEFT JOIN iniciativa i ON i.creado_por = v.usuario_id
+        LEFT JOIN iniciativa i ON i.vinculador_id = v.id
         LEFT JOIN hito h       ON h.creado_por = v.usuario_id
         LEFT JOIN proyecto p   ON p.creado_por = v.usuario_id
         {where}
@@ -55,13 +55,13 @@ async def get_vinculador(vid: int, db: asyncpg.Connection = Depends(get_db)):
 
     uid = row["usuario_id"]
 
-    # Iniciativas creadas
+    # Iniciativas asignadas a este vinculador
     iniciativas = await db.fetch("""
         SELECT id, titulo, tipo, estado, creado_en
         FROM iniciativa
-        WHERE creado_por = $1
+        WHERE vinculador_id = $1
         ORDER BY creado_en DESC
-    """, uid) if uid else []
+    """, vid)
 
     # Hitos creados
     hitos = await db.fetch("""
@@ -138,7 +138,7 @@ async def patch_vinculador(
                COUNT(DISTINCT p.id) AS total_proyectos
         FROM vinculador v
         LEFT JOIN zona z ON z.id = v.zona_id
-        LEFT JOIN iniciativa i ON i.creado_por = v.usuario_id
+        LEFT JOIN iniciativa i ON i.vinculador_id = v.id
         LEFT JOIN hito h       ON h.creado_por = v.usuario_id
         LEFT JOIN proyecto p   ON p.creado_por = v.usuario_id
         WHERE v.id = $1

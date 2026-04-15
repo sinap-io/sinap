@@ -173,17 +173,12 @@ export default function IniciativasClient({
                   {TIPO_INICIATIVA_LABEL[ini.tipo] ?? ini.tipo}
                 </span>
 
-                {/* Título + vinculador */}
+                {/* Título */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-[var(--text)] truncate
                                 group-hover:text-[var(--accent)] transition-colors">
                     {ini.titulo}
                   </p>
-                  {ini.vinculador_nombre && (
-                    <p className="text-xs text-[var(--text-muted)] mt-0.5">
-                      {ini.vinculador_nombre}
-                    </p>
-                  )}
                 </div>
 
                 {/* Stats */}
