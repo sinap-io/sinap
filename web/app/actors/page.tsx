@@ -5,7 +5,12 @@ import type { ActorList } from "@/lib/types";
 import ActorsClient from "@/components/actors/ActorsClient";
 
 export default async function ActorsPage() {
-  const actors = await fetchApi<ActorList[]>("/actors");
+  let actors: ActorList[] = [];
+  try {
+    actors = await fetchApi<ActorList[]>("/actors");
+  } catch {
+    // API no disponible — se muestra la lista vacía
+  }
 
   const totales = {
     empresa:      actors.filter((a) => a.tipo === "empresa").length,
