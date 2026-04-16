@@ -190,6 +190,10 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Rol `manager` agregado a CAN_MANAGE en /iniciativas list (faltaba, inconsistente con /nueva) ✅
 - Página 404 personalizada en español (`web/app/not-found.tsx`) ✅
 - TypeScript type check: sin errores ✅
+- `actors/page.tsx`: try/catch → muestra lista vacía si la API está caída ✅
+- `iniciativas/[id]/page.tsx`: fetch de actores aislado → la iniciativa se muestra aunque falle ✅
+- Nav responsive: top bar + drawer hamburger en mobile (< md), sidebar fija en desktop ✅
+- `layout.tsx`: `pt-14 md:pt-0` + padding responsive para mobile ✅
 
 **Lo que está pendiente de desarrollo (ver BACKLOG.md para detalle completo):**
 - Seguridad: middleware JWT en FastAPI (para que creado_por se pueble automáticamente del token)
