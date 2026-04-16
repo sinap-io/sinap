@@ -216,12 +216,15 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ## Próximo paso concreto
 
+⚠️ **Datos reales diferidos** — no se cargan hasta que el desarrollo esté completo y el Clúster los tenga disponibles (puede llevar semanas). Los datos ficticios de prueba son suficientes para demos.
+
 En orden de prioridad:
 
-1. **Datos reales** — cargar actores, necesidades, instrumentos del Clúster real
-2. **Crear usuarios** para el resto del equipo (vinculadores, oferentes)
-3. **Registrar dominio** sinap.io en Cloudflare
-4. **Seguridad API** — middleware JWT en FastAPI (creado_por automático del token)
+1. **Limpieza técnica** — eliminar console.log de debug en proxy.ts y auth.ts
+2. **Seguridad API** — middleware JWT en FastAPI (creado_por automático del token)
+3. **Crear usuarios** para el resto del equipo (vinculadores, oferentes)
+4. **Registrar dominio** sinap.io en Cloudflare
+5. **Datos reales** — cuando el Clúster los tenga disponibles
 
 ---
 
