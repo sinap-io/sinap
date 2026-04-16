@@ -73,14 +73,14 @@ export default async function InformePage({
         <p className="text-xs font-semibold tracking-widest uppercase text-[var(--accent)] mb-1">
           Inteligencia del ecosistema
         </p>
-        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-3">
+        <h1 className="text-3xl font-bold text-[var(--text)] mb-3">
           Informe semanal
         </h1>
 
         {/* Período + fecha de emisión */}
         <div className="flex flex-col gap-1">
           {data?.periodo && (
-            <p className="text-sm font-medium text-[var(--text-primary)]">
+            <p className="text-sm font-medium text-[var(--text)]">
               {data.periodo}
             </p>
           )}

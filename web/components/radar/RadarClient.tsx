@@ -14,12 +14,12 @@ interface Props {
 
 const mdComponents = {
   h2: ({ children }: { children?: React.ReactNode }) => (
-    <h2 className="text-lg font-bold text-[var(--text-primary)] mt-8 mb-3 pb-2 border-b border-[var(--border)]">
+    <h2 className="text-lg font-bold text-[var(--text)] mt-8 mb-3 pb-2 border-b border-[var(--border)]">
       {children}
     </h2>
   ),
   h3: ({ children }: { children?: React.ReactNode }) => (
-    <h3 className="text-base font-semibold text-[var(--text-primary)] mt-5 mb-2">
+    <h3 className="text-base font-semibold text-[var(--text)] mt-5 mb-2">
       {children}
     </h3>
   ),
@@ -29,7 +29,7 @@ const mdComponents = {
     </p>
   ),
   strong: ({ children }: { children?: React.ReactNode }) => (
-    <strong className="font-semibold text-[var(--text-primary)]">{children}</strong>
+    <strong className="font-semibold text-[var(--text)]">{children}</strong>
   ),
   ul: ({ children }: { children?: React.ReactNode }) => (
     <ul className="space-y-2 mb-4">{children}</ul>
@@ -75,7 +75,7 @@ export default function RadarClient({ radar, temaActivo, emitidoEn, trimestre, r
       {/* Informe */}
       <article className="radar-print">
         <div className="print:block hidden mb-6">
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+          <h1 className="text-2xl font-bold text-[var(--text)]">
             Radar del Sector — Clúster de Biotecnología de Córdoba
           </h1>
           <p className="text-sm text-[var(--text-muted)] mt-1">

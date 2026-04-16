@@ -61,12 +61,12 @@ export default async function RadarPage({
         <p className="text-xs font-semibold tracking-widest uppercase text-[var(--accent)] mb-1">
           Inteligencia sectorial
         </p>
-        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-3">
+        <h1 className="text-3xl font-bold text-[var(--text)] mb-3">
           Radar del sector
         </h1>
         <div className="flex flex-col gap-1">
           {data?.trimestre && (
-            <p className="text-sm font-medium text-[var(--text-primary)]">
+            <p className="text-sm font-medium text-[var(--text)]">
               {data.trimestre}
             </p>
           )}

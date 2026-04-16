@@ -16,7 +16,7 @@ const components: Components = {
   h3: ({ children }) => (
     <h3
       className="text-xs font-semibold uppercase tracking-widest mt-5 mb-2"
-      style={{ color: "var(--text-primary)" }}
+      style={{ color: "var(--text)" }}
     >
       {children}
     </h3>
@@ -27,7 +27,7 @@ const components: Components = {
     </p>
   ),
   strong: ({ children }) => (
-    <strong style={{ color: "var(--text-primary)", fontWeight: 600 }}>{children}</strong>
+    <strong style={{ color: "var(--text)", fontWeight: 600 }}>{children}</strong>
   ),
   ul: ({ children }) => <ul className="space-y-1 mb-3 pl-4">{children}</ul>,
   li: ({ children }) => (

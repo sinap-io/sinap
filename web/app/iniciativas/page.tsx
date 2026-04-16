@@ -6,7 +6,7 @@ import { fetchApi } from "@/lib/api";
 import type { ActorList, IniciativaList } from "@/lib/types";
 import IniciativasClient from "@/components/iniciativas/IniciativasClient";
 
-const CAN_MANAGE = ["admin", "directivo", "vinculador"];
+const CAN_MANAGE = ["admin", "manager", "directivo", "vinculador"];
 
 export default async function IniciativasPage() {
   const session = await auth();
