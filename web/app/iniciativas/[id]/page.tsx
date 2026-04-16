@@ -20,7 +20,12 @@ export default async function IniciativaDetailPage({
     throw e;
   }
 
-  const actors = await fetchApi<ActorList[]>("/actors");
+  let actors: ActorList[] = [];
+  try {
+    actors = await fetchApi<ActorList[]>("/actors");
+  } catch {
+    // La iniciativa se muestra igual; solo el dropdown de actores queda vacío
+  }
 
   return (
     <div className="space-y-8 max-w-3xl">
