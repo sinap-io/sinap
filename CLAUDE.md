@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (16 abril 2026)
+## Estado actual (16 abril 2026 — tarde)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -184,6 +184,13 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Vinculadores: actividad cuenta por vinculador_id (no creado_por) ✅
 - Iniciativas: eliminado nombre de vinculador debajo del título en la lista ✅
 
+**Revisión pre-demo (16 abril 2026 — tarde):**
+- Rutas /adit/* convertidas a redirects (→ /vinculadores y /vinculadores/[id]) ✅
+- Variable CSS `--text-primary` corregida a `--text` en login, radar e informe (no existía) ✅
+- Rol `manager` agregado a CAN_MANAGE en /iniciativas list (faltaba, inconsistente con /nueva) ✅
+- Página 404 personalizada en español (`web/app/not-found.tsx`) ✅
+- TypeScript type check: sin errores ✅
+
 **Lo que está pendiente de desarrollo (ver BACKLOG.md para detalle completo):**
 - Seguridad: middleware JWT en FastAPI (para que creado_por se pueble automáticamente del token)
 - Login con Google (OAuth)
@@ -220,11 +227,12 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Limpieza técnica** — eliminar console.log de debug en proxy.ts y auth.ts
-2. **Seguridad API** — middleware JWT en FastAPI (creado_por automático del token)
+1. ~~**Limpieza técnica**~~ ✅ — completada (console.log ya estaban limpios, CSS vars corregidas)
+2. **Demo con equipo del Clúster** — mostrar estado actual de la plataforma
 3. **Crear usuarios** para el resto del equipo (vinculadores, oferentes)
-4. **Registrar dominio** sinap.io en Cloudflare
-5. **Datos reales** — cuando el Clúster los tenga disponibles
+4. **Seguridad API** — middleware JWT en FastAPI (creado_por automático del token)
+5. **Registrar dominio** sinap.io en Cloudflare
+6. **Datos reales** — cuando el Clúster los tenga disponibles
 
 ---
 
