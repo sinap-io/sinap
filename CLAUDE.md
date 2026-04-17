@@ -231,12 +231,13 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. ~~**Limpieza técnica**~~ ✅ — completada (console.log ya estaban limpios, CSS vars corregidas)
-2. **Demo con equipo del Clúster** — mostrar estado actual de la plataforma
-3. **Crear usuarios** para el resto del equipo (vinculadores, oferentes)
-4. **Seguridad API** — middleware JWT en FastAPI (creado_por automático del token)
-5. **Registrar dominio** sinap.io en Cloudflare
-6. **Datos reales** — cuando el Clúster los tenga disponibles
+1. ~~**Limpieza técnica**~~ ✅ — completada
+2. **Fix Server Actions** — agregar verificación de rol al inicio de cada action que muta datos (~15 actions, una hora de trabajo). Hacerlo antes del demo.
+3. **Demo con equipo del Clúster** — mostrar estado actual de la plataforma
+4. **Crear usuarios** para el resto del equipo — después del demo
+5. **JWT middleware en FastAPI** — creado_por automático del token
+6. **Registrar dominio** sinap.io en Cloudflare
+7. **Datos reales** — cuando el Clúster los tenga disponibles
 
 ---
 
