@@ -1,9 +1,18 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
 import { fetchApi } from "@/lib/api";
 
 interface Result { ok: boolean; error?: string }
+
+const ROLES_PERMITIDOS = ["admin", "manager", "directivo", "vinculador"];
+
+async function requireRol(): Promise<Result | null> {
+  const session = await auth();
+  const rol = (session?.user as { rol?: string })?.rol ?? "";
+  return ROLES_PERMITIDOS.includes(rol) ? null : { ok: false, error: "No autorizado." };
+}
 
 export async function crearProyecto(data: {
   titulo: string;
@@ -14,6 +23,8 @@ export async function crearProyecto(data: {
   apoyos_buscados?: string[];
   iniciativa_id?: number;
 }): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi("/proyectos", { method: "POST", body: JSON.stringify(data) });
     revalidatePath("/proyectos");
@@ -24,6 +35,8 @@ export async function crearProyecto(data: {
 }
 
 export async function editarTRLProyecto(id: number, trl: number): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/proyectos/${id}`, {
       method: "PATCH",
@@ -37,6 +50,8 @@ export async function editarTRLProyecto(id: number, trl: number): Promise<Result
 }
 
 export async function editarEstadoProyecto(id: number, estado: string): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/proyectos/${id}`, {
       method: "PATCH",
@@ -52,6 +67,8 @@ export async function editarEstadoProyecto(id: number, estado: string): Promise<
 export async function editarPrioridadProyecto(
   id: number, prioridad: number | null
 ): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/proyectos/${id}`, {
       method: "PATCH",
@@ -67,6 +84,8 @@ export async function editarPrioridadProyecto(
 export async function editarApoyosProyecto(
   id: number, apoyos_buscados: string[]
 ): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/proyectos/${id}`, {
       method: "PATCH",
@@ -83,6 +102,8 @@ export async function agregarHitoProyecto(
   id: number,
   data: { tipo: string; descripcion?: string; fecha: string; evidencia_url?: string }
 ): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/proyectos/${id}/hitos`, {
       method: "POST",
@@ -96,6 +117,8 @@ export async function agregarHitoProyecto(
 }
 
 export async function quitarHitoProyecto(id: number, hito_id: number): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/proyectos/${id}/hitos/${hito_id}`, { method: "DELETE" });
     revalidatePath(`/proyectos/${id}`);
@@ -109,6 +132,8 @@ export async function editarCamposProyecto(
   id: number,
   campos: { titulo?: string; descripcion?: string; area_tematica?: string; iniciativa_id?: number }
 ): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/proyectos/${id}`, {
       method: "PATCH",
@@ -124,6 +149,8 @@ export async function editarCamposProyecto(
 export async function agregarActorProyecto(
   id: number, actor_id: number, rol?: string
 ): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/proyectos/${id}/actores`, {
       method: "POST",
@@ -137,6 +164,8 @@ export async function agregarActorProyecto(
 }
 
 export async function quitarActorProyecto(id: number, actor_id: number): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/proyectos/${id}/actores/${actor_id}`, { method: "DELETE" });
     revalidatePath(`/proyectos/${id}`);
@@ -149,6 +178,8 @@ export async function quitarActorProyecto(id: number, actor_id: number): Promise
 export async function agregarInstrumentoProyecto(
   id: number, instrumento_id: number
 ): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/proyectos/${id}/instrumentos`, {
       method: "POST",
@@ -167,6 +198,8 @@ export async function agregarInstrumentoProyecto(
 export async function quitarInstrumentoProyecto(
   id: number, instrumento_id: number
 ): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/proyectos/${id}/instrumentos/${instrumento_id}`, { method: "DELETE" });
     revalidatePath(`/proyectos/${id}`);

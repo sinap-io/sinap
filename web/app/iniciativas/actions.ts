@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 import { fetchApi, ApiError } from "@/lib/api";
 import type { IniciativaList } from "@/lib/types";
 
@@ -10,6 +11,13 @@ export interface ActionError  { ok: false; message: string }
 type Result = ActionResult | ActionError;
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const ROLES_PERMITIDOS = ["admin", "manager", "directivo", "vinculador"];
+
+async function requireRol(): Promise<ActionError | null> {
+  const session = await auth();
+  const rol = (session?.user as { rol?: string })?.rol ?? "";
+  return ROLES_PERMITIDOS.includes(rol) ? null : { ok: false, message: "No autorizado." };
+}
 
 /** DELETE con body vacío — fetchApi espera JSON pero 204 no tiene body */
 async function apiDelete(path: string) {
@@ -26,6 +34,8 @@ export async function crearIniciativa(data: {
   notas?: string | null;
   vinculador_id?: number | null;
 }): Promise<never | ActionError> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     const ini = await fetchApi<IniciativaList>("/iniciativas", {
       method: "POST",
@@ -47,6 +57,8 @@ export async function editarTituloDescripcion(
   titulo: string,
   descripcion: string | null,
 ): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/iniciativas/${id}`, {
       method: "PATCH",
@@ -66,6 +78,8 @@ export async function editarTituloDescripcion(
 export async function cambiarEstado(
   id: number, estado: string,
 ): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/iniciativas/${id}`, {
       method: "PATCH",
@@ -86,6 +100,8 @@ export async function editarNotas(
   id: number,
   notas: string | null,
 ): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/iniciativas/${id}`, {
       method: "PATCH",
@@ -105,6 +121,8 @@ export async function agregarActor(
   rol: string,
   referente?: string | null,
 ): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/iniciativas/${id}/actores`, {
       method: "POST",
@@ -123,6 +141,8 @@ export async function quitarActor(
   actor_id: number,
   rol: string,
 ): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await apiDelete(`/iniciativas/${id}/actores/${actor_id}/${rol}`);
     revalidatePath(`/iniciativas/${id}`);
@@ -144,6 +164,8 @@ export async function agregarHito(
     evidencia_url?: string | null;
   },
 ): Promise<Result> {
+  const authErr = await requireRol();
+  if (authErr) return authErr;
   try {
     await fetchApi(`/iniciativas/${id}/hitos`, {
       method: "POST",
