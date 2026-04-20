@@ -73,6 +73,10 @@ INICIATIVAS EN CURSO:
 Formato: título | tipo | estado | actores vinculados | total hitos
 {iniciativas}
 
+PROYECTOS REGISTRADOS:
+Formato: título | área temática | TRL (1-9) | estado | apoyos buscados | prioridad (1=crítica, 4=baja)
+{proyectos}
+
 HITOS RECIENTES — ÚLTIMOS 7 DÍAS:
 Formato: iniciativa | tipo | descripción | fecha
 {hitos_semana}
@@ -106,10 +110,13 @@ Si todas las necesidades urgentes tienen cobertura potencial, decilo.
 Para las iniciativas en_curso: ¿cuáles tienen actividad reciente? ¿cuáles no registraron hitos en más de 30 días?
 Mencioná cada iniciativa estancada por nombre con su último hito (si existe).
 
+## Proyectos
+Listá los proyectos activos con su TRL actual y los apoyos que están buscando. ¿Hay proyectos con TRL avanzado (6+) sin iniciativa de financiamiento vinculada? ¿Hay proyectos buscando socio tecnológico que podrían matchear con capacidades disponibles en el ecosistema?
+
 ## Financiamiento
-Cruzá actores con necesidades activas contra los instrumentos de financiamiento disponibles.
-¿Hay algún actor con una necesidad que podría calificar para algún fondo, pero no tiene iniciativa de financiamiento en curso?
-Sé específico: actor → instrumento → por qué aplica.
+Cruzá actores con necesidades activas y proyectos que buscan financiamiento contra los instrumentos disponibles.
+¿Hay algún actor o proyecto que podría calificar para algún fondo, pero no tiene iniciativa de financiamiento en curso?
+Sé específico: actor/proyecto → instrumento → por qué aplica.
 
 ## Esta semana
 Qué actividad registró la plataforma en los últimos 7 días según los hitos. Si no hubo actividad, decilo.
@@ -207,6 +214,16 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
         LIMIT 15
     """)
 
+    proyectos = await db.fetch("""
+        SELECT p.titulo, p.area_tematica, p.trl, p.estado,
+               array_to_string(p.apoyos_buscados, ', ') as apoyos,
+               p.prioridad
+        FROM proyecto p
+        WHERE p.estado NOT IN ('archivado', 'finalizado')
+        ORDER BY p.prioridad ASC NULLS LAST, p.id DESC
+        LIMIT 20
+    """)
+
     estancadas = await db.fetch("""
         SELECT i.titulo, i.estado, i.tipo,
                MAX(h.fecha) as ultimo_hito,
@@ -235,6 +252,7 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
         "total_gaps": len(gaps),
         "total_instrumentos_activos": len(instrumentos),
         "total_iniciativas_activas": len(iniciativas_rows),
+        "total_proyectos": len(proyectos),
     }
 
     # Calcular período (semana actual: lunes → domingo)
@@ -262,6 +280,7 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
                     gaps=fmt(gaps, ["descripcion", "origen", "status"]),
                     instrumentos=fmt(instrumentos, ["nombre", "organismo", "tipo", "monto_maximo", "plazo_ejecucion"]),
                     iniciativas=fmt(iniciativas_rows, ["titulo", "tipo", "estado", "total_actores", "total_hitos"]),
+                    proyectos=fmt(proyectos, ["titulo", "area_tematica", "trl", "estado", "apoyos", "prioridad"]),
                     hitos_semana=fmt(hitos_semana, ["iniciativa", "tipo", "descripcion", "fecha"]),
                     hitos_90=fmt(hitos_90, ["iniciativa", "tipo", "descripcion", "fecha"]),
                     estancadas=fmt(estancadas, ["titulo", "estado", "ultimo_hito", "total_hitos"]),
