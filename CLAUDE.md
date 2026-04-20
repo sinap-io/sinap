@@ -235,9 +235,10 @@ En orden de prioridad:
 2. **Fix Server Actions** — agregar verificación de rol al inicio de cada action que muta datos (~15 actions, una hora de trabajo). Hacerlo antes del demo.
 3. **Demo con equipo del Clúster** — mostrar estado actual de la plataforma
 4. **Crear usuarios** para el resto del equipo — después del demo
-5. **JWT middleware en FastAPI** — creado_por automático del token
-6. **Registrar dominio** sinap.io en Cloudflare
-7. **Datos reales** — cuando el Clúster los tenga disponibles
+5. **Carga masiva + matching en batch** ⭐ — importación CSV de proyectos (ej: lote CONICET) con matching automático contra servicios/necesidades/instrumentos/iniciativas existentes. El buscador IA ya hace esto para un proyecto a la vez — hay que extenderlo para N proyectos en paralelo. Pedido de Pablo.
+6. **JWT middleware en FastAPI** — creado_por automático del token
+7. **Registrar dominio** sinap.io en Cloudflare
+8. **Datos reales** — cuando el Clúster los tenga disponibles
 
 ---
 
