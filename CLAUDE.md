@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (16 abril 2026 — tarde)
+## Estado actual (20 abril 2026)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -184,6 +184,13 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Vinculadores: actividad cuenta por vinculador_id (no creado_por) ✅
 - Iniciativas: eliminado nombre de vinculador debajo del título en la lista ✅
 
+**Cambios pre-demo (20 abril 2026):**
+- Informe IA incluye proyectos: nueva sección + query + total_proyectos en métricas ✅
+- "Servicios" renombrado a "Ofertas" en toda la UI (nav, home, páginas, actores) ✅
+- "Necesidades" renombrado a "Demandas" en toda la UI ✅
+- Informe IA: reemplazada métrica "Actores" por "Proyectos" (6 métricas justas) ✅
+- Carga masiva + matching en batch agregado como prioridad post-demo (pedido Pablo) ✅
+
 **Revisión pre-demo (16 abril 2026 — tarde):**
 - Rutas /adit/* convertidas a redirects (→ /vinculadores y /vinculadores/[id]) ✅
 - Variable CSS `--text-primary` corregida a `--text` en login, radar e informe (no existía) ✅
@@ -273,6 +280,7 @@ En orden de prioridad:
 
 - **Para cerrar sesión:** el usuario dice "cerramos" → actualizar CLAUDE.md + ARCHITECTURE.md + PROYECTO.md → commit
 - **Para iniciar sesión:** el usuario dice "continuamos" → Claude ya leyó este archivo, arrancar directamente
+- **Durante demos:** si el mensaje empieza con `demo:` → responder en 1-2 líneas máximo, directo, sin explicaciones. Sebastián necesita leerlo y repetirlo rápido.
 
 ---
 
