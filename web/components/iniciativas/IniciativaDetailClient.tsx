@@ -386,7 +386,7 @@ export default function IniciativaDetailClient({
 
           {iniciativa.necesidades.length > 0 && (
             <div>
-              <p className="text-xs font-medium text-[var(--text-muted)] mb-2">Necesidades</p>
+              <p className="text-xs font-medium text-[var(--text-muted)] mb-2">Demandas</p>
               <div className="space-y-1.5">
                 {iniciativa.necesidades.map((n) => (
                   <div key={n.necesidad_id}

@@ -34,16 +34,16 @@ export default async function ActorDetailPage({
       {/* Header con etapa editable */}
       <ActorHeader actor={actor} />
 
-      {/* Servicios */}
+      {/* Ofertas */}
       <section>
         <h2 className="text-lg font-semibold text-[var(--text)] mb-4">
-          Servicios ofrecidos
+          Ofertas
           <span className="ml-2 text-sm font-normal text-[var(--text-muted)]">
             ({actor.servicios.length})
           </span>
         </h2>
         {actor.servicios.length === 0 ? (
-          <p className="text-[var(--text-muted)] text-sm">No hay servicios registrados.</p>
+          <p className="text-[var(--text-muted)] text-sm">No hay ofertas registradas.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {actor.servicios.map((s) => {
@@ -74,10 +74,10 @@ export default async function ActorDetailPage({
         )}
       </section>
 
-      {/* Necesidades */}
+      {/* Demandas */}
       <section>
         <h2 className="text-lg font-semibold text-[var(--text)] mb-4">
-          Necesidades declaradas
+          Demandas declaradas
           <span className="ml-2 text-sm font-normal text-[var(--text-muted)]">
             ({actor.necesidades.length})
           </span>

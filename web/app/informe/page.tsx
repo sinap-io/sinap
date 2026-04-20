@@ -57,12 +57,12 @@ export default async function InformePage({
 
   const metricas = data
     ? [
-        { label: "Actores", value: data.datos.total_actores },
-        { label: "Capacidades", value: data.datos.total_capacidades },
-        { label: "Necesidades activas", value: data.datos.total_necesidades_activas },
+        { label: "Ofertas", value: data.datos.total_capacidades },
+        { label: "Demandas activas", value: data.datos.total_necesidades_activas },
         { label: "Gaps detectados", value: data.datos.total_gaps },
         { label: "Fondos activos", value: data.datos.total_instrumentos_activos },
         { label: "Iniciativas activas", value: data.datos.total_iniciativas_activas },
+        { label: "Proyectos", value: data.datos.total_proyectos ?? 0 },
       ]
     : [];
 

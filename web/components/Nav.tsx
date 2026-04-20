@@ -40,8 +40,8 @@ function SinapLogo() {
 const links = [
   { href: "/",            label: "Inicio",         icon: Home,       roles: null },
   { href: "/actors",      label: "Actores",        icon: Users,      roles: null },
-  { href: "/services",    label: "Servicios",      icon: Wrench,     roles: null },
-  { href: "/needs",       label: "Necesidades",    icon: AlertCircle,roles: null },
+  { href: "/services",    label: "Ofertas",        icon: Wrench,     roles: null },
+  { href: "/needs",       label: "Demandas",       icon: AlertCircle,roles: null },
   { href: "/gaps",        label: "Gaps",           icon: TrendingUp, roles: null },
   { href: "/instruments", label: "Financiamiento", icon: Banknote,   roles: null },
   { href: "/search",      label: "Buscar IA",      icon: Search,     roles: null },

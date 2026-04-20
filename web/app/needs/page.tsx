@@ -23,7 +23,7 @@ export default async function NeedsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-[var(--text)] mb-1">Necesidades activas</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)] mb-1">Demandas activas</h1>
         <p className="text-[var(--text-muted)] text-sm">
           Demanda declarada por actores del ecosistema, ordenada por urgencia
         </p>

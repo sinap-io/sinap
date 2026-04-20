@@ -100,11 +100,11 @@ export default function ActorsClient({ actors }: { actors: ActorList[] }) {
                 <div className="flex gap-6 pt-3 border-t border-[var(--border)]">
                   <div className="text-center">
                     <div className="text-lg font-bold text-[var(--text)]">{actor.total_servicios}</div>
-                    <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">Servicios</div>
+                    <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">Ofertas</div>
                   </div>
                   <div className="text-center">
                     <div className="text-lg font-bold text-[var(--text)]">{actor.total_necesidades}</div>
-                    <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">Necesidades</div>
+                    <div className="text-xs text-[var(--text-muted)] uppercase tracking-wide">Demandas</div>
                   </div>
                   {actor.sitio_web && (
                     <div className="ml-auto self-end">
