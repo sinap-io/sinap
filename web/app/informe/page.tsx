@@ -16,6 +16,7 @@ interface InformeData {
     total_gaps: number;
     total_instrumentos_activos: number;
     total_iniciativas_activas: number;
+    total_proyectos: number;
   };
 }
 
