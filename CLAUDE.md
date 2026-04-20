@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (20 abril 2026)
+## Estado actual (20 abril 2026 — noche)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -206,12 +206,29 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Fix TypeScript: `total_proyectos: number` agregado a `InformeData` interface ✅ (causaba build failure en Vercel)
 - Logo PNG de Sinap en Nav (reemplaza SVG genérico) + favicon del browser ✅
 - Demo realizada con el Clúster ✅
+- 3 usuarios directivos creados: Rodrigo Asili, Iván (apellido pendiente), Andrés Basso ✅
+
+**Post-demo (20 abril 2026 — noche):**
+- **Fix Server Actions** ✅ — 20 funciones de mutación en 4 archivos (iniciativas, proyectos, actores, vinculadores) verifican rol antes de ejecutar
+- **Loading skeletons** ✅ — `loading.tsx` con skeleton animado en 6 rutas: iniciativas, proyectos, actores, vinculadores, informe, radar
+
+**Scope definido para el 1/5/2026 (lanzamiento con datos reales):**
+1. ✅ Fix Server Actions
+2. Panel admin de usuarios (`/admin/usuarios`) — gestión sin terminal
+3. Dominio sinap.io en Cloudflare
+4. Buscador global con embeddings (pgvector + OpenAI text-embedding-3-small) — cross-módulo
+5. ✅ Loading feedback
+6. Filtros persistentes en URL (useSearchParams) — iniciativas, proyectos, actores
+
+**Post 1/5:**
+- Matching semántico por entidad (B1)
+- Carga masiva CSV + matching en batch (B2) — pedido Pablo
+- Panel de gráficos / evolución temporal
+- JWT middleware en FastAPI
 
 **Lo que está pendiente de desarrollo (ver BACKLOG.md para detalle completo):**
-- **Fix Server Actions** — agregar verificación de rol al inicio de cada action de mutación (~15 actions)
-- Crear usuarios para el resto del equipo (vinculadores, oferentes) — post-demo
+- Crear usuarios para el resto del equipo (vinculadores, oferentes)
 - Seguridad: middleware JWT en FastAPI (para que creado_por se pueble automáticamente del token)
-- Bulk CSV import + batch matching — importar N proyectos y cruzarlos con ofertas/demandas/instrumentos/iniciativas (pedido de Pablo)
 - Login con Google (OAuth)
 - Datos reales del Clúster (cuando estén disponibles)
 - Dominio sinap.io en Cloudflare
@@ -246,12 +263,13 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Fix Server Actions** — verificación de rol al inicio de cada action de mutación (~15 acciones)
-2. **Crear usuarios** — para el resto del equipo del Clúster (post-demo)
-3. **Seguridad API** — middleware JWT en FastAPI (creado_por automático del token)
+1. ~~**Fix Server Actions**~~ ✅ — completado
+2. ~~**Loading skeletons**~~ ✅ — completado
+3. **Panel admin de usuarios** — `/admin/usuarios`, gestión sin terminal (editar nombre/rol, agregar usuario)
 4. **Registrar dominio** sinap.io en Cloudflare
-5. **Bulk CSV import + batch matching** ⭐ — importación CSV de proyectos (ej: lote CONICET) con matching automático contra ofertas/demandas/instrumentos/iniciativas. El buscador IA ya hace esto para un proyecto a la vez — extenderlo para N en paralelo. Pedido de Pablo.
-6. **Datos reales** — cuando el Clúster los tenga disponibles
+5. **Buscador global con embeddings** — pgvector en Neon + OpenAI text-embedding-3-small, búsqueda cross-módulo
+6. **Filtros persistentes en URL** — useSearchParams en iniciativas, proyectos, actores
+7. **Datos reales** — borrar ficticios y cargar datos reales del Clúster el 1/5/2026
 
 ---
 
