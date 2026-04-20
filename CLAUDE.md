@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (16 abril 2026)
+## Estado actual (20 abril 2026)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -31,6 +31,8 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - **Rol de Pablo resuelto** ✅ — figura como "Manager" correctamente
 - **Módulo Proyectos** ✅ — CRUD completo + actores + instrumentos + historial TRL + buscador IA
 - **Módulo Vinculadores** ✅ — ex-ADIT, renombrado. Panel de actividad, detalle por vinculador, zona editable
+- **Renombrado Servicios→Ofertas / Necesidades→Demandas** ✅ — en Nav, home, actores, iniciativas (solo UI, rutas y DB sin cambios)
+- **Informe IA incluye proyectos** ✅ — datos de proyectos activos en contexto del prompt + sección "## Proyectos" + métrica "Proyectos" en header
 
 **Branch activo:** `main` — todo mergeado y deployado.
 
@@ -184,8 +186,20 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Vinculadores: actividad cuenta por vinculador_id (no creado_por) ✅
 - Iniciativas: eliminado nombre de vinculador debajo del título en la lista ✅
 
+**Cambios pre-demo (20 abril 2026):**
+- Renombrado "Servicios"→"Ofertas" y "Necesidades"→"Demandas" en toda la UI ✅
+  - Nav.tsx, page.tsx (home), services/page.tsx, needs/page.tsx, ActorsClient.tsx, actors/[id]/page.tsx, IniciativaDetailClient.tsx
+  - Rutas `/services` y `/needs` sin cambiar. DB sin cambiar. Solo labels visuales.
+- Informe IA: proyectos integrados al prompt ✅ — SQL query de proyectos activos, sección "## Proyectos", métrica en header
+- Informe IA: métrica header cambiada — "Actores" reemplazado por "Proyectos" (6 métricas totales) ✅
+- Fix TypeScript: `total_proyectos: number` agregado a `InformeData` interface ✅ (causaba build failure en Vercel)
+- Demo realizada con el Clúster ✅
+
 **Lo que está pendiente de desarrollo (ver BACKLOG.md para detalle completo):**
+- **Fix Server Actions** — agregar verificación de rol al inicio de cada action de mutación (~15 actions)
+- Crear usuarios para el resto del equipo (vinculadores, oferentes) — post-demo
 - Seguridad: middleware JWT en FastAPI (para que creado_por se pueble automáticamente del token)
+- Bulk CSV import + batch matching — importar N proyectos y cruzarlos con ofertas/demandas/instrumentos/iniciativas (pedido de Pablo)
 - Login con Google (OAuth)
 - Datos reales del Clúster (cuando estén disponibles)
 - Dominio sinap.io en Cloudflare
@@ -220,11 +234,12 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Limpieza técnica** — eliminar console.log de debug en proxy.ts y auth.ts
-2. **Seguridad API** — middleware JWT en FastAPI (creado_por automático del token)
-3. **Crear usuarios** para el resto del equipo (vinculadores, oferentes)
+1. **Fix Server Actions** — verificación de rol al inicio de cada action de mutación (~15 acciones)
+2. **Crear usuarios** — para el resto del equipo del Clúster (post-demo)
+3. **Seguridad API** — middleware JWT en FastAPI (creado_por automático del token)
 4. **Registrar dominio** sinap.io en Cloudflare
-5. **Datos reales** — cuando el Clúster los tenga disponibles
+5. **Bulk CSV import + batch matching** — importar proyectos desde CONICET/Excel y cruzarlos con toda la plataforma
+6. **Datos reales** — cuando el Clúster los tenga disponibles
 
 ---
 
@@ -259,6 +274,7 @@ En orden de prioridad:
 
 - **Para cerrar sesión:** el usuario dice "cerramos" → actualizar CLAUDE.md + ARCHITECTURE.md + PROYECTO.md → commit
 - **Para iniciar sesión:** el usuario dice "continuamos" → Claude ya leyó este archivo, arrancar directamente
+- **Convención demo:** mensajes que empiezan con `demo:` = respuesta de 1-2 líneas máximo, para leer y repetir rápido
 
 ---
 
@@ -268,7 +284,7 @@ En orden de prioridad:
 |---|---|---|
 | Gmail | sinap.io.dev@gmail.com | ✅ Creado |
 | GitHub | sinap-io/sinap | ✅ Organización creada, repo transferido y renombrado |
-| Neon.tech | sinap-production `ep-tiny-cell-acjfdkps` (21 tablas + migraciones 001–008) | ✅ Operativo |
+| Neon.tech | sinap-production `ep-tiny-cell-acjfdkps` (21+ tablas + migraciones 001–010) | ✅ Operativo |
 | Railway | sinap-production.up.railway.app | ✅ Operativo (FastAPI) |
 | Vercel | sinap-psi.vercel.app | ✅ Operativo (Next.js) |
 | Cloudflare / sinap.io | — | ⏳ Registrar dominio |
