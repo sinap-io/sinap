@@ -20,9 +20,9 @@ export default async function ServicesPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-[var(--text)] mb-1">Servicios del ecosistema</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)] mb-1">Ofertas del ecosistema</h1>
         <p className="text-[var(--text-muted)] text-sm">
-          {services.length} servicios disponibles en la red
+          {services.length} ofertas disponibles en la red
         </p>
       </div>
 

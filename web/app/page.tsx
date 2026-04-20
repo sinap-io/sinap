@@ -50,12 +50,12 @@ const MODULOS = [
   },
   {
     href:  "/services",
-    title: "Servicios",
+    title: "Ofertas",
     desc:  "Catálogo completo de capacidades disponibles en la red.",
   },
   {
     href:  "/needs",
-    title: "Necesidades",
+    title: "Demandas",
     desc:  "Demanda declarada por actores del ecosistema, ordenada por urgencia.",
   },
 ];
@@ -68,8 +68,8 @@ export default async function HomePage() {
 
   const METRICS = [
     { label: "Actores",            value: stats.actores },
-    { label: "Servicios",          value: stats.servicios },
-    { label: "Necesidades activas",value: stats.necesidades },
+    { label: "Ofertas",            value: stats.servicios },
+    { label: "Demandas activas",   value: stats.necesidades },
     { label: "Fondos disponibles", value: stats.instrumentos },
     { label: "Gaps detectados",    value: stats.gaps },
     { label: "Iniciativas",        value: stats.iniciativas },
