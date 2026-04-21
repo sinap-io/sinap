@@ -2,7 +2,7 @@
 
 > Documento vivo. Captura el estado del proyecto, las decisiones de diseño y el razonamiento detrás de cada una. Actualizar al cerrar cada sprint.
 >
-> Última actualización: 21 abril 2026
+> Última actualización: 21 abril 2026 (tarde)
 
 ---
 
@@ -208,6 +208,7 @@ En producción se podría migrar a `tool_use` de Anthropic para mayor confiabili
 | `POST /iniciativas/{id}/hitos` | Agregar hito |
 | `GET /vinculador/operadores` | Lista de vinculadores disponibles |
 | `GET /informe` | Informe analítico con Claude — análisis cruzado entre módulos |
+| `POST /asistente` | Chat conversacional — Claude consulta ecosistema completo en lenguaje natural |
 
 ---
 
@@ -245,6 +246,7 @@ Las rutas `/vinculador/*` redirigen a `/iniciativas/*` (código legacy, no elimi
 | `/proyectos/[id]` | Server (dynamic) | Detalle editable: TRL, apoyos, hitos timeline, actores, instrumentos |
 | `/vinculadores` | Server (dynamic) | Lista de vinculadores activos con barra de actividad |
 | `/vinculadores/[id]` | Server (dynamic) | Detalle del vinculador: iniciativas, hitos, proyectos, cambios TRL |
+| `/asistente` | Client | Chat conversacional con IA — contexto completo del ecosistema + descarga PDF |
 
 ---
 

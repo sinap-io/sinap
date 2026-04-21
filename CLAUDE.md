@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (21 abril 2026)
+## Estado actual (21 abril 2026 — sesión de tarde)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -33,6 +33,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - **Módulo Vinculadores** ✅ — ex-ADIT, renombrado. Panel de actividad, detalle por vinculador, zona editable
 - **Renombrado Servicios→Ofertas / Necesidades→Demandas** ✅ — en Nav, home, actores, iniciativas (solo UI, rutas y DB sin cambios)
 - **Informe IA incluye proyectos** ✅ — datos de proyectos activos en contexto del prompt + sección "## Proyectos" + métrica "Proyectos" en header
+- **Asistente del Ecosistema** (`/asistente`) ✅ — chat conversacional en lenguaje natural contra todos los datos del ecosistema, con descarga PDF
 
 **Branch activo:** `main` — todo mergeado y deployado.
 
@@ -211,6 +212,23 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Demo realizada con el Clúster ✅
 - 3 usuarios directivos creados: Rodrigo Asili, Iván (apellido pendiente), Andrés Basso ✅
 
+**Asistente del Ecosistema (21 abril 2026):**
+- Nuevo router `api/routers/asistente.py` — POST `/asistente` ✅
+  - Recibe array de mensajes (historial multi-turno)
+  - System prompt con contexto completo del ecosistema: actores, capacidades, necesidades, instrumentos, iniciativas, proyectos
+  - Llama a `claude-sonnet-4-6` con historial limitado a últimos 20 mensajes
+  - Regla: listar **TODAS** las entidades con conexión — no filtrar por relevancia percibida
+  - Regla: no terminar respuestas con preguntas de seguimiento ("¿Querés profundizar?")
+- Nuevas rutas `web/app/asistente/`: `page.tsx`, `actions.ts`, `AsistenteChat.tsx`, `loading.tsx` ✅
+  - Dos arrays de estado: `displayed` (muestra welcome + conversación entera) y `history` (solo mensajes reales → API)
+  - Burbujas de chat con ReactMarkdown (ya instalado en web/)
+  - Scroll automático al último mensaje
+- Nav: link "Asistente IA" con ícono Sparkles, visible para admin/manager/directivo/vinculador/oferente ✅
+- PDF descargable via `window.print()` con CSS `@media print` ✅
+  - Sección `.sinap-print` muestra solo primera consulta del usuario + última respuesta del asistente
+  - "Consulta" = primer mensaje del usuario (no el último)
+  - Sin preguntas de seguimiento al final
+
 **Post-demo (20 abril 2026 — noche):**
 - **Fix Server Actions** ✅ — 20 funciones de mutación en 4 archivos (iniciativas, proyectos, actores, vinculadores) verifican rol antes de ejecutar
 - **Loading skeletons** ✅ — `loading.tsx` con skeleton animado en 6 rutas: iniciativas, proyectos, actores, vinculadores, informe, radar
@@ -232,9 +250,9 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 1. ✅ Fix Server Actions
 2. ✅ Loading feedback
 3. ✅ Cache persistida en DB (Informe + Radar sobreviven reinicios)
-4. Panel admin de usuarios (`/admin/usuarios`) — gestión sin terminal
-5. Dominio sinap.io en Cloudflare
-6. Buscador global con embeddings (pgvector + OpenAI text-embedding-3-small) — cross-módulo
+4. ✅ Asistente del Ecosistema (`/asistente`) — chat conversacional + PDF
+5. Panel admin de usuarios (`/admin/usuarios`) — gestión sin terminal
+6. Dominio sinap.io en Cloudflare
 7. Filtros persistentes en URL (useSearchParams) — iniciativas, proyectos, actores
 
 **Post 1/5:**
@@ -283,9 +301,9 @@ En orden de prioridad:
 1. ~~**Fix Server Actions**~~ ✅ — completado
 2. ~~**Loading skeletons**~~ ✅ — completado
 3. ~~**Cache persistida en DB**~~ ✅ — completado
-4. **Panel admin de usuarios** — `/admin/usuarios`, gestión sin terminal (editar nombre/rol, agregar usuario)
-5. **Registrar dominio** sinap.io en Cloudflare
-6. **Buscador global con embeddings** — pgvector en Neon + OpenAI text-embedding-3-small, búsqueda cross-módulo
+4. ~~**Asistente del Ecosistema**~~ ✅ — completado
+5. **Panel admin de usuarios** — `/admin/usuarios`, gestión sin terminal (editar nombre/rol, agregar usuario)
+6. **Registrar dominio** sinap.io en Cloudflare
 7. **Filtros persistentes en URL** — useSearchParams en iniciativas, proyectos, actores
 8. **Datos reales** — borrar ficticios y cargar datos reales del Clúster el 1/5/2026
 

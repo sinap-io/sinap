@@ -3,7 +3,7 @@
 > Este documento está escrito para Sebastián. No asume conocimientos de programación.
 > Explica qué es cada parte del sistema, por qué existe, y cómo se conecta todo.
 >
-> Última actualización: 16 abril 2026
+> Última actualización: 21 abril 2026
 
 ---
 
@@ -118,6 +118,7 @@ Las pantallas actuales:
 | `/proyectos/[id]` | Detalle editable: TRL, apoyos, hitos, actores, instrumentos |
 | `/vinculadores` | Panel de vinculadores activos con actividad registrada |
 | `/vinculadores/[id]` | Detalle del vinculador: iniciativas, hitos, proyectos y cambios TRL |
+| `/asistente` | Asistente conversacional — chat en lenguaje natural contra el ecosistema completo |
 
 ---
 
@@ -169,6 +170,13 @@ Disponible en dos temas:
 El radar se regenera automáticamente todos los **lunes a las 9:00 AM** (Argentina) mediante un proceso automatizado en GitHub (`.github/workflows/radar-refresh.yml`). Durante la semana, todos los usuarios ven el mismo informe en caché — sin costo adicional. El botón "↻ Regenerar" es visible únicamente para admin y manager, para evitar regeneraciones no planificadas. El botón "↓ Descargar PDF" está disponible para todos los roles con acceso. Si Railway está caído cuando corre el cron, el radar queda vacío hasta el próximo lunes o hasta que un admin/manager haga clic en "Regenerar".
 
 Si la búsqueda web (Tavily) no está disponible, el sistema devuelve un error explícito en lugar de generar contenido desactualizado.
+
+**Asistente del Ecosistema (`/asistente`)**
+Chat conversacional que permite a los socios consultar el ecosistema en lenguaje natural. A diferencia del buscador IA (que responde una consulta puntual), el Asistente mantiene el hilo de la conversación: el usuario puede preguntar, recibir una respuesta, pedir que profundice en algo, o reformular.
+
+El asistente conoce el ecosistema completo — actores, capacidades, necesidades, instrumentos, iniciativas y proyectos — y presenta **toda** la información que tenga conexión con la consulta, sin filtrar por relevancia percibida. El usuario decide qué le sirve.
+
+La respuesta se puede descargar como PDF limpio: muestra la consulta original y la respuesta del asistente, sin el chat de ida y vuelta. Visible para socios (admin, manager, directivo, vinculador, oferente).
 
 **Buscador IA contextual (dentro de cada iniciativa)**
 En el detalle de cualquier iniciativa, hay un panel de búsqueda inteligente que entiende el contexto de esa iniciativa. Tres botones rápidos: "¿Quién puede aportar?", "¿Quién demanda esto?" y "¿Qué financiamiento aplica?". Consulta el ecosistema completo desde el contexto de la iniciativa específica que se está gestionando.
