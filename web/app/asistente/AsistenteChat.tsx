@@ -135,7 +135,7 @@ export default function AsistenteChat() {
   // Para el PDF: último mensaje del asistente + la consulta que lo generó
   const reversed = [...displayed].slice().reverse();
   const ultimaRespuesta = reversed.find(m => m.role === "assistant");
-  const ultimaConsulta  = reversed.find(m => m.role === "user");
+  const ultimaConsulta  = displayed.find(m => m.role === "user");
   const fechaHoy = new Date().toLocaleDateString("es-AR", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
   });
