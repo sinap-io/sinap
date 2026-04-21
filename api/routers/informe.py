@@ -25,10 +25,8 @@ class InformeResponse(BaseModel):
     datos: dict
 
 
-# Cache en memoria — se limpia al reiniciar Railway
-_cache: InformeResponse | None = None
-_cache_ts: datetime | None = None
 _CACHE_TTL_HORAS = 24
+_CACHE_TIPO = "informe"
 
 
 _PROMPT = """\
@@ -121,18 +119,25 @@ async def generar_informe(
     force: bool = False,
     db: asyncpg.Connection = Depends(get_db),
 ):
-    global _cache, _cache_ts
-
-    # Devolver cache si existe y no se fuerza regeneración
-    if not force and _cache is not None and _cache_ts is not None:
-        horas_desde = (datetime.now() - _cache_ts).total_seconds() / 3600
-        if horas_desde < _CACHE_TTL_HORAS:
-            return _cache
+    # Buscar en cache persistente en DB
+    if not force:
+        row = await db.fetchrow("""
+            SELECT contenido FROM cache_ia
+            WHERE tipo = $1
+              AND generado_en + (ttl_horas || ' hours')::interval > NOW()
+        """, _CACHE_TIPO)
+        if row:
+            return InformeResponse(**row["contenido"])
 
     try:
         result = await _generar(db)
-        _cache = result
-        _cache_ts = datetime.now()
+        # Guardar en DB (upsert)
+        await db.execute("""
+            INSERT INTO cache_ia (tipo, contenido, generado_en, ttl_horas)
+            VALUES ($1, $2::jsonb, NOW(), $3)
+            ON CONFLICT (tipo) DO UPDATE
+                SET contenido = $2::jsonb, generado_en = NOW()
+        """, _CACHE_TIPO, result.model_dump_json(), _CACHE_TTL_HORAS)
         return result
     except HTTPException:
         raise

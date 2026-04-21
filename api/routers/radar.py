@@ -52,8 +52,6 @@ class RadarResponse(BaseModel):
     trimestre: str
 
 
-# Cache en memoria por tema — se limpia al reiniciar Railway
-_cache: dict[str, RadarResponse] = {}
 _CACHE_TTL_HORAS = 168  # 7 días
 
 
@@ -155,16 +153,27 @@ async def generar_radar(
     if tema not in TEMAS_VALIDOS:
         raise HTTPException(status_code=400, detail=f"Tema no válido. Opciones: {list(TEMAS_VALIDOS.keys())}")
 
-    # Devolver cache si existe y no se fuerza regeneración
-    if not force and tema in _cache:
-        cached = _cache[tema]
-        horas_desde = (datetime.now() - datetime.fromisoformat(cached.generado_en)).total_seconds() / 3600
-        if horas_desde < _CACHE_TTL_HORAS:
-            return cached
+    cache_tipo = f"radar_{tema}"
+
+    # Buscar en cache persistente en DB
+    if not force:
+        row = await db.fetchrow("""
+            SELECT contenido FROM cache_ia
+            WHERE tipo = $1
+              AND generado_en + (ttl_horas || ' hours')::interval > NOW()
+        """, cache_tipo)
+        if row:
+            return RadarResponse(**row["contenido"])
 
     try:
         result = await _generar(tema, db)
-        _cache[tema] = result
+        # Guardar en DB (upsert)
+        await db.execute("""
+            INSERT INTO cache_ia (tipo, contenido, generado_en, ttl_horas)
+            VALUES ($1, $2::jsonb, NOW(), $3)
+            ON CONFLICT (tipo) DO UPDATE
+                SET contenido = $2::jsonb, generado_en = NOW()
+        """, cache_tipo, result.model_dump_json(), _CACHE_TTL_HORAS)
         return result
     except HTTPException:
         raise
