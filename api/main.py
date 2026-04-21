@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from db.connection import get_pool, settings
-from routers import actors, services, needs, instruments, gaps, search, vinculador, iniciativas, informe, radar
+from routers import actors, services, needs, instruments, gaps, search, vinculador, iniciativas, informe, radar, asistente
 from routers.proyectos import router as proyectos_router, zonas_router
 from routers.adit import router as adit_router
 
@@ -53,6 +53,7 @@ app.include_router(radar.router)
 app.include_router(proyectos_router)
 app.include_router(zonas_router)
 app.include_router(adit_router)
+app.include_router(asistente.router)
 
 
 @app.get("/health")
