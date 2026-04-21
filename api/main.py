@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -8,11 +9,19 @@ from routers import actors, services, needs, instruments, gaps, search, vinculad
 from routers.proyectos import router as proyectos_router, zonas_router
 from routers.adit import router as adit_router
 
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Inicializar pool de conexiones al arrancar
-    await get_pool()
+    # Inicializar pool de conexiones al arrancar.
+    # Si Neon no responde en el momento del startup (timeout de red),
+    # la app arranca igual — el pool se crea en el primer request.
+    try:
+        await get_pool()
+        logger.info("Pool de DB inicializado correctamente.")
+    except Exception as e:
+        logger.warning("No se pudo inicializar el pool al arrancar: %s. Se reintentará en el primer request.", e)
     yield
 
 
