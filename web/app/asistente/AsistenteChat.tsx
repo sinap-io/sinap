@@ -132,15 +132,24 @@ export default function AsistenteChat() {
 
   const tieneConversacion = history.length > 0;
 
+  // Para el PDF: último mensaje del asistente + la consulta que lo generó
+  const reversed = [...displayed].slice().reverse();
+  const ultimaRespuesta = reversed.find(m => m.role === "assistant");
+  const ultimaConsulta  = reversed.find(m => m.role === "user");
+  const fechaHoy = new Date().toLocaleDateString("es-AR", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  });
+
   return (
     <>
       <style>{`
         @media print {
           body * { visibility: hidden; }
-          .print-area, .print-area * { visibility: visible; }
-          .print-area { position: absolute; top: 0; left: 0; width: 100%; padding: 2rem; }
-          .print-message { margin-bottom: 1.5rem; page-break-inside: avoid; }
-          .print-header { margin-bottom: 2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; }
+          .sinap-print, .sinap-print * { visibility: visible; }
+          .sinap-print {
+            position: absolute; top: 0; left: 0; width: 100%;
+            padding: 2.5rem; font-family: sans-serif;
+          }
         }
       `}</style>
 
@@ -180,20 +189,39 @@ export default function AsistenteChat() {
           </div>
         </div>
 
-        {/* Mensajes */}
-        <div className="print-area flex-1 overflow-y-auto px-6 py-6 space-y-5">
-          {/* Print header (solo visible al imprimir) */}
-          <div className="print-header hidden print:block">
-            <p className="text-lg font-bold" style={{ color: S.navy }}>
-              Consulta al Asistente — Clúster Biotecnología de Córdoba
-            </p>
-            <p className="text-sm" style={{ color: S.muted }}>
-              {new Date().toLocaleDateString("es-AR", {
-                weekday: "long", year: "numeric", month: "long", day: "numeric"
-              })}
-            </p>
+        {/* Sección solo visible al imprimir — último resultado limpio */}
+        {ultimaRespuesta && ultimaConsulta && (
+          <div className="sinap-print hidden print:block">
+            <div style={{ borderBottom: `2px solid ${S.accent}`, paddingBottom: "1rem", marginBottom: "1.5rem" }}>
+              <p style={{ fontSize: "1.2rem", fontWeight: 700, color: S.navy }}>
+                Consulta al Asistente — Clúster Biotecnología de Córdoba
+              </p>
+              <p style={{ fontSize: "0.8rem", color: S.muted, marginTop: "0.25rem" }}>{fechaHoy}</p>
+            </div>
+            <div style={{ background: "#f8fafc", border: `1px solid ${S.border}`, borderRadius: "8px", padding: "0.75rem 1rem", marginBottom: "1.5rem" }}>
+              <p style={{ fontSize: "0.7rem", color: S.muted, marginBottom: "0.25rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Consulta</p>
+              <p style={{ fontSize: "0.9rem", color: S.navy }}>{ultimaConsulta.content}</p>
+            </div>
+            <div style={{ fontSize: "0.875rem", lineHeight: 1.7, color: S.navy }}>
+              <ReactMarkdown
+                components={{
+                  p: ({ children }) => <p style={{ marginBottom: "0.75rem" }}>{children}</p>,
+                  strong: ({ children }) => <strong style={{ fontWeight: 600 }}>{children}</strong>,
+                  ul: ({ children }) => <ul style={{ paddingLeft: "1.25rem", marginBottom: "0.75rem" }}>{children}</ul>,
+                  ol: ({ children }) => <ol style={{ paddingLeft: "1.25rem", marginBottom: "0.75rem" }}>{children}</ol>,
+                  li: ({ children }) => <li style={{ marginBottom: "0.25rem" }}>{children}</li>,
+                  h2: ({ children }) => <h2 style={{ fontWeight: 700, fontSize: "0.9rem", marginTop: "1.25rem", marginBottom: "0.5rem", color: S.navy, textTransform: "uppercase", letterSpacing: "0.03em" }}>{children}</h2>,
+                  h3: ({ children }) => <h3 style={{ fontWeight: 600, marginTop: "1rem", marginBottom: "0.25rem" }}>{children}</h3>,
+                }}
+              >
+                {ultimaRespuesta.content}
+              </ReactMarkdown>
+            </div>
           </div>
+        )}
 
+        {/* Mensajes — pantalla */}
+        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-5 print:hidden">
           {displayed.map((msg, i) =>
             msg.role === "assistant" ? (
               <BubbleAsistente key={i} content={msg.content} />
