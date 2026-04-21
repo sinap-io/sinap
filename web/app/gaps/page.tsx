@@ -5,10 +5,17 @@ import type { GapItem, GapSummary } from "@/lib/types";
 import GapsClient from "@/components/gaps/GapsClient";
 
 export default async function GapsPage() {
-  const [gaps, summary] = await Promise.all([
-    fetchApi<GapItem[]>("/gaps?solo_sin_oferta=false"),
-    fetchApi<GapSummary>("/gaps/summary"),
-  ]);
+  let gaps: GapItem[] = [];
+  let summary: GapSummary = { total_gaps: 0, total_parcial: 0, total_demanda: 0 };
+
+  try {
+    [gaps, summary] = await Promise.all([
+      fetchApi<GapItem[]>("/gaps?solo_sin_oferta=false"),
+      fetchApi<GapSummary>("/gaps/summary"),
+    ]);
+  } catch {
+    // API caída — muestra la página con datos vacíos
+  }
 
   return (
     <div className="space-y-8">
