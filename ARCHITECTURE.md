@@ -2,7 +2,7 @@
 
 > Documento vivo. Captura el estado del proyecto, las decisiones de diseño y el razonamiento detrás de cada una. Actualizar al cerrar cada sprint.
 >
-> Última actualización: 16 abril 2026
+> Última actualización: 21 abril 2026
 
 ---
 
@@ -271,10 +271,16 @@ Para regenerar `web/.env.local` desde Vercel: `cd web && npx vercel env pull .en
 
 ### Backend (FastAPI)
 ```bash
-# Desde el root del repo
-python -m uvicorn api.main:app --port 8000 --reload
+# Desde el directorio api/ (igual que en Railway — nixpacks corre desde api/)
+cd api
+uvicorn main:app --port 8000 --reload
 # Docs disponibles en http://localhost:8000/docs
 ```
+
+**⚠️ Nota importante sobre el startCommand de Railway:**
+Nixpacks detecta `requirements.txt` en `api/` y ejecuta **desde `api/`**, no desde la raíz del repo.
+Por eso `railway.toml` usa `startCommand = "uvicorn main:app ..."` (sin `cd api`).
+Para desarrollo local, hacer `cd api` manualmente antes de correr uvicorn garantiza el mismo comportamiento.
 
 Variables requeridas en `api/.env` (Railway las inyecta automáticamente en producción):
 ```

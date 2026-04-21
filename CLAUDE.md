@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (20 abril 2026 — noche)
+## Estado actual (21 abril 2026)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -58,7 +58,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 **Informe IA — estado:**
 - Endpoint `GET /informe` en Railway ✅ (`?force=true` para forzar regeneración)
-- Cache 24h en memoria (se pierde si Railway reinicia) ✅
+- Cache 24h **persistida en DB** (tabla `cache_ia`) — sobrevive reinicios de Railway ✅
 - 5 secciones de análisis cruzado entre todos los módulos:
   1. Resumen (2 oraciones, lo más urgente)
   2. Oportunidades de negocios → corto plazo (matches actores no conectados) + mediano plazo (brechas sin cobertura)
@@ -73,7 +73,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 **Radar sectorial — estado:**
 - Endpoint `GET /radar?tema=X&force=true` ✅
 - 2 temas: `biosensores` + `biotech_general` (los 5 anteriores eliminados — enfoque más rico) ✅
-- Cache 7 días en memoria (se limpia si Railway reinicia) ✅
+- Cache 7 días **persistida en DB** (tabla `cache_ia`) — sobrevive reinicios de Railway ✅
 - Búsqueda web real con **Tavily** integrado ✅ — TAVILY_API_KEY en Railway
 - Botón "↻ Regenerar" visible solo para `admin` y `manager` ✅
 - Botón "↓ Descargar PDF" disponible para todos los roles con acceso (`window.print()`) ✅
@@ -95,6 +95,9 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 **Usuarios — estado:**
 - `sebabizzi@gmail.com` (admin) / `sinap2026` ✅
 - `pdiazazulay@gmail.com` (manager) / `sinap2026` ✅
+- `rodrigoasili@gmail.com` (directivo) / `cluster2026` ✅
+- `anduagami@gmail.com` (directivo) / `cluster2026` ✅ — nombre: Iván (apellido pendiente)
+- `Asbasso84@gmail.com` (directivo) / `cluster2026` ✅ — ⚠️ email con mayúscula inicial
 - Script `api/scripts/crear_usuario.py` para crear usuarios desde CLI ✅
 
 **Datos ficticios verosímiles — estado (3 abril 2026):**
@@ -212,13 +215,27 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - **Fix Server Actions** ✅ — 20 funciones de mutación en 4 archivos (iniciativas, proyectos, actores, vinculadores) verifican rol antes de ejecutar
 - **Loading skeletons** ✅ — `loading.tsx` con skeleton animado en 6 rutas: iniciativas, proyectos, actores, vinculadores, informe, radar
 
+**21 abril 2026 — fixes de confiabilidad:**
+- **Cache persistida en DB** ✅ — Informe y Radar ya no pierden cache al reiniciar Railway
+  - Tabla `cache_ia` (migración 011, aplicada en Neon) — upsert por tipo, TTL en horas
+  - Informe: TTL 24h, clave `"informe"` / Radar: TTL 168h (7 días), clave `"radar_{tema}"`
+- **Fix Gaps page** ✅ — try/catch en `gaps/page.tsx` → muestra página vacía en lugar de crash si API está caída
+- **Fix Railway startCommand** ✅ — ver sección "Lecciones aprendidas" abajo
+  - Commit definitivo: `railway.toml` → `startCommand = "uvicorn main:app --host 0.0.0.0 --port $PORT"` (sin `cd api`)
+- **Usuarios directivos creados** ✅:
+  - `rodrigoasili@gmail.com` / cluster2026 / Rodrigo Asili / directivo
+  - `anduagami@gmail.com` / cluster2026 / Iván / directivo
+  - `Asbasso84@gmail.com` / cluster2026 / Andrés Basso / directivo
+  - ⚠️ Email de Andrés tiene mayúscula inicial. Si el login falla, probar en minúscula y corregir en DB.
+
 **Scope definido para el 1/5/2026 (lanzamiento con datos reales):**
 1. ✅ Fix Server Actions
-2. Panel admin de usuarios (`/admin/usuarios`) — gestión sin terminal
-3. Dominio sinap.io en Cloudflare
-4. Buscador global con embeddings (pgvector + OpenAI text-embedding-3-small) — cross-módulo
-5. ✅ Loading feedback
-6. Filtros persistentes en URL (useSearchParams) — iniciativas, proyectos, actores
+2. ✅ Loading feedback
+3. ✅ Cache persistida en DB (Informe + Radar sobreviven reinicios)
+4. Panel admin de usuarios (`/admin/usuarios`) — gestión sin terminal
+5. Dominio sinap.io en Cloudflare
+6. Buscador global con embeddings (pgvector + OpenAI text-embedding-3-small) — cross-módulo
+7. Filtros persistentes en URL (useSearchParams) — iniciativas, proyectos, actores
 
 **Post 1/5:**
 - Matching semántico por entidad (B1)
@@ -265,11 +282,12 @@ En orden de prioridad:
 
 1. ~~**Fix Server Actions**~~ ✅ — completado
 2. ~~**Loading skeletons**~~ ✅ — completado
-3. **Panel admin de usuarios** — `/admin/usuarios`, gestión sin terminal (editar nombre/rol, agregar usuario)
-4. **Registrar dominio** sinap.io en Cloudflare
-5. **Buscador global con embeddings** — pgvector en Neon + OpenAI text-embedding-3-small, búsqueda cross-módulo
-6. **Filtros persistentes en URL** — useSearchParams en iniciativas, proyectos, actores
-7. **Datos reales** — borrar ficticios y cargar datos reales del Clúster el 1/5/2026
+3. ~~**Cache persistida en DB**~~ ✅ — completado
+4. **Panel admin de usuarios** — `/admin/usuarios`, gestión sin terminal (editar nombre/rol, agregar usuario)
+5. **Registrar dominio** sinap.io en Cloudflare
+6. **Buscador global con embeddings** — pgvector en Neon + OpenAI text-embedding-3-small, búsqueda cross-módulo
+7. **Filtros persistentes en URL** — useSearchParams en iniciativas, proyectos, actores
+8. **Datos reales** — borrar ficticios y cargar datos reales del Clúster el 1/5/2026
 
 ---
 
@@ -297,6 +315,82 @@ En orden de prioridad:
 - Título: "Plataforma de Inteligencia Territorial"
 - Subtítulo: "Registra la actividad del Clúster de Biotecnología de Córdoba. / Actores, capacidades, oportunidades e iniciativas en curso."
 - Nombre: sinap.io — aprobado por Pablo ✅
+
+---
+
+## Lecciones aprendidas — errores que no deben repetirse
+
+### 1. Railway + nixpacks: el startCommand corre desde el subdirectorio del proyecto (21/04/2026)
+
+**Qué pasó:** Railway rompió con `ModuleNotFoundError: No module named 'api'`. El backend estuvo caído varias horas.
+
+**Causa raíz:** Nixpacks detecta `requirements.txt` en `api/` y **ejecuta todos los comandos desde `api/`**, no desde la raíz del repo. El startCommand original era `uvicorn api.main:app` (desde raíz), que funcionaba porque `api` era un namespace package. Cuando nixpacks cambió de comportamiento, el proceso arrancaba desde `api/` y Python no encontraba ningún paquete llamado `api`.
+
+**Fix incorrecto intentado:** `cd api && uvicorn main:app` — esto intentaba hacer `cd` a `api/api/` (que no existe) y abortaba antes de iniciar Python. Railway reintentaba en loop, mostrando siempre el error de la build anterior en los logs (confundía el diagnóstico).
+
+**Fix correcto:** `uvicorn main:app --host 0.0.0.0 --port $PORT` — sin `cd`, porque nixpacks ya ejecuta desde `api/`.
+
+**Regla:** Si se toca `railway.toml`, verificar siempre que el `startCommand` no asuma que el cwd es la raíz del repo. Nixpacks corre desde donde encuentra `requirements.txt`.
+
+**Regla de diagnóstico:** Si Railway muestra un error Python en los logs pero el fix ya está pusheado, puede ser que Railway esté mostrando logs de una build anterior. Hay que mirar el timestamp del log, no solo el mensaje.
+
+---
+
+### 2. Los crashes de Railway se diagnostican por el tipo de error, no solo el mensaje (21/04/2026)
+
+- `ModuleNotFoundError: No module named 'X'` → problema de Python path / cwd, no de código
+- `ImportError` → dependencia faltante o import circular
+- El proceso sale con código 1 sin error Python → el shell command falló antes de que Python arrancara (ej: `cd` a directorio inexistente)
+- Error en lifespan → pool de DB que no conecta al arrancar (ya mitigado con try/catch)
+
+---
+
+### 3. Los cambios del frontend (Next.js/Vercel) no pueden causar crashes de Railway (21/04/2026)
+
+Server Actions (`web/app/*/actions.ts`) son TypeScript que corre en Vercel. No tocan Railway en absoluto. Si Railway cae al mismo tiempo que se hace un cambio en el frontend, la causa es otra (startCommand, variable de entorno, import de Python).
+
+---
+
+### 4. La cache en memoria se pierde en cada restart de Railway (resuelto 21/04/2026)
+
+Railway reinicia el proceso ante cualquier deploy, crash o mantenimiento. Si el Informe o el Radar están en memoria, se generan de cero (30-60 segundos de espera para el usuario + costos de API). La solución es persistir en la tabla `cache_ia` de Neon.
+
+---
+
+## Workflow de desarrollo — cómo no romper main
+
+**Regla central: `main` = producción = nunca roto.** Todo desarrollo nuevo va en una rama.
+
+### Flujo estándar
+
+```
+git checkout -b feature/nombre-descriptivo
+# ... trabajar, commitear ...
+# Testear localmente antes de mergear
+git checkout main && git merge feature/nombre-descriptivo
+git push origin main
+# Monitorear logs de Railway 1-2 minutos post-deploy
+```
+
+### Cuándo es seguro mergear a main
+
+- Se testeó localmente (backend corriendo + frontend corriendo)
+- No hay migraciones de DB pendientes sin aplicar
+- El cambio no toca `railway.toml` ni variables de entorno (esos cambios son los más riesgosos)
+
+### Migraciones de DB — protocolo
+
+1. Aplicar la migración en Neon **antes** de deployar el código que la usa
+2. Siempre usar `CREATE TABLE IF NOT EXISTS` / `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`
+3. Nunca usar `DROP TABLE` ni `ALTER TABLE ... DROP COLUMN` sin aviso explícito
+4. Después de aplicar: verificar en Neon console que la tabla/columna existe
+
+### Si algo se rompe en main
+
+1. Identificar si es frontend (Vercel) o backend (Railway) — son independientes
+2. Para Railway: mirar logs de deploy, buscar el tipo de error (ver lección 2)
+3. Hotfix directo a main si es crítico en producción — sin pasar por rama
+4. Documentar en CLAUDE.md qué pasó y por qué (ver sección de lecciones aprendidas)
 
 ---
 
