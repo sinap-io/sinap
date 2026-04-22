@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (23 abril 2026)
+## Estado actual (24 abril 2026)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -265,7 +265,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 4. ✅ Asistente del Ecosistema (`/asistente`) — chat conversacional + PDF
 5. ✅ Panel admin de usuarios (`/admin/usuarios`)
 6. ✅ Modelo de roles externos (socio / freemium / invitado)
-7. Dominio sinap.io en Cloudflare
+7. ✅ Dominio sinap.io — comprado en Porkbun, DNS en Cloudflare, agregado en Vercel. Pendiente: propagación de nameservers (1-2hs) → Vercel pasa a "Valid Configuration" solo.
 8. ✅ Filtros persistentes en URL (useSearchParams) — iniciativas, proyectos, actores
 
 **Post 1/5:**
