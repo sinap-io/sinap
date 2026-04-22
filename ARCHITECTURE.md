@@ -2,7 +2,7 @@
 
 > Documento vivo. Captura el estado del proyecto, las decisiones de diseño y el razonamiento detrás de cada una. Actualizar al cerrar cada sprint.
 >
-> Última actualización: 21 abril 2026 (tarde)
+> Última actualización: 22 abril 2026
 
 ---
 

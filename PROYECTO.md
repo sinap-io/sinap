@@ -3,7 +3,7 @@
 > Este documento está escrito para Sebastián. No asume conocimientos de programación.
 > Explica qué es cada parte del sistema, por qué existe, y cómo se conecta todo.
 >
-> Última actualización: 21 abril 2026
+> Última actualización: 22 abril 2026
 
 ---
 
@@ -144,8 +144,9 @@ No todos los usuarios ven y pueden hacer lo mismo. Hay cinco niveles:
 | **Manager** | Pablo Díaz Azulay (Cluster Manager) | Gestionar iniciativas, ver todos los módulos de inteligencia |
 | **Directivo** | Miembros de la Comisión Directiva | Crear y gestionar iniciativas, ver informes |
 | **Vinculador** | Operadores del Clúster | Gestionar iniciativas asignadas, ver informes |
-| **Oferente** | Actores con membresía | Ver todo, editar su perfil |
-| **Demandante** | Actores sin membresía | Ver catálogo y buscar con IA |
+| **Socio** | Actores con membresía plena | Acceso completo a todos los módulos |
+| **Freemium** | Actores registrados sin membresía | Actores, Ofertas, Demandas. Resto bloqueado con candado |
+| **Invitado** | Visitantes con acceso temporal | Ve todos los módulos en lectura, no puede crear. Acceso con vencimiento. |
 
 Los módulos de **Informe IA** y **Radar Sectorial** son visibles únicamente para admin, manager, directivo y vinculador — son herramientas de gestión interna, no para todos los actores.
 

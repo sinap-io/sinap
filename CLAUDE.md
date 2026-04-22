@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (21 abril 2026 — sesión de tarde)
+## Estado actual (22 abril 2026)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -34,6 +34,8 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - **Renombrado Servicios→Ofertas / Necesidades→Demandas** ✅ — en Nav, home, actores, iniciativas (solo UI, rutas y DB sin cambios)
 - **Informe IA incluye proyectos** ✅ — datos de proyectos activos en contexto del prompt + sección "## Proyectos" + métrica "Proyectos" en header
 - **Asistente del Ecosistema** (`/asistente`) ✅ — chat conversacional en lenguaje natural contra todos los datos del ecosistema, con descarga PDF
+- **Panel admin de usuarios** (`/admin/usuarios`) ✅ — gestión sin terminal, visible para admin y manager
+- **Modelo de roles externos rediseñado** ✅ — socio / freemium / invitado (ver sección abajo)
 
 **Branch activo:** `main` — todo mergeado y deployado.
 
@@ -97,9 +99,18 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - `sebabizzi@gmail.com` (admin) / `sinap2026` ✅
 - `pdiazazulay@gmail.com` (manager) / `sinap2026` ✅
 - `rodrigoasili@gmail.com` (directivo) / `cluster2026` ✅
-- `anduagami@gmail.com` (directivo) / `cluster2026` ✅ — nombre: Iván (apellido pendiente)
-- `Asbasso84@gmail.com` (directivo) / `cluster2026` ✅ — ⚠️ email con mayúscula inicial
+- `anduagami@gmail.com` (directivo) / `cluster2026` ✅ — Iván Anduaga
+- `asbasso84@gmail.com` (directivo) / `cluster2026` ✅ — Andrés Basso (email corregido a minúsculas, duplicado eliminado)
 - Script `api/scripts/crear_usuario.py` para crear usuarios desde CLI ✅
+- Panel `/admin/usuarios` para gestión visual (admin + manager) ✅
+
+**Modelo de roles externos (migración 012 — 22 abril 2026):**
+- `socio` (ex `oferente`) — acceso completo a toda la plataforma
+- `freemium` (nuevo) — acceso básico: Inicio, Actores, Ofertas, Demandas. El resto aparece en el Nav con candado gris y tooltip "Para acceder debés ser socio". Redirige desde rutas bloqueadas.
+- `invitado` (ex `demandante`) — ve todos los módulos de datos en modo lectura, no puede crear nada. Solo ve listados de Iniciativas y Proyectos (no el detalle). Tiene `fecha_vencimiento` (default 7 días al crear).
+- Auth: login rechazado si `invitado` tiene `fecha_vencimiento` vencida
+- ⚠️ El label final de `freemium` está pendiente — por ahora muestra "Acceso básico"
+- ⚠️ Archivos locales (PDFs, Excel, PNG, MD) commiteados accidentalmente — limpiar en próxima sesión con `git rm --cached`
 
 **Datos ficticios verosímiles — estado (3 abril 2026):**
 - Script `api/scripts/seed_data.py` ✅ — carga 23 actores, 36 capacidades, 17 necesidades, 12 instrumentos, 4 iniciativas, 11 hitos
@@ -251,9 +262,10 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 2. ✅ Loading feedback
 3. ✅ Cache persistida en DB (Informe + Radar sobreviven reinicios)
 4. ✅ Asistente del Ecosistema (`/asistente`) — chat conversacional + PDF
-5. Panel admin de usuarios (`/admin/usuarios`) — gestión sin terminal
-6. Dominio sinap.io en Cloudflare
-7. Filtros persistentes en URL (useSearchParams) — iniciativas, proyectos, actores
+5. ✅ Panel admin de usuarios (`/admin/usuarios`)
+6. ✅ Modelo de roles externos (socio / freemium / invitado)
+7. Dominio sinap.io en Cloudflare
+8. Filtros persistentes en URL (useSearchParams) — iniciativas, proyectos, actores
 
 **Post 1/5:**
 - Matching semántico por entidad (B1)
@@ -302,10 +314,13 @@ En orden de prioridad:
 2. ~~**Loading skeletons**~~ ✅ — completado
 3. ~~**Cache persistida en DB**~~ ✅ — completado
 4. ~~**Asistente del Ecosistema**~~ ✅ — completado
-5. **Panel admin de usuarios** — `/admin/usuarios`, gestión sin terminal (editar nombre/rol, agregar usuario)
-6. **Registrar dominio** sinap.io en Cloudflare
-7. **Filtros persistentes en URL** — useSearchParams en iniciativas, proyectos, actores
-8. **Datos reales** — borrar ficticios y cargar datos reales del Clúster el 1/5/2026
+5. ~~**Panel admin de usuarios**~~ ✅ — completado
+6. ~~**Modelo de roles externos**~~ ✅ — completado
+7. **Limpiar archivos locales del repo** — `git rm --cached` para PDFs/Excel/PNG commiteados accidentalmente
+8. **Registrar dominio** sinap.io en Cloudflare
+9. **Definir label final de freemium** — "Acceso básico" es provisorio
+10. **Filtros persistentes en URL** — useSearchParams en iniciativas, proyectos, actores
+11. **Datos reales** — borrar ficticios y cargar datos reales del Clúster el 1/5/2026
 
 ---
 
