@@ -19,7 +19,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!credentials?.email || !credentials?.password) return null;
 
         const { rows } = await pool.query(
-          "SELECT id, email, nombre, password, rol FROM usuario WHERE email = $1 AND activo = true",
+          "SELECT id, email, nombre, password, rol, fecha_vencimiento FROM usuario WHERE email = $1 AND activo = true",
           [credentials.email]
         );
 
@@ -28,6 +28,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         const valid = await compare(credentials.password as string, user.password);
         if (!valid) return null;
+
+        // Invitados con acceso vencido no pueden ingresar
+        if (user.rol === "invitado" && user.fecha_vencimiento) {
+          if (new Date(user.fecha_vencimiento) < new Date()) return null;
+        }
 
         return { id: String(user.id), email: user.email, name: user.nombre, rol: user.rol };
       },

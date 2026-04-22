@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { fetchApi } from "@/lib/api";
 import type { ActorList, ProyectoList } from "@/lib/types";
 import ProyectosClient from "@/components/proyectos/ProyectosClient";
@@ -10,6 +11,8 @@ const CAN_MANAGE = ["admin", "manager", "directivo", "vinculador"];
 
 export default async function ProyectosPage() {
   const session = await auth();
+  const rol = (session?.user as { rol?: string })?.rol ?? "";
+  if (rol === "freemium") redirect("/");
   let proyectos: ProyectoList[] = [];
   let actores: Pick<ActorList, "id" | "nombre">[] = [];
 

@@ -10,7 +10,7 @@ const pool = new Pool({
   ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
 });
 
-const ROLES_VALIDOS = ["admin", "manager", "directivo", "vinculador", "oferente", "demandante"];
+const ROLES_VALIDOS = ["admin", "manager", "directivo", "vinculador", "socio", "freemium", "invitado"];
 
 async function checkAdmin() {
   const session = await auth();
@@ -24,19 +24,25 @@ export type Usuario = {
   nombre: string;
   rol: string;
   activo: boolean;
+  fecha_vencimiento: string | null;
 };
 
 export async function listarUsuarios(): Promise<Usuario[]> {
   await checkAdmin();
   const { rows } = await pool.query(
-    "SELECT id, email, nombre, rol, activo FROM usuario ORDER BY rol, nombre"
+    "SELECT id, email, nombre, rol, activo, fecha_vencimiento FROM usuario ORDER BY rol, nombre"
   );
-  return rows;
+  return rows.map(r => ({
+    ...r,
+    fecha_vencimiento: r.fecha_vencimiento
+      ? new Date(r.fecha_vencimiento).toISOString().split("T")[0]
+      : null,
+  }));
 }
 
 export async function actualizarUsuario(
   id: number,
-  data: { nombre?: string; rol?: string; activo?: boolean; password?: string }
+  data: { nombre?: string; rol?: string; activo?: boolean; password?: string; fecha_vencimiento?: string | null }
 ): Promise<{ ok: boolean; error?: string }> {
   try {
     await checkAdmin();
@@ -49,10 +55,11 @@ export async function actualizarUsuario(
     const values: unknown[] = [];
     let i = 1;
 
-    if (data.nombre !== undefined) { sets.push(`nombre = $${i++}`); values.push(data.nombre.trim()); }
-    if (data.rol !== undefined)    { sets.push(`rol = $${i++}`);    values.push(data.rol); }
-    if (data.activo !== undefined) { sets.push(`activo = $${i++}`); values.push(data.activo); }
-    if (data.password)             {
+    if (data.nombre !== undefined)           { sets.push(`nombre = $${i++}`);           values.push(data.nombre.trim()); }
+    if (data.rol !== undefined)              { sets.push(`rol = $${i++}`);              values.push(data.rol); }
+    if (data.activo !== undefined)           { sets.push(`activo = $${i++}`);           values.push(data.activo); }
+    if ("fecha_vencimiento" in data)         { sets.push(`fecha_vencimiento = $${i++}`); values.push(data.fecha_vencimiento ?? null); }
+    if (data.password)                       {
       const hashed = await hash(data.password, 10);
       sets.push(`password = $${i++}`);
       values.push(hashed);
@@ -74,6 +81,7 @@ export async function crearUsuario(data: {
   nombre: string;
   rol: string;
   password: string;
+  fecha_vencimiento?: string;
 }): Promise<{ ok: boolean; error?: string }> {
   try {
     await checkAdmin();
@@ -86,9 +94,11 @@ export async function crearUsuario(data: {
     }
 
     const hashed = await hash(data.password, 10);
+    const vencimiento = data.fecha_vencimiento || null;
+
     await pool.query(
-      "INSERT INTO usuario (email, nombre, rol, password, activo) VALUES ($1, $2, $3, $4, true)",
-      [data.email.toLowerCase().trim(), data.nombre.trim(), data.rol, hashed]
+      "INSERT INTO usuario (email, nombre, rol, password, activo, fecha_vencimiento) VALUES ($1, $2, $3, $4, true, $5)",
+      [data.email.toLowerCase().trim(), data.nombre.trim(), data.rol, hashed, vencimiento]
     );
     revalidatePath("/admin/usuarios");
     return { ok: true };

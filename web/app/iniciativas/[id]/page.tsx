@@ -1,7 +1,8 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { auth } from "@/auth";
 import { fetchApi, ApiError } from "@/lib/api";
 import type { IniciativaDetail, ActorList } from "@/lib/types";
 import IniciativaDetailClient from "@/components/iniciativas/IniciativaDetailClient";
@@ -12,6 +13,10 @@ export default async function IniciativaDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const session = await auth();
+  const rol = (session?.user as { rol?: string })?.rol ?? "";
+  // invitado y freemium solo ven el listado, no el detalle
+  if (rol === "invitado" || rol === "freemium") redirect("/iniciativas");
   let iniciativa: IniciativaDetail;
   try {
     iniciativa = await fetchApi<IniciativaDetail>(`/iniciativas/${id}`);

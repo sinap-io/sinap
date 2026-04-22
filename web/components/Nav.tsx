@@ -23,6 +23,7 @@ import {
   X,
   Sparkles,
   ShieldCheck,
+  Lock,
 } from "lucide-react";
 
 function SinapLogo({ size = 32 }: { size?: number }) {
@@ -32,20 +33,20 @@ function SinapLogo({ size = 32 }: { size?: number }) {
 }
 
 const links = [
-  { href: "/",            label: "Inicio",         icon: Home,       roles: null },
-  { href: "/actors",      label: "Actores",        icon: Users,      roles: null },
-  { href: "/services",    label: "Ofertas",        icon: Wrench,     roles: null },
-  { href: "/needs",       label: "Demandas",       icon: AlertCircle,roles: null },
-  { href: "/gaps",        label: "Gaps",           icon: TrendingUp, roles: null },
-  { href: "/instruments", label: "Financiamiento", icon: Banknote,   roles: null },
-  { href: "/search",      label: "Buscar IA",      icon: Search,     roles: null },
-  { href: "/iniciativas", label: "Iniciativas",    icon: Lightbulb,     roles: null },
-  { href: "/proyectos",   label: "Proyectos",      icon: FlaskConical,  roles: null },
-  { href: "/vinculadores", label: "Vinculadores",   icon: Activity,      roles: ["admin", "manager", "directivo", "vinculador"] },
-  { href: "/asistente",   label: "Asistente IA",   icon: Sparkles,   roles: ["admin", "manager", "directivo", "vinculador", "oferente"] },
-  { href: "/admin/usuarios", label: "Usuarios",    icon: ShieldCheck, roles: ["admin", "manager"] },
-  { href: "/informe",     label: "Informe IA",     icon: BarChart2,  roles: ["admin", "manager", "directivo", "vinculador"] },
-  { href: "/radar",       label: "Radar sectorial",icon: Radar,      roles: ["admin", "manager", "directivo", "vinculador"] },
+  { href: "/",             label: "Inicio",          icon: Home,         roles: null,                                                      lockedFor: [] as string[] },
+  { href: "/actors",       label: "Actores",          icon: Users,        roles: null,                                                      lockedFor: [] },
+  { href: "/services",     label: "Ofertas",          icon: Wrench,       roles: null,                                                      lockedFor: [] },
+  { href: "/needs",        label: "Demandas",         icon: AlertCircle,  roles: null,                                                      lockedFor: [] },
+  { href: "/gaps",         label: "Gaps",             icon: TrendingUp,   roles: null,                                                      lockedFor: ["freemium"] },
+  { href: "/instruments",  label: "Financiamiento",   icon: Banknote,     roles: null,                                                      lockedFor: ["freemium"] },
+  { href: "/search",       label: "Buscar IA",        icon: Search,       roles: null,                                                      lockedFor: ["freemium"] },
+  { href: "/iniciativas",  label: "Iniciativas",      icon: Lightbulb,    roles: null,                                                      lockedFor: ["freemium"] },
+  { href: "/proyectos",    label: "Proyectos",        icon: FlaskConical, roles: null,                                                      lockedFor: ["freemium"] },
+  { href: "/vinculadores", label: "Vinculadores",     icon: Activity,     roles: ["admin", "manager", "directivo", "vinculador"],            lockedFor: [] },
+  { href: "/asistente",    label: "Asistente IA",     icon: Sparkles,     roles: ["admin", "manager", "directivo", "vinculador", "socio", "freemium"], lockedFor: ["freemium"] },
+  { href: "/informe",      label: "Informe IA",       icon: BarChart2,    roles: ["admin", "manager", "directivo", "vinculador"],            lockedFor: [] },
+  { href: "/radar",        label: "Radar sectorial",  icon: Radar,        roles: ["admin", "manager", "directivo", "vinculador"],            lockedFor: [] },
+  { href: "/admin/usuarios", label: "Usuarios",       icon: ShieldCheck,  roles: ["admin", "manager"],                                      lockedFor: [] },
 ];
 
 const ROL_LABEL: Record<string, string> = {
@@ -53,8 +54,9 @@ const ROL_LABEL: Record<string, string> = {
   manager:    "Manager",
   directivo:  "Directivo",
   vinculador: "Vinculador",
-  oferente:   "Miembro",
-  demandante: "Invitado",
+  socio:      "Socio",
+  freemium:   "Acceso básico",
+  invitado:   "Invitado",
 };
 
 const S = {
@@ -67,13 +69,32 @@ const S = {
 };
 
 function NavLinks({ rol, pathname, onClose }: { rol: string; pathname: string; onClose?: () => void }) {
+  const visibleLinks = links.filter(({ roles }) => !roles || roles.includes(rol));
+
   return (
     <>
       <p className="text-[10px] font-semibold uppercase tracking-widest px-3 pb-2" style={{ color: S.muted }}>
         Plataforma
       </p>
-      {links.filter(({ roles }) => !roles || roles.includes(rol)).map(({ href, label, icon: Icon }) => {
-        const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
+      {visibleLinks.map(({ href, label, icon: Icon, lockedFor }) => {
+        const isLocked = lockedFor.includes(rol);
+        const active = !isLocked && (href === "/" ? pathname === "/" : pathname.startsWith(href));
+
+        if (isLocked) {
+          return (
+            <div
+              key={href}
+              className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm cursor-not-allowed select-none"
+              style={{ color: "#c0cfe0" }}
+              title="Para acceder a esta función debés ser socio del Clúster"
+            >
+              <Icon size={16} strokeWidth={1.5} />
+              <span className="flex-1">{label}</span>
+              <Lock size={10} strokeWidth={2} style={{ color: "#c0cfe0" }} />
+            </div>
+          );
+        }
+
         return (
           <Link
             key={href}
@@ -197,12 +218,10 @@ export default function Nav() {
       {/* ── Mobile drawer ────────────────────────────────────── */}
       {mobileOpen && (
         <>
-          {/* Overlay */}
           <div
             className="md:hidden fixed inset-0 z-50 bg-black/30"
             onClick={() => setMobileOpen(false)}
           />
-          {/* Drawer */}
           <aside
             className="md:hidden fixed top-0 left-0 h-screen w-72 flex flex-col z-50"
             style={{ background: S.bg, borderRight: `1px solid ${S.border}` }}

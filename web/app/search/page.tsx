@@ -1,8 +1,12 @@
 export const dynamic = "force-dynamic";
 
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import SearchClient from "@/components/search/SearchClient";
 
-export default function SearchPage() {
+export default async function SearchPage() {
+  const session = await auth();
+  if ((session?.user as { rol?: string })?.rol === "freemium") redirect("/");
   return (
     <div className="space-y-8 max-w-3xl">
       <div>

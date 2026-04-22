@@ -12,7 +12,7 @@ interface AsistenteResponse {
   respuesta: string;
 }
 
-const ROLES_CON_ACCESO = ["admin", "manager", "directivo", "vinculador", "oferente"];
+const ROLES_CON_ACCESO = ["admin", "manager", "directivo", "vinculador", "socio"];
 
 export async function enviarMensaje(
   messages: MensajeChat[]

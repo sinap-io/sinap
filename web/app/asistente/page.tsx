@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import AsistenteChat from "./AsistenteChat";
 
-const ROLES_CON_ACCESO = ["admin", "manager", "directivo", "vinculador", "oferente"];
+const ROLES_CON_ACCESO = ["admin", "manager", "directivo", "vinculador", "socio"];
 
 export const metadata = { title: "Asistente — SINAP" };
 

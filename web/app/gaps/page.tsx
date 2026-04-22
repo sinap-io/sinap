@@ -1,10 +1,14 @@
 export const dynamic = "force-dynamic";
 
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { fetchApi } from "@/lib/api";
 import type { GapItem, GapSummary } from "@/lib/types";
 import GapsClient from "@/components/gaps/GapsClient";
 
 export default async function GapsPage() {
+  const session = await auth();
+  if ((session?.user as { rol?: string })?.rol === "freemium") redirect("/");
   let gaps: GapItem[] = [];
   let summary: GapSummary = { total_gaps: 0, total_parcial: 0, total_demanda: 0 };
 

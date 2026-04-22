@@ -1,11 +1,16 @@
 export const dynamic = "force-dynamic";
 
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { fetchApi } from "@/lib/api";
 import type { InstrumentItem } from "@/lib/types";
 import InstrumentsClient from "@/components/instruments/InstrumentsClient";
 import { TIPO_INSTRUMENTO_LABEL, TIPO_INSTRUMENTO_COLOR, STATUS_INSTRUMENTO_COLOR } from "@/lib/labels";
 
 export default async function InstrumentsPage() {
+  const session = await auth();
+  if ((session?.user as { rol?: string })?.rol === "freemium") redirect("/");
+
   const instruments = await fetchApi<InstrumentItem[]>("/instruments");
 
   const activos    = instruments.filter((i) => i.status === "activo").length;

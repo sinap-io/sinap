@@ -17,6 +17,8 @@ export default async function ProyectoDetailPage({
   const { id } = await params;
   const session = await auth();
   const rol = (session?.user as { rol?: string })?.rol ?? "";
+  // invitado y freemium solo ven el listado, no el detalle
+  if (rol === "invitado" || rol === "freemium") redirect("/proyectos");
 
   let proyecto: ProyectoDetail | null = null;
   let actores: Pick<ActorList, "id" | "nombre">[] = [];
