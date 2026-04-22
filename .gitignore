@@ -7,3 +7,8 @@ __pycache__/
 *.log
 openapi.json
 .claude/
+
+# Archivos locales — no subir al repo
+*.pdf
+*.xlsx
+*.xls
