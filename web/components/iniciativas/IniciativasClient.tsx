@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import type { IniciativaList } from "@/lib/types";
 import {
@@ -24,27 +25,47 @@ export default function IniciativasClient({
   iniciativas: IniciativaList[];
   actores: ActorOption[];
 }) {
-  const [tipoFiltro,     setTipoFiltro]     = useState(TODOS);
-  const [estadoFiltro,   setEstadoFiltro]   = useState(TODOS);
-  const [actorFiltro,    setActorFiltro]    = useState<number | "todos">(TODOS);
-  const [vinculadorFiltro, setVinculadorFiltro] = useState(TODOS);
-  const [busqueda,       setBusqueda]       = useState("");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const busqueda         = searchParams.get("q")          ?? "";
+  const tipoFiltro       = searchParams.get("tipo")        ?? TODOS;
+  const estadoFiltro     = searchParams.get("estado")      ?? TODOS;
+  const actorParam       = searchParams.get("actor")       ?? TODOS;
+  const vinculadorFiltro = searchParams.get("vinculador")  ?? TODOS;
+
+  const actorFiltro: number | "todos" = actorParam === TODOS ? TODOS : Number(actorParam);
+
+  function setParam(key: string, value: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value && value !== TODOS) params.set(key, value);
+    else params.delete(key);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }
+
+  function limpiar() {
+    router.replace(pathname, { scroll: false });
+  }
 
   // Vinculadores únicos para el dropdown
-  const vinculadores = Array.from(
-    new Set(
-      iniciativas
-        .map((i) => i.vinculador_nombre)
-        .filter((v): v is string => v !== null)
-    )
-  ).sort();
+  const vinculadores = useMemo(() =>
+    Array.from(
+      new Set(
+        iniciativas
+          .map((i) => i.vinculador_nombre)
+          .filter((v): v is string => v !== null)
+      )
+    ).sort(),
+    [iniciativas]
+  );
 
   const filtradas = iniciativas.filter((i) => {
-    if (tipoFiltro   !== TODOS && i.tipo   !== tipoFiltro)   return false;
-    if (estadoFiltro !== TODOS && i.estado !== estadoFiltro) return false;
-    if (actorFiltro  !== TODOS && !i.actor_ids.includes(actorFiltro as number)) return false;
-    if (vinculadorFiltro !== TODOS && i.vinculador_nombre !== vinculadorFiltro) return false;
-    if (busqueda && !i.titulo.toLowerCase().includes(busqueda.toLowerCase())) return false;
+    if (tipoFiltro       !== TODOS && i.tipo              !== tipoFiltro)              return false;
+    if (estadoFiltro     !== TODOS && i.estado            !== estadoFiltro)            return false;
+    if (actorFiltro      !== TODOS && !i.actor_ids.includes(actorFiltro as number))    return false;
+    if (vinculadorFiltro !== TODOS && i.vinculador_nombre !== vinculadorFiltro)        return false;
+    if (busqueda && !i.titulo.toLowerCase().includes(busqueda.toLowerCase()))          return false;
     return true;
   });
 
@@ -66,13 +87,13 @@ export default function IniciativasClient({
           type="text"
           placeholder="Buscar por título..."
           value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
+          onChange={(e) => setParam("q", e.target.value)}
           className={`${selectCls} flex-1 min-w-[180px]`}
         />
 
         <select
           value={tipoFiltro}
-          onChange={(e) => setTipoFiltro(e.target.value)}
+          onChange={(e) => setParam("tipo", e.target.value)}
           className={selectCls}
         >
           <option value={TODOS}>Todos los tipos</option>
@@ -83,7 +104,7 @@ export default function IniciativasClient({
 
         <select
           value={estadoFiltro}
-          onChange={(e) => setEstadoFiltro(e.target.value)}
+          onChange={(e) => setParam("estado", e.target.value)}
           className={selectCls}
         >
           <option value={TODOS}>Todos los estados</option>
@@ -94,10 +115,8 @@ export default function IniciativasClient({
 
         {actores.length > 0 && (
           <select
-            value={actorFiltro}
-            onChange={(e) =>
-              setActorFiltro(e.target.value === TODOS ? TODOS : Number(e.target.value))
-            }
+            value={actorParam}
+            onChange={(e) => setParam("actor", e.target.value)}
             className={selectCls}
           >
             <option value={TODOS}>Todos los actores</option>
@@ -105,7 +124,7 @@ export default function IniciativasClient({
               .slice()
               .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"))
               .map((a) => (
-                <option key={a.id} value={a.id}>{a.nombre}</option>
+                <option key={a.id} value={String(a.id)}>{a.nombre}</option>
               ))}
           </select>
         )}
@@ -113,7 +132,7 @@ export default function IniciativasClient({
         {vinculadores.length > 0 && (
           <select
             value={vinculadorFiltro}
-            onChange={(e) => setVinculadorFiltro(e.target.value)}
+            onChange={(e) => setParam("vinculador", e.target.value)}
             className={selectCls}
           >
             <option value={TODOS}>Todos los vinculadores</option>
@@ -125,13 +144,7 @@ export default function IniciativasClient({
 
         {hayFiltros && (
           <button
-            onClick={() => {
-              setTipoFiltro(TODOS);
-              setEstadoFiltro(TODOS);
-              setActorFiltro(TODOS);
-              setVinculadorFiltro(TODOS);
-              setBusqueda("");
-            }}
+            onClick={limpiar}
             className="text-xs text-[var(--text-muted)] hover:text-[var(--text)]
                        transition-colors px-2"
           >

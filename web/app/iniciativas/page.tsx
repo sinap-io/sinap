@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { fetchApi } from "@/lib/api";
 import type { ActorList, IniciativaList } from "@/lib/types";
+import { Suspense } from "react";
 import IniciativasClient from "@/components/iniciativas/IniciativasClient";
 
 const CAN_MANAGE = ["admin", "manager", "directivo", "vinculador"];
@@ -74,7 +75,9 @@ export default async function IniciativasPage() {
       </div>
 
       {/* Lista con filtros */}
-      <IniciativasClient iniciativas={iniciativas} actores={actores} />
+      <Suspense fallback={<div className="text-sm text-[var(--text-muted)] py-4">Cargando…</div>}>
+        <IniciativasClient iniciativas={iniciativas} actores={actores} />
+      </Suspense>
     </div>
   );
 }

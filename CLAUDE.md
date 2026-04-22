@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (22 abril 2026)
+## Estado actual (23 abril 2026)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -36,6 +36,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - **Asistente del Ecosistema** (`/asistente`) ✅ — chat conversacional en lenguaje natural contra todos los datos del ecosistema, con descarga PDF
 - **Panel admin de usuarios** (`/admin/usuarios`) ✅ — gestión sin terminal, visible para admin y manager
 - **Modelo de roles externos rediseñado** ✅ — socio / freemium / invitado (ver sección abajo)
+- **Filtros persistentes en URL** ✅ — useSearchParams en iniciativas, proyectos y actores. Suspense boundaries en las 3 páginas. Fix: duplicate `const rol` y `redirect` import faltante en proyectos.
 
 **Branch activo:** `main` — todo mergeado y deployado.
 
@@ -110,7 +111,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - `invitado` (ex `demandante`) — ve todos los módulos de datos en modo lectura, no puede crear nada. Solo ve listados de Iniciativas y Proyectos (no el detalle). Tiene `fecha_vencimiento` (default 7 días al crear).
 - Auth: login rechazado si `invitado` tiene `fecha_vencimiento` vencida
 - ⚠️ El label final de `freemium` está pendiente — por ahora muestra "Acceso básico"
-- ⚠️ Archivos locales (PDFs, Excel, PNG, MD) commiteados accidentalmente — limpiar en próxima sesión con `git rm --cached`
+- Archivos locales (PDFs, Excel) eliminados del repo con `git rm --cached` ✅ — `.gitignore` actualizado
 
 **Datos ficticios verosímiles — estado (3 abril 2026):**
 - Script `api/scripts/seed_data.py` ✅ — carga 23 actores, 36 capacidades, 17 necesidades, 12 instrumentos, 4 iniciativas, 11 hitos
@@ -265,7 +266,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 5. ✅ Panel admin de usuarios (`/admin/usuarios`)
 6. ✅ Modelo de roles externos (socio / freemium / invitado)
 7. Dominio sinap.io en Cloudflare
-8. Filtros persistentes en URL (useSearchParams) — iniciativas, proyectos, actores
+8. ✅ Filtros persistentes en URL (useSearchParams) — iniciativas, proyectos, actores
 
 **Post 1/5:**
 - Matching semántico por entidad (B1)
@@ -316,10 +317,10 @@ En orden de prioridad:
 4. ~~**Asistente del Ecosistema**~~ ✅ — completado
 5. ~~**Panel admin de usuarios**~~ ✅ — completado
 6. ~~**Modelo de roles externos**~~ ✅ — completado
-7. **Limpiar archivos locales del repo** — `git rm --cached` para PDFs/Excel/PNG commiteados accidentalmente
+7. ~~**Limpiar archivos locales del repo**~~ ✅ — `git rm --cached` + `.gitignore` actualizado
 8. **Registrar dominio** sinap.io en Cloudflare
 9. **Definir label final de freemium** — "Acceso básico" es provisorio
-10. **Filtros persistentes en URL** — useSearchParams en iniciativas, proyectos, actores
+10. ~~**Filtros persistentes en URL**~~ ✅ — useSearchParams en iniciativas, proyectos, actores
 11. **Datos reales** — borrar ficticios y cargar datos reales del Clúster el 1/5/2026
 
 ---

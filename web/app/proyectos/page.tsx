@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { fetchApi } from "@/lib/api";
 import type { ActorList, ProyectoList } from "@/lib/types";
+import { Suspense } from "react";
 import ProyectosClient from "@/components/proyectos/ProyectosClient";
 
 const CAN_MANAGE = ["admin", "manager", "directivo", "vinculador"];
@@ -33,8 +34,6 @@ export default async function ProyectosPage() {
     busca_socio:             proyectos.filter((p) => p.apoyos_buscados.includes("socio_tecnologico")).length,
     finalizado:              proyectos.filter((p) => p.estado === "finalizado").length,
   };
-
-  const rol = (session?.user as { rol?: string })?.rol ?? "";
 
   return (
     <div className="space-y-8">
@@ -77,7 +76,9 @@ export default async function ProyectosPage() {
       </div>
 
       {/* Lista con filtros */}
-      <ProyectosClient proyectos={proyectos} actores={actores} />
+      <Suspense fallback={<div className="text-sm text-[var(--text-muted)] py-4">Cargando…</div>}>
+        <ProyectosClient proyectos={proyectos} actores={actores} />
+      </Suspense>
     </div>
   );
 }

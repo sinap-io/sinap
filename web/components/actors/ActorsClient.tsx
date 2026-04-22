@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Badge from "@/components/Badge";
 import type { ActorList } from "@/lib/types";
@@ -9,8 +10,19 @@ import { TIPO_ACTOR_LABEL, TIPO_ACTOR_COLOR } from "@/lib/labels";
 const TIPOS = ["empresa", "startup", "universidad", "investigador", "gobierno"];
 
 export default function ActorsClient({ actors }: { actors: ActorList[] }) {
-  const [search, setSearch] = useState("");
-  const [tipo, setTipo] = useState("");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const search = searchParams.get("q")    ?? "";
+  const tipo   = searchParams.get("tipo") ?? "";
+
+  function setParam(key: string, value: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value) params.set(key, value);
+    else params.delete(key);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }
 
   const filtered = useMemo(() => {
     return actors.filter((a) => {
@@ -29,14 +41,14 @@ export default function ActorsClient({ actors }: { actors: ActorList[] }) {
           type="text"
           placeholder="Buscar por nombre..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => setParam("q", e.target.value)}
           className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-card)]
                      px-4 py-2 text-sm text-[var(--text)] placeholder-[var(--text-muted)]
                      focus:outline-none focus:border-[var(--accent)]"
         />
         <select
           value={tipo}
-          onChange={(e) => setTipo(e.target.value)}
+          onChange={(e) => setParam("tipo", e.target.value)}
           className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)]
                      px-4 py-2 text-sm text-[var(--text)]
                      focus:outline-none focus:border-[var(--accent)]"

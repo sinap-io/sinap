@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { fetchApi } from "@/lib/api";
 import type { ActorList, InstrumentItem, IniciativaList, ProyectoDetail } from "@/lib/types";

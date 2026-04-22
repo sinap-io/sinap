@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import type { ProyectoList } from "@/lib/types";
 import {
@@ -23,21 +24,41 @@ export default function ProyectosClient({
   proyectos: ProyectoList[];
   actores: ActorOption[];
 }) {
-  const [estadoFiltro, setEstadoFiltro] = useState(TODOS);
-  const [areaFiltro,   setAreaFiltro]   = useState(TODOS);
-  const [actorFiltro,  setActorFiltro]  = useState<number | "todos">(TODOS);
-  const [busqueda,     setBusqueda]     = useState("");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const busqueda    = searchParams.get("q")      ?? "";
+  const estadoFiltro = searchParams.get("estado") ?? TODOS;
+  const areaFiltro   = searchParams.get("area")   ?? TODOS;
+  const actorParam   = searchParams.get("actor")  ?? TODOS;
+
+  const actorFiltro: number | "todos" = actorParam === TODOS ? TODOS : Number(actorParam);
+
+  function setParam(key: string, value: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value && value !== TODOS) params.set(key, value);
+    else params.delete(key);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }
+
+  function limpiar() {
+    router.replace(pathname, { scroll: false });
+  }
 
   // Áreas únicas de los proyectos cargados
-  const areas = Array.from(
-    new Set(proyectos.map((p) => p.area_tematica).filter((a): a is string => a !== null))
-  ).sort();
+  const areas = useMemo(() =>
+    Array.from(
+      new Set(proyectos.map((p) => p.area_tematica).filter((a): a is string => a !== null))
+    ).sort(),
+    [proyectos]
+  );
 
   const filtrados = proyectos.filter((p) => {
-    if (estadoFiltro !== TODOS && p.estado !== estadoFiltro) return false;
-    if (areaFiltro   !== TODOS && p.area_tematica !== areaFiltro) return false;
-    if (actorFiltro  !== TODOS && !p.actor_ids.includes(actorFiltro as number)) return false;
-    if (busqueda && !p.titulo.toLowerCase().includes(busqueda.toLowerCase())) return false;
+    if (estadoFiltro !== TODOS && p.estado          !== estadoFiltro)              return false;
+    if (areaFiltro   !== TODOS && p.area_tematica   !== areaFiltro)                return false;
+    if (actorFiltro  !== TODOS && !p.actor_ids.includes(actorFiltro as number))    return false;
+    if (busqueda && !p.titulo.toLowerCase().includes(busqueda.toLowerCase()))       return false;
     return true;
   });
 
@@ -56,11 +77,11 @@ export default function ProyectosClient({
           type="text"
           placeholder="Buscar por título..."
           value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
+          onChange={(e) => setParam("q", e.target.value)}
           className={`${selectCls} flex-1 min-w-[180px]`}
         />
 
-        <select value={estadoFiltro} onChange={(e) => setEstadoFiltro(e.target.value)} className={selectCls}>
+        <select value={estadoFiltro} onChange={(e) => setParam("estado", e.target.value)} className={selectCls}>
           <option value={TODOS}>Todos los estados</option>
           {Object.entries(ESTADO_PROYECTO_LABEL).map(([k, v]) => (
             <option key={k} value={k}>{v}</option>
@@ -68,7 +89,7 @@ export default function ProyectosClient({
         </select>
 
         {areas.length > 0 && (
-          <select value={areaFiltro} onChange={(e) => setAreaFiltro(e.target.value)} className={selectCls}>
+          <select value={areaFiltro} onChange={(e) => setParam("area", e.target.value)} className={selectCls}>
             <option value={TODOS}>Todas las áreas</option>
             {areas.map((a) => (
               <option key={a} value={a}>{AREA_LABEL[a] ?? a}</option>
@@ -78,10 +99,8 @@ export default function ProyectosClient({
 
         {actores.length > 0 && (
           <select
-            value={actorFiltro}
-            onChange={(e) =>
-              setActorFiltro(e.target.value === TODOS ? TODOS : Number(e.target.value))
-            }
+            value={actorParam}
+            onChange={(e) => setParam("actor", e.target.value)}
             className={selectCls}
           >
             <option value={TODOS}>Todos los actores</option>
@@ -89,19 +108,14 @@ export default function ProyectosClient({
               .slice()
               .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"))
               .map((a) => (
-                <option key={a.id} value={a.id}>{a.nombre}</option>
+                <option key={a.id} value={String(a.id)}>{a.nombre}</option>
               ))}
           </select>
         )}
 
         {hayFiltros && (
           <button
-            onClick={() => {
-              setEstadoFiltro(TODOS);
-              setAreaFiltro(TODOS);
-              setActorFiltro(TODOS);
-              setBusqueda("");
-            }}
+            onClick={limpiar}
             className="text-xs text-[var(--text-muted)] hover:text-[var(--text)] transition-colors px-2"
           >
             Limpiar filtros

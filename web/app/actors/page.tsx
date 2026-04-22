@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { fetchApi } from "@/lib/api";
 import type { ActorList } from "@/lib/types";
+import { Suspense } from "react";
 import ActorsClient from "@/components/actors/ActorsClient";
 
 export default async function ActorsPage() {
@@ -53,7 +54,9 @@ export default async function ActorsPage() {
       </div>
 
       {/* Lista con filtros (Client Component) */}
-      <ActorsClient actors={actors} />
+      <Suspense fallback={<div className="text-sm text-[var(--text-muted)] py-4">Cargando…</div>}>
+        <ActorsClient actors={actors} />
+      </Suspense>
     </div>
   );
 }
