@@ -43,7 +43,7 @@ const links = [
   { href: "/proyectos",   label: "Proyectos",      icon: FlaskConical,  roles: null },
   { href: "/vinculadores", label: "Vinculadores",   icon: Activity,      roles: ["admin", "manager", "directivo", "vinculador"] },
   { href: "/asistente",   label: "Asistente IA",   icon: Sparkles,   roles: ["admin", "manager", "directivo", "vinculador", "oferente"] },
-  { href: "/admin/usuarios", label: "Usuarios",    icon: ShieldCheck, roles: ["admin"] },
+  { href: "/admin/usuarios", label: "Usuarios",    icon: ShieldCheck, roles: ["admin", "manager"] },
   { href: "/informe",     label: "Informe IA",     icon: BarChart2,  roles: ["admin", "manager", "directivo", "vinculador"] },
   { href: "/radar",       label: "Radar sectorial",icon: Radar,      roles: ["admin", "manager", "directivo", "vinculador"] },
 ];

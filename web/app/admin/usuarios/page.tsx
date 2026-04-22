@@ -8,7 +8,7 @@ export const metadata = { title: "Usuarios — SINAP" };
 export default async function AdminUsuariosPage() {
   const session = await auth();
   const rol = (session?.user as { rol?: string })?.rol ?? "";
-  if (rol !== "admin") redirect("/");
+  if (!["admin", "manager"].includes(rol)) redirect("/");
 
   const usuarios = await listarUsuarios();
   return <AdminUsuariosClient usuarios={usuarios} />;

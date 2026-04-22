@@ -15,7 +15,7 @@ const ROLES_VALIDOS = ["admin", "manager", "directivo", "vinculador", "oferente"
 async function checkAdmin() {
   const session = await auth();
   const rol = (session?.user as { rol?: string })?.rol ?? "";
-  if (rol !== "admin") throw new Error("No autorizado.");
+  if (!["admin", "manager"].includes(rol)) throw new Error("No autorizado.");
 }
 
 export type Usuario = {
