@@ -1,8 +1,10 @@
 import logging
+import os
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from db.connection import get_pool, settings
 from routers import actors, services, needs, instruments, gaps, search, vinculador, iniciativas, informe, radar, asistente
@@ -10,6 +12,10 @@ from routers.proyectos import router as proyectos_router, zonas_router
 from routers.adit import router as adit_router
 
 logger = logging.getLogger(__name__)
+
+# Rutas públicas que no requieren autenticación
+_PUBLIC_PATHS = {"/health", "/docs", "/openapi.json", "/redoc"}
+_SINAP_API_KEY = os.environ.get("SINAP_API_KEY", "")
 
 
 @asynccontextmanager
@@ -39,6 +45,26 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def require_api_key(request: Request, call_next):
+    """Bloquea requests sin la clave interna correcta.
+    Rutas públicas (health, docs) quedan libres.
+    Si SINAP_API_KEY no está configurada, rechaza todo para evitar
+    que un deploy incompleto quede abierto accidentalmente.
+    """
+    if request.url.path in _PUBLIC_PATHS:
+        return await call_next(request)
+
+    if not _SINAP_API_KEY:
+        logger.error("SINAP_API_KEY no configurada — rechazando request a %s", request.url.path)
+        return JSONResponse(status_code=503, content={"detail": "API no configurada correctamente"})
+
+    if request.headers.get("X-Sinap-Api-Key") != _SINAP_API_KEY:
+        return JSONResponse(status_code=403, content={"detail": "No autorizado"})
+
+    return await call_next(request)
 
 app.include_router(actors.router)
 app.include_router(services.router)
