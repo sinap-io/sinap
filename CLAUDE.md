@@ -38,6 +38,10 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - **Modelo de roles externos rediseñado** ✅ — socio / freemium / invitado (ver sección abajo)
 - **Filtros persistentes en URL** ✅ — useSearchParams en iniciativas, proyectos y actores. Suspense boundaries en las 3 páginas. Fix: duplicate `const rol` y `redirect` import faltante en proyectos.
 
+**Fixes 24 abril 2026:**
+- **Informe y Radar**: cache read envuelto en try/except → si el cache está corrupto, regenera automáticamente en lugar de dar 500 ✅
+- **Asistente**: eliminada regla "si la consulta es vaga, preguntá" → ahora siempre responde con todo directamente ✅
+
 **Branch activo:** `main` — todo mergeado y deployado.
 
 **⚠️ Nota de auth en preview:**
@@ -318,7 +322,7 @@ En orden de prioridad:
 5. ~~**Panel admin de usuarios**~~ ✅ — completado
 6. ~~**Modelo de roles externos**~~ ✅ — completado
 7. ~~**Limpiar archivos locales del repo**~~ ✅ — `git rm --cached` + `.gitignore` actualizado
-8. **Registrar dominio** sinap.io en Cloudflare
+8. **Revisar confiabilidad de los módulos IA** — informe, radar y asistente fallan en momentos críticos. Analizar causas raíz y agregar robustez (timeouts, reintentos, fallbacks claros)
 9. **Definir label final de freemium** — "Acceso básico" es provisorio
 10. ~~**Filtros persistentes en URL**~~ ✅ — useSearchParams en iniciativas, proyectos, actores
 11. **Datos reales** — borrar ficticios y cargar datos reales del Clúster el 1/5/2026
