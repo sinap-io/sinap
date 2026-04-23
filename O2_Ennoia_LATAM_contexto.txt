@@ -1,0 +1,123 @@
+SINAP — OPORTUNIDAD 2: ENNOIA / ADIT LATAM
+Documento de contexto para retomar el desarrollo
+Generado: 23 abril 2026
+============================================================
+
+QUÉ ES ESTA OPORTUNIDAD
+------------------------
+Ennoia es una organización que opera el modelo ADIT (vinculadores) a escala LATAM.
+El interés es construir una plataforma que soporte a los vinculadores en su trabajo:
+registrar lo que hacen, generar negocios, mapear actividad, obtener certificaciones
+y hacer seguimiento de capacitaciones.
+
+Es una oportunidad distinta a O1 (Clúster de Córdoba). El usuario central no es el
+clúster como organización sino el vinculador individual como profesional.
+
+
+DIFERENCIAS CLAVE RESPECTO A O1
+---------------------------------
+O1 (Clúster): el valor está en la visibilidad del ecosistema.
+  Quién hace qué, qué iniciativas hay, dónde están las brechas.
+  Datos relativamente abiertos dentro del ecosistema.
+
+O2 (Ennoia): el valor está en la trazabilidad del vinculador.
+  Qué gestionó, qué negoció, qué certificó, con qué resultado.
+  Datos sensibles: NDA, proyectos en etapas tempranas, información
+  confidencial de empresas, organismos y gobiernos.
+
+
+REQUERIMIENTOS FUNCIONALES ADICIONALES (respecto a O1)
+-------------------------------------------------------
+1. Módulo de certificaciones de vinculadores
+   - Registro de actividades certificables
+   - Emisión o registro de certificados por tipo de acción
+
+2. Seguimiento de capacitaciones
+   - Tracking de formación recibida por el vinculador
+   - Historial de cursos, programas, horas
+
+3. Control de acceso granular por recurso
+   - Hoy sinap.io tiene control por rol (admin, manager, etc.)
+   - O2 necesita control por ítem: un proyecto en NDA no lo ve
+     cualquier vinculador, solo los autorizados explícitamente
+   - Visibilidad configurable por iniciativa / proyecto / etapa
+
+4. Registro de auditoría
+   - Log de quién accedió a qué y cuándo
+   - Necesario para cumplimiento y para resolver disputas
+
+
+REQUERIMIENTOS DE SEGURIDAD ADICIONALES
+-----------------------------------------
+Respecto a O1, O2 necesita:
+
+1. JWT middleware en FastAPI (hoy la API no tiene autenticación propia)
+2. Row-Level Security en PostgreSQL (control de acceso a nivel de fila)
+3. 2FA (autenticación de dos factores) — Auth.js soporta TOTP
+4. Data residency: elegir región de datos según mercado (Neon permite esto)
+5. Logs de auditoría (quién hizo qué, con timestamp)
+6. Posiblemente: SOC 2 / ISO 27001 si algún cliente enterprise lo exige
+   (esto es largo plazo, no para V1)
+
+
+DECISIÓN TÉCNICA: CLON DEL MISMO STACK
+----------------------------------------
+O2 se construye como un repositorio separado (clon de sinap.io).
+NO como una extensión de O1. Razones:
+- El modelo de datos de seguridad va a divergir significativamente
+- El foco de producto es distinto (vinculador como protagonista, no el clúster)
+- Que sean repos separados permite que cada uno evolucione a su ritmo
+
+Stack a mantener igual:
+- Next.js (frontend) → Vercel
+- FastAPI (backend) → Railway
+- PostgreSQL (base de datos) → Neon
+- Auth.js v5
+
+Las mejoras de seguridad van sobre este mismo stack, no requieren
+cambiar tecnología. Son configuración y código adicional, no reemplazo.
+
+El único escenario donde cambiaría el stack es si un cliente exige
+certificaciones de compliance formales (SOC 2, ISO 27001).
+Eso sería una conversación posterior con Ennoia.
+
+
+MODELO DE FINANCIAMIENTO
+--------------------------
+O2 se financia a través de instrumentos públicos/multilaterales,
+no depende de go-to-market inmediato.
+
+Instrumentos relevantes a explorar:
+- IDB (Banco Interamericano de Desarrollo) — programas de innovación LATAM
+- CAF (Banco de Desarrollo de América Latina) — digitalización y ecosistemas
+- FONARSEC / FONSOFT (Argentina) — proyectos de I+D tecnológico
+- Fondos propios de Ennoia o de sus socios institucionales
+
+La propuesta a Ennoia debería incluir:
+- Estimación de costo/tiempo de desarrollo
+- Descripción de los módulos nuevos
+- Propuesta de instrumentos de financiamiento aplicables
+
+
+PRÓXIMOS PASOS ANTES DE ARRANCAR O2
+-------------------------------------
+1. Sesión de descubrimiento con Ennoia:
+   - Qué necesitan exactamente (funcional y de seguridad)
+   - En qué plazo
+   - Con qué financiamiento
+
+2. Estimación de desarrollo basada en esa sesión
+
+3. Definir modelo de acuerdo (desarrollo financiado, equity, licencia)
+
+4. Clonar repo de sinap.io como base
+
+5. Arrancar por la capa de seguridad (JWT, RLS, 2FA) antes de
+   cualquier funcionalidad nueva
+
+
+ESTADO AL 23 ABRIL 2026
+-------------------------
+- O2 definida conceptualmente, no iniciada técnicamente
+- Esperando sesión de requerimientos con Ennoia
+- O1 en desarrollo activo (ver CLAUDE.md del repo sinap-io/sinap)
