@@ -34,6 +34,7 @@ const TODOS_TIPOS_HITO = Object.keys(TIPO_HITO_PROYECTO_LABEL);
 interface ActorOption    { id: number; nombre: string }
 interface InstrumentoOpt { id: number; nombre: string; tipo: string }
 interface IniciativaOpt  { id: number; titulo: string }
+interface VinculadorOpt  { id: number; nombre: string }
 
 function fmt(d: string) {
   return new Date(d).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" });
@@ -45,12 +46,14 @@ export default function ProyectoDetailClient({
   actoresDisponibles,
   instrumentosDisponibles,
   iniciativasDisponibles: _iniciativasDisponibles,
+  vinculadoresDisponibles,
 }: {
   proyecto: ProyectoDetail;
   rol: string;
   actoresDisponibles: ActorOption[];
   instrumentosDisponibles: InstrumentoOpt[];
   iniciativasDisponibles: IniciativaOpt[];
+  vinculadoresDisponibles: VinculadorOpt[];
 }) {
   const canManage = CAN_MANAGE.includes(rol);
   const [isPending, startTransition] = useTransition();
@@ -180,6 +183,26 @@ export default function ProyectoDetailClient({
       setHitoTipo(""); setHitoDesc(""); setHitoUrl("");
       setHitoFecha(new Date().toISOString().split("T")[0]);
       setAddingHito(false);
+    });
+  }
+
+  // ── Vinculador ───────────────────────────────────────────────
+  const [vinculadorEdit, setVinculadorEdit] = useState(false);
+  const [vinculadorSel,  setVinculadorSel]  = useState(
+    proyecto.vinculador_id?.toString() ?? ""
+  );
+
+  function abrirVinculadorEdit() {
+    setVinculadorSel(proyecto.vinculador_id?.toString() ?? "");
+    setVinculadorEdit(true);
+  }
+
+  function guardarVinculador() {
+    startTransition(async () => {
+      await editarCamposProyecto(proyecto.id, {
+        vinculador_id: vinculadorSel === "" ? 0 : Number(vinculadorSel),
+      });
+      setVinculadorEdit(false);
     });
   }
 
@@ -344,6 +367,53 @@ export default function ProyectoDetailClient({
             {trlActual && (
               <p className="text-xs text-[var(--text-muted)] italic">{TRL_LABEL[trlActual]}</p>
             )}
+
+            {/* Vinculador */}
+            <div className="flex items-center gap-2 pt-1 border-t border-[var(--border)]">
+              <span className="text-xs text-[var(--text-muted)]">Vinculador:</span>
+              {vinculadorEdit ? (
+                <>
+                  <select
+                    value={vinculadorSel}
+                    onChange={(e) => setVinculadorSel(e.target.value)}
+                    className="text-xs rounded-lg border border-[var(--border)] px-2 py-1 bg-white focus:outline-none focus:border-[var(--accent)]"
+                    autoFocus
+                  >
+                    <option value="">Sin asignar</option>
+                    {vinculadoresDisponibles.map((v) => (
+                      <option key={v.id} value={v.id}>{v.nombre}</option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={guardarVinculador}
+                    disabled={isPending}
+                    className="text-xs text-[var(--accent)] hover:opacity-80"
+                  >
+                    Guardar
+                  </button>
+                  <button
+                    onClick={() => setVinculadorEdit(false)}
+                    className="text-xs text-[var(--text-muted)] hover:text-[var(--text)]"
+                  >
+                    Cancelar
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span className="text-xs font-medium text-[var(--text)]">
+                    {proyecto.vinculador_nombre ?? "Sin asignar"}
+                  </span>
+                  {canManage && (
+                    <button
+                      onClick={abrirVinculadorEdit}
+                      className="text-xs text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
+                    >
+                      ✏
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
           </>
         ) : (
           <div className="space-y-3">

@@ -146,9 +146,11 @@ async def get_proyecto(pid: int, db: asyncpg.Connection = Depends(get_db)):
         SELECT p.id, p.titulo, p.descripcion, p.trl, p.area_tematica, p.estado,
                p.apoyos_buscados, p.prioridad,
                p.iniciativa_id, i.titulo AS iniciativa_titulo,
+               p.vinculador_id, v.nombre AS vinculador_nombre,
                p.creado_en, p.actualizado_en
         FROM proyecto p
         LEFT JOIN iniciativa i ON i.id = p.iniciativa_id
+        LEFT JOIN vinculador v ON v.id = p.vinculador_id
         WHERE p.id = $1
     """, pid)
     if not row:
@@ -217,6 +219,11 @@ async def patch_proyecto(
         if val is not None:
             args.append(val)
             updates.append(f"{field} = ${len(args)}")
+
+    # vinculador_id: 0 = quitar (NULL), >0 = asignar
+    if body.vinculador_id is not None:
+        args.append(None if body.vinculador_id == 0 else body.vinculador_id)
+        updates.append(f"vinculador_id = ${len(args)}")
 
     # prioridad: -1 = quitar (NULL), 1-4 = asignar
     if body.prioridad is not None:

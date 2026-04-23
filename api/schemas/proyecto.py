@@ -79,6 +79,7 @@ class ProyectoPatch(BaseModel):
     apoyos_buscados: list[str] | None = None
     prioridad: int | None = None          # 1-4, -1 = quitar prioridad
     iniciativa_id: int | None = None
+    vinculador_id: int | None = None      # 0 = quitar vinculador
     cambiado_por: int | None = None
 
 
@@ -109,6 +110,8 @@ class ProyectoDetail(BaseModel):
     prioridad: int | None
     iniciativa_id: int | None
     iniciativa_titulo: str | None
+    vinculador_id: int | None
+    vinculador_nombre: str | None
     creado_en: datetime
     actualizado_en: datetime
     actores: list[ProyectoActorOut]

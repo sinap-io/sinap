@@ -4,9 +4,10 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { fetchApi } from "@/lib/api";
-import type { ActorList, InstrumentItem, IniciativaList, ProyectoDetail } from "@/lib/types";
+import type { ActorList, InstrumentItem, IniciativaList, ProyectoDetail, VinculadorItem } from "@/lib/types";
 
 type InstrumentoSimple = { id: number; nombre: string; tipo: string };
+type VinculadorSimple   = { id: number; nombre: string };
 import ProyectoDetailClient from "@/components/proyectos/ProyectoDetailClient";
 
 export default async function ProyectoDetailPage({
@@ -24,9 +25,10 @@ export default async function ProyectoDetailPage({
   let actores: Pick<ActorList, "id" | "nombre">[] = [];
   let instrumentos: InstrumentoSimple[] = [];
   let iniciativas: Pick<IniciativaList, "id" | "titulo">[] = [];
+  let vinculadores: VinculadorSimple[] = [];
 
   try {
-    [proyecto, actores, instrumentos, iniciativas] = await Promise.all([
+    [proyecto, actores, instrumentos, iniciativas, vinculadores] = await Promise.all([
       fetchApi<ProyectoDetail>(`/proyectos/${id}`),
       fetchApi<ActorList[]>("/actors").then((list) =>
         list.map(({ id, nombre }) => ({ id, nombre }))
@@ -36,6 +38,9 @@ export default async function ProyectoDetailPage({
       ),
       fetchApi<IniciativaList[]>("/iniciativas").then((list) =>
         list.map(({ id, titulo }) => ({ id, titulo }))
+      ),
+      fetchApi<VinculadorItem[]>("/vinculador/operadores").then((list) =>
+        list.filter((v) => v.activo).map(({ id, nombre }) => ({ id, nombre }))
       ),
     ]);
   } catch {
@@ -61,6 +66,7 @@ export default async function ProyectoDetailPage({
         actoresDisponibles={actores}
         instrumentosDisponibles={instrumentos}
         iniciativasDisponibles={iniciativas}
+        vinculadoresDisponibles={vinculadores}
       />
     </div>
   );

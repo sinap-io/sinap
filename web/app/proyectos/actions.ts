@@ -130,7 +130,7 @@ export async function quitarHitoProyecto(id: number, hito_id: number): Promise<R
 
 export async function editarCamposProyecto(
   id: number,
-  campos: { titulo?: string; descripcion?: string; area_tematica?: string; iniciativa_id?: number }
+  campos: { titulo?: string; descripcion?: string; area_tematica?: string; iniciativa_id?: number; vinculador_id?: number }
 ): Promise<Result> {
   const authErr = await requireRol();
   if (authErr) return authErr;

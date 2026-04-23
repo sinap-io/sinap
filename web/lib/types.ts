@@ -218,6 +218,8 @@ export interface ProyectoDetail {
   prioridad: number | null;
   iniciativa_id: number | null;
   iniciativa_titulo: string | null;
+  vinculador_id: number | null;
+  vinculador_nombre: string | null;
   creado_en: string;
   actualizado_en: string;
   actores: ProyectoActorOut[];
