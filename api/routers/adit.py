@@ -31,7 +31,7 @@ async def list_vinculadores(
         LEFT JOIN zona z ON z.id = v.zona_id
         LEFT JOIN iniciativa i ON i.vinculador_id = v.id
         LEFT JOIN hito h       ON h.creado_por = v.usuario_id
-        LEFT JOIN proyecto p   ON p.creado_por = v.usuario_id
+        LEFT JOIN proyecto p   ON p.vinculador_id = v.id
         {where}
         GROUP BY v.id, z.nombre
         ORDER BY v.nombre
@@ -73,13 +73,13 @@ async def get_vinculador(vid: int, db: asyncpg.Connection = Depends(get_db)):
         ORDER BY h.creado_en DESC
     """, uid) if uid else []
 
-    # Proyectos creados
+    # Proyectos asignados a este vinculador
     proyectos = await db.fetch("""
         SELECT id, titulo, trl, estado, creado_en
         FROM proyecto
-        WHERE creado_por = $1
+        WHERE vinculador_id = $1
         ORDER BY creado_en DESC
-    """, uid) if uid else []
+    """, vid)
 
     # Cambios de TRL registrados
     trl_changes = await db.fetch("""
@@ -140,7 +140,7 @@ async def patch_vinculador(
         LEFT JOIN zona z ON z.id = v.zona_id
         LEFT JOIN iniciativa i ON i.vinculador_id = v.id
         LEFT JOIN hito h       ON h.creado_por = v.usuario_id
-        LEFT JOIN proyecto p   ON p.creado_por = v.usuario_id
+        LEFT JOIN proyecto p   ON p.vinculador_id = v.id
         WHERE v.id = $1
         GROUP BY v.id, z.nombre
     """, vid)

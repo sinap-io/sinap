@@ -5,20 +5,48 @@ on:
     # Lunes 9:00 AM Argentina (UTC-3) = 12:00 UTC
     - cron: '0 12 * * 1'
   workflow_dispatch:
-    # Permite ejecutar manualmente desde GitHub Actions si hace falta
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+
     steps:
+      - name: Despertar Railway
+        run: |
+          echo "Verificando que Railway esté activo..."
+          curl -sf "https://sinap-production.up.railway.app/health" \
+            --max-time 30 \
+            -w "Health: HTTP %{http_code} en %{time_total}s\n" \
+            || echo "Warning: health check tardó — continuando igual"
+          sleep 3
+
       - name: Refresh radar — Biosensores
         run: |
           echo "Regenerando radar: biosensores..."
-          curl -sf "https://sinap-production.up.railway.app/radar?tema=biosensores&force=true" \
-            -o /dev/null -w "HTTP status: %{http_code}\n" || echo "Error al regenerar biosensores"
+          RESPONSE=$(curl -s --max-time 240 \
+            -w "\nHTTP_STATUS:%{http_code}" \
+            "https://sinap-production.up.railway.app/radar?tema=biosensores&force=true")
+          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
+          echo "Respuesta HTTP: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "ERROR: biosensores devolvió HTTP $HTTP_STATUS"
+            echo "$RESPONSE" | head -c 800
+            exit 1
+          fi
+          echo "OK: biosensores regenerado correctamente."
 
       - name: Refresh radar — Biotech general
         run: |
           echo "Regenerando radar: biotech_general..."
-          curl -sf "https://sinap-production.up.railway.app/radar?tema=biotech_general&force=true" \
-            -o /dev/null -w "HTTP status: %{http_code}\n" || echo "Error al regenerar biotech_general"
+          RESPONSE=$(curl -s --max-time 240 \
+            -w "\nHTTP_STATUS:%{http_code}" \
+            "https://sinap-production.up.railway.app/radar?tema=biotech_general&force=true")
+          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
+          echo "Respuesta HTTP: $HTTP_STATUS"
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "ERROR: biotech_general devolvió HTTP $HTTP_STATUS"
+            echo "$RESPONSE" | head -c 800
+            exit 1
+          fi
+          echo "OK: biotech_general regenerado correctamente."
