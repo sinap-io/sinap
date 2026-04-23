@@ -157,13 +157,20 @@ async def generar_radar(
 
     # Buscar en cache persistente en DB
     if not force:
-        row = await db.fetchrow("""
-            SELECT contenido FROM cache_ia
-            WHERE tipo = $1
-              AND generado_en + (ttl_horas || ' hours')::interval > NOW()
-        """, cache_tipo)
-        if row:
-            return RadarResponse(**row["contenido"])
+        try:
+            row = await db.fetchrow("""
+                SELECT contenido FROM cache_ia
+                WHERE tipo = $1
+                  AND generado_en + (ttl_horas || ' hours')::interval > NOW()
+            """, cache_tipo)
+            if row:
+                contenido = row["contenido"]
+                if isinstance(contenido, str):
+                    import json
+                    contenido = json.loads(contenido)
+                return RadarResponse.model_validate(contenido)
+        except Exception as cache_err:
+            logger.warning("Cache read failed, regenerating: %s", cache_err)
 
     try:
         result = await _generar(tema, db)
