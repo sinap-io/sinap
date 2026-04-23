@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (24 abril 2026)
+## Estado actual (23 abril 2026)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -41,6 +41,14 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 **Fixes 24 abril 2026:**
 - **Informe y Radar**: cache read envuelto en try/except → si el cache está corrupto, regenera automáticamente en lugar de dar 500 ✅
 - **Asistente**: eliminada regla "si la consulta es vaga, preguntá" → ahora siempre responde con todo directamente ✅
+
+**23 abril 2026 — Vinculador en proyectos + confiabilidad IA:**
+- **Migración 013 aplicada** ✅ — `vinculador_id INTEGER` en tabla `proyecto` (FK a vinculador, ON DELETE SET NULL)
+- **API proyectos actualizada** ✅ — GET /proyectos/{id} devuelve vinculador_id + vinculador_nombre; PATCH acepta vinculador_id (0 = quitar)
+- **Frontend detalle proyecto** ✅ — fila "Vinculador" editable en el header con selector inline
+- **adit.py corregido** ✅ — queries de proyectos usan `vinculador_id = v.id` (lista, detalle, PATCH). Un proyecto asignado a un vinculador aparece en su panel de actividad.
+- **Radar cron mejorado** ✅ — agrega `--max-time 240`, falla en rojo si HTTP ≠ 200 (antes fallaba silencioso), paso de wake-up previo, job timeout 15 min. Para diagnosticar: GitHub → sinap-io/sinap → Actions → último run.
+- **Informe cron nuevo** ✅ — `informe-refresh.yml`, corre L-V 9AM Argentina, pre-calienta cache diariamente antes de que el equipo empiece el día.
 
 **Branch activo:** `main` — todo mergeado y deployado.
 
@@ -322,7 +330,7 @@ En orden de prioridad:
 5. ~~**Panel admin de usuarios**~~ ✅ — completado
 6. ~~**Modelo de roles externos**~~ ✅ — completado
 7. ~~**Limpiar archivos locales del repo**~~ ✅ — `git rm --cached` + `.gitignore` actualizado
-8. **Revisar confiabilidad de los módulos IA** — informe, radar y asistente fallan en momentos críticos. Analizar causas raíz y agregar robustez (timeouts, reintentos, fallbacks claros)
+8. ~~**Revisar confiabilidad de los módulos IA**~~ ✅ — cron radar mejorado (falla loudly), cron informe nuevo (diario), vinculador en proyectos completo
 9. **Definir label final de freemium** — "Acceso básico" es provisorio
 10. ~~**Filtros persistentes en URL**~~ ✅ — useSearchParams en iniciativas, proyectos, actores
 11. **Datos reales** — borrar ficticios y cargar datos reales del Clúster el 1/5/2026
