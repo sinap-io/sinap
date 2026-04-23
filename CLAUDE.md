@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (20 abril 2026)
+## Estado actual (23 abril 2026 — actualizado)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -33,6 +33,10 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - **Módulo Vinculadores** ✅ — ex-ADIT, renombrado. Panel de actividad, detalle por vinculador, zona editable
 - **Renombrado Servicios→Ofertas / Necesidades→Demandas** ✅ — en Nav, home, actores, iniciativas (solo UI, rutas y DB sin cambios)
 - **Informe IA incluye proyectos** ✅ — datos de proyectos activos en contexto del prompt + sección "## Proyectos" + métrica "Proyectos" en header
+- **Filtros URL-persistentes** ✅ — Iniciativas, Proyectos y Actores usan useSearchParams + useRouter; los filtros sobreviven navegación y se pueden compartir por URL
+- **Vinculador en proyectos** ✅ — migración 013 aplicada; cada proyecto tiene vinculador_id asignable desde el detalle del proyecto; módulo vinculadores refleja proyectos asignados
+- **Confiabilidad módulos IA** ✅ — caché de informe y radar en Neon DB (no en memoria); fix 500 en informe (cache read en try/except); cron informe diario (L-V 9AM); cron radar mejorado (falla loudly si HTTP ≠ 200); asistente ya no pregunta por aclaración
+- **Fix adit.py** ✅ — queries de proyectos usan vinculador_id = v.id en lugar de creado_por = usuario_id
 
 **Branch activo:** `main` — todo mergeado y deployado.
 
@@ -58,8 +62,10 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 **Informe IA — estado:**
 - Endpoint `GET /informe` en Railway ✅ (`?force=true` para forzar regeneración)
-- Cache 24h en memoria (se pierde si Railway reinicia) ✅
-- 5 secciones de análisis cruzado entre todos los módulos:
+- Cache 24h en tabla `cache_ia` de Neon DB (persiste entre reinicios de Railway) ✅
+- Cache read en try/except → si falla, regenera automáticamente ✅
+- Cron diario automático: GitHub Actions L-V 9AM Argentina → `.github/workflows/informe-refresh.yml` ✅
+- 6 secciones de análisis cruzado entre todos los módulos:
   1. Resumen (2 oraciones, lo más urgente)
   2. Oportunidades de negocios → corto plazo (matches actores no conectados) + mediano plazo (brechas sin cobertura)
   3. Estado de iniciativas (detecta iniciativas en_curso sin hitos en +30 días)
@@ -73,14 +79,18 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 **Radar sectorial — estado:**
 - Endpoint `GET /radar?tema=X&force=true` ✅
 - 2 temas: `biosensores` + `biotech_general` (los 5 anteriores eliminados — enfoque más rico) ✅
-- Cache 7 días en memoria (se limpia si Railway reinicia) ✅
+- Cache 7 días en tabla `cache_ia` de Neon DB (persiste entre reinicios de Railway) ✅
+- Cache read en try/except → si falla, regenera automáticamente ✅
 - Búsqueda web real con **Tavily** integrado ✅ — TAVILY_API_KEY en Railway
 - Botón "↻ Regenerar" visible solo para `admin` y `manager` ✅
 - Botón "↓ Descargar PDF" disponible para todos los roles con acceso (`window.print()`) ✅
-- **Cron automático:** GitHub Actions llama al backend todos los lunes a las 9:00 AM Argentina (12:00 UTC) ✅
+- **Cron automático mejorado:** GitHub Actions lunes 9AM Argentina (12:00 UTC) ✅
   - Workflow: `.github/workflows/radar-refresh.yml`
-  - Se puede ejecutar manualmente desde GitHub → Actions → "Radar — refresh semanal automático"
+  - Ahora falla en rojo si Railway devuelve error (antes fallaba silenciosamente)
+  - Agrega `--max-time 240` y paso de wake-up previo
+  - Se puede ejecutar manualmente desde GitHub → Actions
 - Prompt: 5 secciones, sin límite de palabras, contenido extenso ✅
+- **Para diagnosticar si el cron funcionó:** GitHub → sinap-io/sinap → Actions → último run. Si está rojo = falló y el caché no se actualizó.
 
 **Buscador en iniciativas — estado:**
 - Panel colapsable en detalle de iniciativa ✅
@@ -195,10 +205,41 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Fix TypeScript: `total_proyectos: number` agregado a `InformeData` interface ✅ (causaba build failure en Vercel)
 - Demo realizada con el Clúster ✅
 
+**Módulo Proyectos — vinculador (23 abril 2026):**
+- Migración 013 aplicada ✅ — `vinculador_id INTEGER` en tabla `proyecto` (FK a vinculador, ON DELETE SET NULL)
+- API GET /proyectos/{id}: LEFT JOIN vinculador, devuelve vinculador_id + vinculador_nombre ✅
+- API PATCH /proyectos/{id}: acepta vinculador_id (0 = quitar, >0 = asignar) ✅
+- Frontend detalle proyecto: fila "Vinculador" editable en el header (selector inline) ✅
+- Módulo vinculadores: queries usan `vinculador_id = v.id` → un proyecto asignado aparece en el panel del vinculador ✅
+
+**Seguridad API — shared API key (23 abril 2026):**
+- `api/main.py`: middleware HTTP que valida header `X-Sinap-Api-Key` en todos los requests ✅
+- `/health` permanece público (keep-alive + crons no necesitan auth) ✅
+- Si `SINAP_API_KEY` no está configurada → 503 (fail-safe: deploy incompleto no queda abierto) ✅
+- Si la clave es incorrecta → 403 ✅
+- `web/lib/api.ts`: agrega `X-Sinap-Api-Key` en cada `fetchApi` (server-side only, nunca expuesta al browser) ✅
+- Railway: variable `SINAP_API_KEY=SinapAPI-2026-Xk9mRvLq` configurada ✅
+- Vercel: variable `SINAP_API_KEY=SinapAPI-2026-Xk9mRvLq` configurada ✅
+- ⚠️ Esto es autenticación de servicio (Next.js ↔ FastAPI). No es el JWT por usuario (eso sigue pendiente).
+
+**O2 — Ennoia/ADIT LATAM (23 abril 2026):**
+- Documento de contexto creado: `O2_Ennoia_LATAM_contexto.txt` en raíz del repo ✅
+- Decisión: O2 = clon del mismo stack (Next.js + FastAPI + PostgreSQL), repo separado
+- Financiamiento: instrumentos públicos/multilaterales (IDB, CAF, FONARSEC) — no depende de go-to-market
+- Estado: esperando sesión de requerimientos con Ennoia. No iniciado técnicamente.
+
+**Reunión Clúster 20 abril — features identificadas:**
+- Notificaciones por email (Iván) — no prioritario por ahora
+- Buscador global (Iván/Rodrigo) — ✅ YA EXISTE: Asistente IA está en el nav como ítem independiente
+- Multi-contacto por actor (Andrés) — pendiente, hacer ANTES de cargar datos reales (schema change)
+- Módulo networking para Congreso (Rodrigo, confirmado por Pablo) — pendiente diseño, DESPUÉS de datos reales
+
 **Lo que está pendiente de desarrollo (ver BACKLOG.md para detalle completo):**
+- **Multi-contacto por actor** — tabla `actor_contacto` (nombre, cargo, email, teléfono, es_principal) + UI de gestión en detalle del actor. Hacer ANTES de cargar datos reales.
 - **Fix Server Actions** — agregar verificación de rol al inicio de cada action de mutación (~15 actions)
 - Crear usuarios para el resto del equipo (vinculadores, oferentes) — post-demo
-- Seguridad: middleware JWT en FastAPI (para que creado_por se pueble automáticamente del token)
+- Seguridad: middleware JWT en FastAPI (para que `creado_por` se pueble automáticamente del token del usuario logueado — distinto a la API key ya implementada)
+- Módulo networking — requiere reunión de diseño primero (qué registrar del Congreso). Hacer DESPUÉS de datos reales.
 - Bulk CSV import + batch matching — importar N proyectos y cruzarlos con ofertas/demandas/instrumentos/iniciativas (pedido de Pablo)
 - Login con Google (OAuth)
 - Datos reales del Clúster (cuando estén disponibles)
@@ -234,12 +275,23 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-1. **Fix Server Actions** — verificación de rol al inicio de cada action de mutación (~15 acciones)
-2. **Crear usuarios** — para el resto del equipo del Clúster (post-demo)
-3. **Seguridad API** — middleware JWT en FastAPI (creado_por automático del token)
-4. **Registrar dominio** sinap.io en Cloudflare
-5. **Bulk CSV import + batch matching** — importar proyectos desde CONICET/Excel y cruzarlos con toda la plataforma
-6. **Datos reales** — cuando el Clúster los tenga disponibles
+**Antes de cargar datos reales (schema changes):**
+1. **Multi-contacto por actor** — tabla `actor_contacto` + UI. Si se carga data real sin esto, el campo queda vacío para siempre.
+
+**En cualquier momento:**
+2. **Fix Server Actions** — verificación de rol al inicio de cada action de mutación (~15 acciones)
+3. **Crear usuarios** — para el resto del equipo del Clúster (post-demo)
+4. **Seguridad API** — JWT en FastAPI (creado_por automático del token del usuario)
+5. **Registrar dominio** sinap.io en Cloudflare
+
+**Después de datos reales:**
+6. **Módulo networking** — requiere reunión de diseño primero
+7. **Bulk CSV import + batch matching** — cuando haya datos reales que importar
+8. **Datos reales** — cuando el Clúster los tenga disponibles
+
+**Verificación pendiente próxima sesión:**
+- Chequear en GitHub Actions si el radar cron del lunes siguiente corre en verde
+- Continuar análisis de priorización "antes vs. después de datos reales" (iniciado esta sesión)
 
 ---
 
