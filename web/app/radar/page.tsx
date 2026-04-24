@@ -64,18 +64,11 @@ export default async function RadarPage({
         <h1 className="text-3xl font-bold text-[var(--text)] mb-3">
           Radar del sector
         </h1>
-        <div className="flex flex-col gap-1">
-          {data?.edicion && (
-            <p className="text-sm font-medium text-[var(--text)]">
-              {data.edicion}
-            </p>
-          )}
-          {emitidoEn && (
-            <p className="text-xs text-[var(--text-muted)]">
-              Emitido el {emitidoEn}
-            </p>
-          )}
-        </div>
+        {emitidoEn && (
+          <p className="text-xs text-[var(--text-muted)]">
+            Actualización semanal · Emitido el {emitidoEn}
+          </p>
+        )}
       </div>
 
       {/* Selector de tema */}
@@ -106,7 +99,6 @@ export default async function RadarPage({
           tema={data.tema}
           temaActivo={temaActivo}
           emitidoEn={emitidoEn ?? ""}
-          edicion={data.edicion}
           rol={rol}
         />
       ) : null}

@@ -8,7 +8,6 @@ interface Props {
   tema: string;
   temaActivo: string;
   emitidoEn: string;
-  edicion: string;
   rol: string;
 }
 
@@ -45,7 +44,7 @@ const mdComponents = {
 
 const PUEDE_REGENERAR = ["admin", "manager"];
 
-export default function RadarClient({ radar, temaActivo, emitidoEn, edicion, rol }: Props) {
+export default function RadarClient({ radar, temaActivo, emitidoEn, rol }: Props) {
   const router = useRouter();
 
   const handlePrint = () => {
@@ -79,7 +78,7 @@ export default function RadarClient({ radar, temaActivo, emitidoEn, edicion, rol
             Radar del Sector — Clúster de Biotecnología de Córdoba
           </h1>
           <p className="text-sm text-[var(--text-muted)] mt-1">
-            {edicion} · Emitido el {emitidoEn}
+            Actualización semanal · Emitido el {emitidoEn}
           </p>
         </div>
         <ReactMarkdown components={mdComponents}>{radar}</ReactMarkdown>
