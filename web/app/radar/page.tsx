@@ -15,7 +15,7 @@ interface RadarData {
   tema: string;
   tema_label: string;
   generado_en: string;
-  trimestre: string;
+  edicion: string;
 }
 
 export default async function RadarPage({
@@ -65,9 +65,9 @@ export default async function RadarPage({
           Radar del sector
         </h1>
         <div className="flex flex-col gap-1">
-          {data?.trimestre && (
+          {data?.edicion && (
             <p className="text-sm font-medium text-[var(--text)]">
-              {data.trimestre}
+              {data.edicion}
             </p>
           )}
           {emitidoEn && (
@@ -106,7 +106,7 @@ export default async function RadarPage({
           tema={data.tema}
           temaActivo={temaActivo}
           emitidoEn={emitidoEn ?? ""}
-          trimestre={data.trimestre}
+          edicion={data.edicion}
           rol={rol}
         />
       ) : null}

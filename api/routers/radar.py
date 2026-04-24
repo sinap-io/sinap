@@ -6,7 +6,7 @@ combinando búsqueda web real (Tavily) con análisis de Claude.
 import asyncio
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import asyncpg
 from anthropic import AsyncAnthropic
@@ -49,7 +49,7 @@ class RadarResponse(BaseModel):
     tema: str
     tema_label: str
     generado_en: str
-    trimestre: str
+    edicion: str
 
 
 _CACHE_TTL_HORAS = 168  # 7 días
@@ -216,15 +216,13 @@ async def _generar(tema: str, db: asyncpg.Connection) -> RadarResponse:
     ) or "datos no disponibles"
 
     hoy = datetime.now()
-    mes = hoy.month
-    if mes <= 3:
-        trimestre = f"Q1 {hoy.year}"
-    elif mes <= 6:
-        trimestre = f"Q2 {hoy.year}"
-    elif mes <= 9:
-        trimestre = f"Q3 {hoy.year}"
-    else:
-        trimestre = f"Q4 {hoy.year}"
+    # Mostrar la semana de emisión (lunes de la semana actual)
+    lunes = hoy - timedelta(days=hoy.weekday())
+    _MESES_ES = [
+        "enero", "febrero", "marzo", "abril", "mayo", "junio",
+        "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+    ]
+    trimestre = f"Semana del {lunes.day} de {_MESES_ES[lunes.month - 1]} de {lunes.year}"
 
     tema_label = TEMAS_VALIDOS[tema]
     fecha_actual = hoy.strftime("%B %Y").replace(
@@ -270,5 +268,5 @@ async def _generar(tema: str, db: asyncpg.Connection) -> RadarResponse:
         tema=tema,
         tema_label=tema_label,
         generado_en=datetime.now().isoformat(),
-        trimestre=trimestre,
+        edicion=trimestre,
     )
