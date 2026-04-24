@@ -48,6 +48,7 @@ export default async function InformePage({
   // Fecha de emisión formateada
   const emitidoEn = data?.generado_en
     ? new Date(data.generado_en).toLocaleDateString("es-AR", {
+        timeZone: "America/Argentina/Buenos_Aires",
         day: "2-digit",
         month: "long",
         year: "numeric",

@@ -6,7 +6,7 @@ combinando búsqueda web real (Tavily) con análisis de Claude.
 import asyncio
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import asyncpg
 from anthropic import AsyncAnthropic
@@ -267,6 +267,6 @@ async def _generar(tema: str, db: asyncpg.Connection) -> RadarResponse:
         radar=texto,
         tema=tema,
         tema_label=tema_label,
-        generado_en=datetime.now().isoformat(),
+        generado_en=datetime.now(timezone.utc).isoformat(),
         edicion=trimestre,
     )

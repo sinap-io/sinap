@@ -3,7 +3,7 @@ Módulo de Inteligencia — Informe del Clúster
 Genera un informe analítico cruzando datos de todos los módulos de SINAP.
 """
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import asyncpg
 from anthropic import AsyncAnthropic
@@ -306,7 +306,7 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
 
     return InformeResponse(
         informe=respuesta.content[0].text,
-        generado_en=datetime.now().isoformat(),
+        generado_en=datetime.now(timezone.utc).isoformat(),
         periodo=periodo,
         datos=datos_resumen,
     )
