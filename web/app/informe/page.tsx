@@ -1,4 +1,5 @@
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
