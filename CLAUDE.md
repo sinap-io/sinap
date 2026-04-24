@@ -250,6 +250,13 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - Verificado: run #2 del informe en verde (1m 0s) ✅
 - Keep-alive no necesitó cambios (solo pingea `/health`, que es pública) ✅
 
+**Fix radar — label y timezone (24 abril 2026):**
+- Eliminado el renglón "Q2 2026" / "Semana del..." — confundía la cadencia del informe
+- Ahora muestra solo: "Actualización semanal · Emitido el [fecha]" ✅
+- Fix timezone: `datetime.now()` sin zona → `datetime.now(timezone.utc)` en radar.py e informe.py ✅
+- Frontend: `timeZone: "America/Argentina/Buenos_Aires"` en `toLocaleDateString` de radar e informe ✅
+- Causa: Railway y Vercel corren en UTC; sin fix mostraba UTC en lugar de hora Argentina
+
 **Lo que está pendiente de desarrollo (ver BACKLOG.md para detalle completo):**
 - Crear usuarios para el resto del equipo (vinculadores, oferentes) — post-demo
 - Seguridad: `creado_por` automático — las server actions tienen acceso al session de Auth.js; pasar `usuario_id` en el body al crear iniciativas/hitos/proyectos (no requiere JWT en FastAPI)
