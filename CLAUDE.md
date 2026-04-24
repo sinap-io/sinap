@@ -14,7 +14,7 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ---
 
-## Estado actual (23 abril 2026)
+## Estado actual (24 abril 2026)
 
 **Lo que funciona en producción (main / sinap-psi.vercel.app):**
 - Backend FastAPI → Railway: `https://sinap-production.up.railway.app` ✅
@@ -38,7 +38,17 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 - **Modelo de roles externos rediseñado** ✅ — socio / freemium / invitado (ver sección abajo)
 - **Filtros persistentes en URL** ✅ — useSearchParams en iniciativas, proyectos y actores. Suspense boundaries en las 3 páginas. Fix: duplicate `const rol` y `redirect` import faltante en proyectos.
 
-**Fixes 24 abril 2026:**
+**Fixes y mejoras 24 abril 2026 (sesión completa):**
+- **Multi-contacto por actor** ✅ — migración 014 aplicada (tabla `actor_contacto`); API CRUD completa; UI en ficha de cada actor (lista, agregar, editar, eliminar, badge "Principal")
+- **Seguridad API — shared API key** ✅ — middleware en `main.py` valida `X-Sinap-Api-Key` en todos los requests; `/health` pública; `fetchApi` en Next.js agrega la clave (server-side, nunca al browser); variables configuradas en Railway y Vercel
+- **Fix crons GitHub Actions (403)** ✅ — workflows agregaban el header `X-Sinap-Api-Key`; secret `SINAP_API_KEY` en GitHub repo; verificado en verde
+- **Fix radar — label y timezone** ✅ — eliminado renglón "Q2 2026" / "Semana del..."; solo muestra "Actualización semanal · Emitido el [fecha]"; `datetime.now(timezone.utc)` en backend; `timeZone: "America/Argentina/Buenos_Aires"` en frontend
+- **Fix SearchClient markdown** ✅ — resultados del Buscador IA se renderizan con ReactMarkdown + mdComponents (antes mostraban markdown crudo)
+- **Fix botón Actualizar informe** ✅ — rediseño completo:
+  - Railway: nuevo endpoint `POST /informe/trigger` con FastAPI BackgroundTasks → retorna en <1s, genera en background (~45s)
+  - Vercel: Server Action llama al trigger (sin esperar) y devuelve `eta=45`
+  - UI: cuenta regresiva visible con recarga automática al llegar a 0 (sin depender de Vercel timeouts)
+  - `max_tokens`: 2000 → **4000** para que el informe nunca se corte (Financiamiento y Esta semana ya no desaparecen)
 - **Informe y Radar**: cache read envuelto en try/except → si el cache está corrupto, regenera automáticamente en lugar de dar 500 ✅
 - **Asistente**: eliminada regla "si la consulta es vaga, preguntá" → ahora siempre responde con todo directamente ✅
 
@@ -321,19 +331,33 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 ⚠️ **Datos reales diferidos** — no se cargan hasta que el desarrollo esté completo y el Clúster los tenga disponibles (puede llevar semanas). Los datos ficticios de prueba son suficientes para demos.
 
-En orden de prioridad:
+### Agenda próxima sesión (acordada 24/4/2026)
 
-1. ~~**Fix Server Actions**~~ ✅ — completado
-2. ~~**Loading skeletons**~~ ✅ — completado
-3. ~~**Cache persistida en DB**~~ ✅ — completado
-4. ~~**Asistente del Ecosistema**~~ ✅ — completado
-5. ~~**Panel admin de usuarios**~~ ✅ — completado
-6. ~~**Modelo de roles externos**~~ ✅ — completado
-7. ~~**Limpiar archivos locales del repo**~~ ✅ — `git rm --cached` + `.gitignore` actualizado
-8. ~~**Revisar confiabilidad de los módulos IA**~~ ✅ — cron radar mejorado (falla loudly), cron informe nuevo (diario), vinculador en proyectos completo
-9. **Definir label final de freemium** — "Acceso básico" es provisorio
-10. ~~**Filtros persistentes en URL**~~ ✅ — useSearchParams en iniciativas, proyectos, actores
-11. **Datos reales** — borrar ficticios y cargar datos reales del Clúster el 1/5/2026
+**1. Revisión integral módulos IA + crons** — hay demasiados problemas que aparecen justo antes de presentaciones. Revisar en conjunto:
+- Confirmar que el botón Actualizar del informe ahora funciona (fire-and-forget + countdown)
+- Forzar regeneración del informe y verificar que aparecen TODAS las secciones (incluyendo Financiamiento)
+- Revisar que max_tokens=4000 es suficiente o si necesita más
+- Cron informe y cron radar: verificar que el último run fue en verde
+- Buscador IA en iniciativas: verificar timeout y calidad de respuestas
+- Asistente del Ecosistema: revisar estabilidad
+
+**2. Planificar qué ve cada actor/usuario** — definir la experiencia por rol de forma explícita:
+- Qué módulos ve cada rol (admin, manager, directivo, vinculador, socio, freemium, invitado)
+- Qué puede HACER vs solo VER en cada módulo
+- Si hay módulos que actualmente muestran cosas que no deberían (ej: freemium viendo detalles de iniciativas)
+- Si hay módulos que deberían estar diferenciados pero no lo están
+- Resultado esperado: tabla rol × módulo × permisos → implementar los gaps que haya
+
+**Backlog (en orden de prioridad):**
+1. ~~**Fix Server Actions**~~ ✅
+2. ~~**Loading skeletons**~~ ✅
+3. ~~**Cache persistida en DB**~~ ✅
+4. ~~**Asistente del Ecosistema**~~ ✅
+5. ~~**Panel admin de usuarios**~~ ✅
+6. ~~**Modelo de roles externos**~~ ✅
+7. ~~**Filtros persistentes en URL**~~ ✅
+8. **Definir label final de freemium** — "Acceso básico" es provisorio
+9. **Datos reales** — borrar ficticios y cargar datos reales del Clúster cuando estén
 
 ---
 
@@ -457,4 +481,4 @@ git push origin main
 | Neon.tech | sinap-production `ep-tiny-cell-acjfdkps` (21+ tablas + migraciones 001–010) | ✅ Operativo |
 | Railway | sinap-production.up.railway.app | ✅ Operativo (FastAPI) |
 | Vercel | sinap-psi.vercel.app | ✅ Operativo (Next.js) |
-| Cloudflare / sinap.io | — | ⏳ Registrar dominio |
+| Cloudflare / sinap.io | sinap.io | ✅ Comprado en Porkbun, DNS en Cloudflare, configurado en Vercel |
