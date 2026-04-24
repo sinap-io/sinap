@@ -231,14 +231,28 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 **Reunión Clúster 20 abril — features identificadas:**
 - Notificaciones por email (Iván) — no prioritario por ahora
 - Buscador global (Iván/Rodrigo) — ✅ YA EXISTE: Asistente IA está en el nav como ítem independiente
-- Multi-contacto por actor (Andrés) — pendiente, hacer ANTES de cargar datos reales (schema change)
+- **Multi-contacto por actor** ✅ — implementado (ver abajo)
 - Módulo networking para Congreso (Rodrigo, confirmado por Pablo) — pendiente diseño, DESPUÉS de datos reales
 
+**Multi-contacto por actor (24 abril 2026):**
+- Migración 014 aplicada ✅ — tabla `actor_contacto` (nombre, cargo, email, telefono, es_principal)
+- API: contactos incluidos en GET `/actors/{id}` + CRUD en `/actors/{id}/contactos` ✅
+- Si se marca un contacto como principal → el anterior pierde el flag automáticamente ✅
+- Types: interface `Contacto` en `types.ts`; `ActorDetail` extiende con `contactos[]` ✅
+- Actions: `crearContacto`, `editarContacto`, `eliminarContacto` con verificación de rol ✅
+- Componente `ActorContactos.tsx`: lista con badge "Principal", formulario inline, edit/delete ✅
+- Visible en la ficha de cada actor, antes de Ofertas ✅
+
+**Fix crons GitHub Actions (24 abril 2026):**
+- Causa del fallo: workflows llamaban a Railway sin `X-Sinap-Api-Key` → 403 desde que implementamos la API key
+- Fix: header `X-Sinap-Api-Key: ${{ secrets.SINAP_API_KEY }}` agregado en informe-refresh.yml y radar-refresh.yml ✅
+- Secret `SINAP_API_KEY` agregado en GitHub → sinap-io/sinap → Settings → Secrets → Actions ✅
+- Verificado: run #2 del informe en verde (1m 0s) ✅
+- Keep-alive no necesitó cambios (solo pingea `/health`, que es pública) ✅
+
 **Lo que está pendiente de desarrollo (ver BACKLOG.md para detalle completo):**
-- **Multi-contacto por actor** — tabla `actor_contacto` (nombre, cargo, email, teléfono, es_principal) + UI de gestión en detalle del actor. Hacer ANTES de cargar datos reales.
-- **Fix Server Actions** — agregar verificación de rol al inicio de cada action de mutación (~15 actions)
 - Crear usuarios para el resto del equipo (vinculadores, oferentes) — post-demo
-- Seguridad: middleware JWT en FastAPI (para que `creado_por` se pueble automáticamente del token del usuario logueado — distinto a la API key ya implementada)
+- Seguridad: `creado_por` automático — las server actions tienen acceso al session de Auth.js; pasar `usuario_id` en el body al crear iniciativas/hitos/proyectos (no requiere JWT en FastAPI)
 - Módulo networking — requiere reunión de diseño primero (qué registrar del Congreso). Hacer DESPUÉS de datos reales.
 - Bulk CSV import + batch matching — importar N proyectos y cruzarlos con ofertas/demandas/instrumentos/iniciativas (pedido de Pablo)
 - Login con Google (OAuth)
@@ -275,23 +289,15 @@ Las explicaciones técnicas deben ser claras para alguien sin formación en prog
 
 En orden de prioridad:
 
-**Antes de cargar datos reales (schema changes):**
-1. **Multi-contacto por actor** — tabla `actor_contacto` + UI. Si se carga data real sin esto, el campo queda vacío para siempre.
-
 **En cualquier momento:**
-2. **Fix Server Actions** — verificación de rol al inicio de cada action de mutación (~15 acciones)
-3. **Crear usuarios** — para el resto del equipo del Clúster (post-demo)
-4. **Seguridad API** — JWT en FastAPI (creado_por automático del token del usuario)
-5. **Registrar dominio** sinap.io en Cloudflare
+1. **Crear usuarios** — para el resto del equipo del Clúster (post-demo)
+2. **creado_por automático** — pasar usuario_id desde session en server actions de creación
+3. **Registrar dominio** sinap.io en Cloudflare
 
 **Después de datos reales:**
-6. **Módulo networking** — requiere reunión de diseño primero
-7. **Bulk CSV import + batch matching** — cuando haya datos reales que importar
-8. **Datos reales** — cuando el Clúster los tenga disponibles
-
-**Verificación pendiente próxima sesión:**
-- Chequear en GitHub Actions si el radar cron del lunes siguiente corre en verde
-- Continuar análisis de priorización "antes vs. después de datos reales" (iniciado esta sesión)
+4. **Módulo networking** — requiere reunión de diseño primero
+5. **Bulk CSV import + batch matching** — cuando haya datos reales que importar
+6. **Datos reales** — cuando el Clúster los tenga disponibles
 
 ---
 
