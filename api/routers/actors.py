@@ -2,7 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 import asyncpg
 
 from db.connection import get_db
-from schemas.actor import ActorDetail, ActorList, ActorPatch, NeedSummary, ServiceSummary
+from schemas.actor import (
+    ActorDetail, ActorList, ActorPatch, NeedSummary, ServiceSummary,
+    ContactoSummary, ContactoCreate, ContactoPatch,
+)
 
 router = APIRouter(prefix="/actors", tags=["actors"])
 
@@ -62,12 +65,19 @@ async def get_actor(actor_id: int, db: asyncpg.Connection = Depends(get_db)):
         FROM necesidad WHERE actor_id = $1
     """, actor_id)
 
+    contactos = await db.fetch("""
+        SELECT id, nombre, cargo, email, telefono, es_principal
+        FROM actor_contacto WHERE actor_id = $1
+        ORDER BY es_principal DESC, id ASC
+    """, actor_id)
+
     actor_dict = dict(actor)
     return ActorDetail(
         **{k: v for k, v in actor_dict.items() if k != "certificaciones"},
         certificaciones=actor_dict["certificaciones"] or [],
         servicios=[ServiceSummary(**dict(r)) for r in servicios],
         necesidades=[NeedSummary(**dict(r)) for r in necesidades],
+        contactos=[ContactoSummary(**dict(r)) for r in contactos],
     )
 
 
@@ -105,3 +115,81 @@ async def patch_actor(
             )
 
     return await get_actor(actor_id, db)
+
+
+# ── Contactos ─────────────────────────────────────────────────
+
+@router.post("/{actor_id}/contactos", response_model=ContactoSummary, status_code=201)
+async def crear_contacto(
+    actor_id: int, body: ContactoCreate,
+    db: asyncpg.Connection = Depends(get_db),
+):
+    actor = await db.fetchrow("SELECT id FROM actor WHERE id = $1", actor_id)
+    if not actor:
+        raise HTTPException(404, "Actor no encontrado")
+
+    # Si se marca como principal, quitar flag del anterior principal
+    if body.es_principal:
+        await db.execute(
+            "UPDATE actor_contacto SET es_principal = FALSE WHERE actor_id = $1",
+            actor_id,
+        )
+
+    row = await db.fetchrow(
+        """INSERT INTO actor_contacto (actor_id, nombre, cargo, email, telefono, es_principal)
+           VALUES ($1, $2, $3, $4, $5, $6)
+           RETURNING id, nombre, cargo, email, telefono, es_principal""",
+        actor_id, body.nombre, body.cargo, body.email, body.telefono, body.es_principal,
+    )
+    return ContactoSummary(**dict(row))
+
+
+@router.patch("/{actor_id}/contactos/{contacto_id}", response_model=ContactoSummary)
+async def patch_contacto(
+    actor_id: int, contacto_id: int, body: ContactoPatch,
+    db: asyncpg.Connection = Depends(get_db),
+):
+    existing = await db.fetchrow(
+        "SELECT id FROM actor_contacto WHERE id = $1 AND actor_id = $2",
+        contacto_id, actor_id,
+    )
+    if not existing:
+        raise HTTPException(404, "Contacto no encontrado")
+
+    # Si se marca como principal, quitar flag del anterior principal
+    if body.es_principal:
+        await db.execute(
+            "UPDATE actor_contacto SET es_principal = FALSE WHERE actor_id = $1 AND id != $2",
+            actor_id, contacto_id,
+        )
+
+    fields = {k: v for k, v in body.model_dump().items() if v is not None}
+    if not fields:
+        row = await db.fetchrow(
+            "SELECT id, nombre, cargo, email, telefono, es_principal FROM actor_contacto WHERE id = $1",
+            contacto_id,
+        )
+        return ContactoSummary(**dict(row))
+
+    set_clause = ", ".join(f"{k} = ${i+2}" for i, k in enumerate(fields))
+    values = list(fields.values())
+    row = await db.fetchrow(
+        f"""UPDATE actor_contacto SET {set_clause}
+            WHERE id = $1
+            RETURNING id, nombre, cargo, email, telefono, es_principal""",
+        contacto_id, *values,
+    )
+    return ContactoSummary(**dict(row))
+
+
+@router.delete("/{actor_id}/contactos/{contacto_id}", status_code=204)
+async def eliminar_contacto(
+    actor_id: int, contacto_id: int,
+    db: asyncpg.Connection = Depends(get_db),
+):
+    deleted = await db.fetchval(
+        "DELETE FROM actor_contacto WHERE id = $1 AND actor_id = $2 RETURNING 1",
+        contacto_id, actor_id,
+    )
+    if not deleted:
+        raise HTTPException(404, "Contacto no encontrado")

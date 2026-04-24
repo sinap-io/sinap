@@ -5,6 +5,7 @@ import Link from "next/link";
 import { fetchApi, ApiError } from "@/lib/api";
 import type { ActorDetail } from "@/lib/types";
 import ActorHeader from "@/components/actors/ActorHeader";
+import ActorContactos from "@/components/actors/ActorContactos";
 import {
   SERVICIO_LABEL, AREA_LABEL, DISPONIBILIDAD_COLOR, URGENCIA_COLOR,
 } from "@/lib/labels";
@@ -33,6 +34,9 @@ export default async function ActorDetailPage({
 
       {/* Header con etapa editable */}
       <ActorHeader actor={actor} />
+
+      {/* Contactos */}
+      <ActorContactos actorId={actor.id} contactos={actor.contactos} />
 
       {/* Ofertas */}
       <section>

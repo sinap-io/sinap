@@ -19,6 +19,31 @@ class NeedSummary(BaseModel):
     urgencia: str
 
 
+class ContactoSummary(BaseModel):
+    id: int
+    nombre: str
+    cargo: Optional[str]
+    email: Optional[str]
+    telefono: Optional[str]
+    es_principal: bool
+
+
+class ContactoCreate(BaseModel):
+    nombre: str
+    cargo: Optional[str] = None
+    email: Optional[str] = None
+    telefono: Optional[str] = None
+    es_principal: bool = False
+
+
+class ContactoPatch(BaseModel):
+    nombre: Optional[str] = None
+    cargo: Optional[str] = None
+    email: Optional[str] = None
+    telefono: Optional[str] = None
+    es_principal: Optional[bool] = None
+
+
 class ActorBase(BaseModel):
     id: int
     nombre: str
@@ -37,3 +62,4 @@ class ActorDetail(ActorBase):
     certificaciones: list[str]
     servicios: list[ServiceSummary]
     necesidades: list[NeedSummary]
+    contactos: list[ContactoSummary]

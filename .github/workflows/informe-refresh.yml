@@ -25,6 +25,7 @@ jobs:
         run: |
           echo "Regenerando informe IA..."
           RESPONSE=$(curl -s --max-time 120 \
+            -H "X-Sinap-Api-Key: ${{ secrets.SINAP_API_KEY }}" \
             -w "\nHTTP_STATUS:%{http_code}" \
             "https://sinap-production.up.railway.app/informe?force=true")
           HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)

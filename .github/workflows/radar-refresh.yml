@@ -25,6 +25,7 @@ jobs:
         run: |
           echo "Regenerando radar: biosensores..."
           RESPONSE=$(curl -s --max-time 240 \
+            -H "X-Sinap-Api-Key: ${{ secrets.SINAP_API_KEY }}" \
             -w "\nHTTP_STATUS:%{http_code}" \
             "https://sinap-production.up.railway.app/radar?tema=biosensores&force=true")
           HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
@@ -40,6 +41,7 @@ jobs:
         run: |
           echo "Regenerando radar: biotech_general..."
           RESPONSE=$(curl -s --max-time 240 \
+            -H "X-Sinap-Api-Key: ${{ secrets.SINAP_API_KEY }}" \
             -w "\nHTTP_STATUS:%{http_code}" \
             "https://sinap-production.up.railway.app/radar?tema=biotech_general&force=true")
           HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)

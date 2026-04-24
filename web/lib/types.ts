@@ -23,10 +23,20 @@ export interface NeedSummary {
   urgencia: string;
 }
 
+export interface Contacto {
+  id: number;
+  nombre: string;
+  cargo: string | null;
+  email: string | null;
+  telefono: string | null;
+  es_principal: boolean;
+}
+
 export interface ActorDetail extends Omit<ActorList, "total_servicios" | "total_necesidades"> {
   certificaciones: string[];
   servicios: ServiceSummary[];
   necesidades: NeedSummary[];
+  contactos: Contacto[];
 }
 
 // ── Services ──────────────────────────────────────────────────
