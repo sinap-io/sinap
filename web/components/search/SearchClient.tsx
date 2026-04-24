@@ -1,8 +1,39 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import ReactMarkdown from "react-markdown";
 import { runSearch } from "@/app/search/actions";
 import type { SearchResponse } from "@/lib/types";
+
+const mdComponents = {
+  h2: ({ children }: { children?: React.ReactNode }) => (
+    <h2 className="text-base font-bold text-[var(--text)] mt-6 mb-2 pb-1 border-b border-[var(--border)]">
+      {children}
+    </h2>
+  ),
+  h3: ({ children }: { children?: React.ReactNode }) => (
+    <h3 className="text-sm font-semibold text-[var(--text)] mt-4 mb-1">
+      {children}
+    </h3>
+  ),
+  p: ({ children }: { children?: React.ReactNode }) => (
+    <p className="text-sm text-[var(--text-secondary,var(--text-muted))] leading-relaxed mb-3">
+      {children}
+    </p>
+  ),
+  ul: ({ children }: { children?: React.ReactNode }) => (
+    <ul className="space-y-1.5 mb-3 ml-1">{children}</ul>
+  ),
+  li: ({ children }: { children?: React.ReactNode }) => (
+    <li className="text-sm text-[var(--text-muted)] flex gap-2">
+      <span className="text-[var(--accent)] shrink-0 mt-0.5">—</span>
+      <span>{children}</span>
+    </li>
+  ),
+  strong: ({ children }: { children?: React.ReactNode }) => (
+    <strong className="font-semibold text-[var(--text)]">{children}</strong>
+  ),
+};
 
 const EJEMPLOS = [
   "Necesito validar la estabilidad de un compuesto biológico a distintas temperaturas",
@@ -127,12 +158,12 @@ export default function SearchClient() {
 
           {/* Respuesta de Claude */}
           <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-6">
-            <h2 className="text-sm font-semibold text-[var(--text-muted)] uppercase tracking-wide mb-4">
+            <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide mb-4">
               Análisis del ecosistema
-            </h2>
-            <div className="text-sm text-[var(--text-muted)] leading-relaxed whitespace-pre-wrap">
+            </p>
+            <ReactMarkdown components={mdComponents}>
               {result.respuesta}
-            </div>
+            </ReactMarkdown>
           </div>
 
           {/* Gaps detectados */}
