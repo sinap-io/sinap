@@ -1,9 +1,9 @@
 "use client";
 
-import { useTransition, useState } from "react";
+import { useTransition, useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
-import { actualizarInforme } from "@/app/informe/actions";
+import { triggerActualizarInforme } from "@/app/informe/actions";
 
 const components: Components = {
   h2: ({ children }) => (
@@ -51,21 +51,37 @@ interface Props {
 
 const PUEDE_ACTUALIZAR = ["admin", "manager"];
 
+type GeneratingState = "idle" | "triggering" | "countdown" | "error";
+
 export default function InformeClient({ informe, periodo, emitidoEn, rol }: Props) {
   const [isPending, startTransition] = useTransition();
+  const [genState, setGenState] = useState<GeneratingState>("idle");
+  const [countdown, setCountdown] = useState(0);
   const [error, setError] = useState<string | null>(null);
+
+  // Cuenta regresiva → recarga la página cuando llega a 0
+  useEffect(() => {
+    if (genState !== "countdown") return;
+    if (countdown <= 0) {
+      window.location.reload();
+      return;
+    }
+    const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [genState, countdown]);
 
   function regenerar() {
     setError(null);
+    setGenState("triggering");
     startTransition(async () => {
       try {
-        await actualizarInforme();
-      } catch (e: unknown) {
-        // redirect() lanza una excepción especial de Next.js — no es un error real
-        const msg = e instanceof Error ? e.message : String(e);
-        if (!msg.includes("NEXT_REDIRECT")) {
-          setError("No se pudo actualizar el informe. Intentá de nuevo en unos segundos.");
-        }
+        const { eta } = await triggerActualizarInforme();
+        // Railway confirmó que arrancó la generación — mostrar cuenta regresiva
+        setCountdown(eta);
+        setGenState("countdown");
+      } catch {
+        setGenState("error");
+        setError("No se pudo iniciar la actualización. Revisá la conexión e intentá de nuevo.");
       }
     });
   }
@@ -95,45 +111,58 @@ export default function InformeClient({ informe, periodo, emitidoEn, rol }: Prop
 
       {/* Controles (ocultos al imprimir) */}
       <div className="mt-6 flex flex-col gap-3 print:hidden">
+
+        {/* Banda de cuenta regresiva */}
+        {genState === "countdown" && (
+          <div className="rounded-lg border border-[var(--border)] bg-[var(--bg-card)] px-4 py-3 flex items-center gap-3">
+            <svg className="animate-spin h-4 w-4 shrink-0" style={{ color: "var(--accent)" }} viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            <div>
+              <p className="text-sm font-medium" style={{ color: "var(--text)" }}>
+                Generando informe con IA…
+              </p>
+              <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                La página se actualizará automáticamente en {countdown} segundos.
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center gap-3">
           {PUEDE_ACTUALIZAR.includes(rol) && (
             <button
               onClick={regenerar}
-              disabled={isPending}
+              disabled={isPending || genState === "countdown"}
               className="px-4 py-2 rounded-lg text-sm font-medium border border-[var(--accent)] text-[var(--accent)] hover:bg-teal-50 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              {isPending ? (
+              {genState === "triggering" && isPending ? (
                 <>
                   <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  Actualizando…
+                  Iniciando…
                 </>
-              ) : (
-                "↻ Actualizar"
-              )}
+              ) : "↻ Actualizar"}
             </button>
           )}
           <button
             onClick={descargarPDF}
-            disabled={isPending}
+            disabled={genState === "countdown"}
             className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--accent)] text-white hover:bg-teal-700 transition disabled:opacity-50"
           >
             ↓ Descargar PDF
           </button>
-          {PUEDE_ACTUALIZAR.includes(rol) && !isPending && (
+          {PUEDE_ACTUALIZAR.includes(rol) && genState === "idle" && (
             <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-              El informe se actualiza una vez por día. Usá Actualizar para forzar regeneración.
-            </p>
-          )}
-          {isPending && (
-            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-              Generando con IA… puede tardar hasta 30 segundos.
+              El informe se actualiza automáticamente cada día. Usá Actualizar para forzar regeneración.
             </p>
           )}
         </div>
-        {error && (
+
+        {genState === "error" && error && (
           <p className="text-xs text-red-600">{error}</p>
         )}
       </div>

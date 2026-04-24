@@ -1,15 +1,19 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { fetchApi } from "@/lib/api";
 
-// Permite hasta 60s en Vercel (límite Hobby plan)
-export const maxDuration = 60;
-
-export async function actualizarInforme(): Promise<void> {
-  await fetchApi("/informe?force=true", {
-    // 55s de timeout para darle margen a Vercel
-    signal: AbortSignal.timeout(55_000),
-  });
-  redirect("/informe");
+/**
+ * Dispara la regeneración del informe en Railway (background task).
+ * Railway retorna inmediatamente — la generación con Claude toma ~45 segundos.
+ * El cliente muestra una cuenta regresiva y recarga la página al terminar.
+ *
+ * Vercel Hobby tiene timeout de 10s en funciones serverless;
+ * este endpoint retorna en <1s, por lo que no hay problema.
+ */
+export async function triggerActualizarInforme(): Promise<{ eta: number }> {
+  const res = await fetchApi<{ status: string; eta_segundos: number }>(
+    "/informe/trigger",
+    { method: "POST" }
+  );
+  return { eta: res.eta_segundos ?? 45 };
 }

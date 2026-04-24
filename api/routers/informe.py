@@ -7,10 +7,10 @@ from datetime import datetime, timedelta, timezone
 
 import asyncpg
 from anthropic import AsyncAnthropic
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel
 
-from db.connection import get_db
+from db.connection import get_db, get_pool
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/informe", tags=["informe"])
@@ -119,6 +119,32 @@ Sé específico: actor/proyecto → instrumento → por qué aplica.
 ## Esta semana
 Qué actividad registró la plataforma en los últimos 7 días según los hitos. Si no hubo actividad, decilo.
 """
+
+
+async def _background_generar_guardar() -> None:
+    """Regenera el informe en background usando el pool global (no depende del request)."""
+    try:
+        pool = await get_pool()
+        async with pool.acquire() as db:
+            result = await _generar(db)
+            await db.execute("""
+                INSERT INTO cache_ia (tipo, contenido, generado_en, ttl_horas)
+                VALUES ($1, $2::jsonb, NOW(), $3)
+                ON CONFLICT (tipo) DO UPDATE
+                    SET contenido = $2::jsonb, generado_en = NOW()
+            """, _CACHE_TIPO, result.model_dump_json(), _CACHE_TTL_HORAS)
+            logger.info("Informe regenerado en background exitosamente")
+    except Exception as e:
+        import traceback
+        logger.error("Error regenerando informe en background: %s\n%s", e, traceback.format_exc())
+
+
+@router.post("/trigger")
+async def trigger_informe(background_tasks: BackgroundTasks):
+    """Dispara la regeneración en background y retorna inmediatamente.
+    El cliente puede recargar la página ~45 segundos después para ver el informe nuevo."""
+    background_tasks.add_task(_background_generar_guardar)
+    return {"status": "generating", "eta_segundos": 45}
 
 
 @router.get("", response_model=InformeResponse)
@@ -282,7 +308,7 @@ async def _generar(db: asyncpg.Connection) -> InformeResponse:
     try:
         respuesta = await _client.messages.create(
             model="claude-sonnet-4-6",
-            max_tokens=2000,
+            max_tokens=4000,
             messages=[{
                 "role": "user",
                 "content": _PROMPT.format(
